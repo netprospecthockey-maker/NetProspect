@@ -1,0 +1,108 @@
+[debug] [2026-07-17T19:38:37.369Z] ----------------------------------------------------------------------
+[debug] [2026-07-17T19:38:37.373Z] Command:       /Users/matthewloeffler/.nvm/versions/node/v20.14.0/bin/node /Users/matthewloeffler/.npm/_npx/7750544ccf494d8b/node_modules/.bin/firebase use
+[debug] [2026-07-17T19:38:37.373Z] CLI Version:   15.24.0
+[debug] [2026-07-17T19:38:37.374Z] Platform:      darwin
+[debug] [2026-07-17T19:38:37.374Z] Node Version:  v20.14.0
+[debug] [2026-07-17T19:38:37.374Z] Detected Agent: codex_cli
+[debug] [2026-07-17T19:38:37.374Z] Time:          Fri Jul 17 2026 15:38:37 GMT-0400 (Eastern Daylight Time)
+[debug] [2026-07-17T19:38:37.374Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-07-17T19:38:37.393Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]
+[debug] [2026-07-17T19:38:37.518Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-07-17T19:38:37.618Z] Error: Could not load the default credentials. Browse to https://cloud.google.com/docs/authentication/getting-started for more information.
+    at GoogleAuth.getApplicationDefaultAsync (/Users/matthewloeffler/.npm/_npx/7750544ccf494d8b/node_modules/google-auth-library/build/src/auth/googleauth.js:287:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async GoogleAuth._GoogleAuth_determineClient (/Users/matthewloeffler/.npm/_npx/7750544ccf494d8b/node_modules/google-auth-library/build/src/auth/googleauth.js:834:32)
+    at async GoogleAuth.getClient (/Users/matthewloeffler/.npm/_npx/7750544ccf494d8b/node_modules/google-auth-library/build/src/auth/googleauth.js:698:20)
+    at async GoogleAuth.getAccessToken (/Users/matthewloeffler/.npm/_npx/7750544ccf494d8b/node_modules/google-auth-library/build/src/auth/googleauth.js:722:24)
+    at async autoAuth (/Users/matthewloeffler/.npm/_npx/7750544ccf494d8b/node_modules/firebase-tools/lib/requireAuth.js:38:19)
+    at async Object.requireAuth [as fn] (/Users/matthewloeffler/.npm/_npx/7750544ccf494d8b/node_modules/firebase-tools/lib/requireAuth.js:100:20)
+    at async /Users/matthewloeffler/.npm/_npx/7750544ccf494d8b/node_modules/firebase-tools/lib/command.js:271:17
+[error] 
+[error] Error: Failed to authenticate, have you run firebase login?
+[debug] [2026-07-17T19:38:37.643Z] <<< [apiv2][status] GET https://firebase-public.firebaseio.com/cli.json 200
+[debug] [2026-07-17T19:38:37.643Z] <<< [apiv2][body] GET https://firebase-public.firebaseio.com/cli.json {"cloudBuildErrorAfter":1594252800000,"cloudBuildWarnAfter":1590019200000,"defaultNode10After":1594252800000,"minVersion":"3.0.5","node8DeploysDisabledAfter":1613390400000,"node8RuntimeDisabledAfter":1615809600000,"node8WarnAfter":1600128000000}
+[debug] [2026-07-17T19:38:49.121Z] ----------------------------------------------------------------------
+[debug] [2026-07-17T19:38:49.123Z] Command:       /Users/matthewloeffler/.nvm/versions/node/v20.14.0/bin/node /Users/matthewloeffler/.npm/_npx/7750544ccf494d8b/node_modules/.bin/firebase login --no-localhost
+[debug] [2026-07-17T19:38:49.124Z] CLI Version:   15.24.0
+[debug] [2026-07-17T19:38:49.124Z] Platform:      darwin
+[debug] [2026-07-17T19:38:49.124Z] Node Version:  v20.14.0
+[debug] [2026-07-17T19:38:49.124Z] Detected Agent: codex_cli
+[debug] [2026-07-17T19:38:49.124Z] Time:          Fri Jul 17 2026 15:38:49 GMT-0400 (Eastern Daylight Time)
+[debug] [2026-07-17T19:38:49.124Z] ----------------------------------------------------------------------
+[debug] 
+[info] i  The Firebase CLI’s MCP server feature can optionally make use of Gemini in Firebase. Learn more about Gemini in Firebase and how it uses your data: https://firebase.google.com/docs/gemini-in-firebase#how-gemini-in-firebase-uses-your-data 
+[info] 
+[info] i  Firebase optionally collects CLI and Emulator Suite usage and error reporting information to help improve our products. Data is collected in accordance with Google's privacy policy (https://policies.google.com/privacy) and is not used to identify you. 
+[debug] [2026-07-17T19:39:55.015Z] >>> [apiv2][query] POST https://auth.firebase.tools/attest [none]
+[debug] [2026-07-17T19:39:55.015Z] >>> [apiv2][body] POST https://auth.firebase.tools/attest {"session_id":"fc2ccd8d-948f-40fb-af2d-daca713ccc51"}
+[debug] [2026-07-17T19:39:55.566Z] <<< [apiv2][status] POST https://auth.firebase.tools/attest 200
+[debug] [2026-07-17T19:39:55.566Z] <<< [apiv2][body] POST https://auth.firebase.tools/attest {"token":"mWBGmfzrJO0Xa1jjV6SO0cTol2_26ym1HXHi0y0FwTo"}
+[info] 
+[info] To sign in to the Firebase CLI:
+[info] 
+[info] 1. Take note of your session ID:
+[info] 
+[info]    FC2CC
+[info] 
+[info] 2. Visit the URL below on any device and follow the instructions to get your code:
+[info] 
+[info]    https://auth.firebase.tools/login?code_challenge=PXm3_GVmxoCio-DWsu1mOEWA-nj497FmAFPe3kpdS9o&session=fc2ccd8d-948f-40fb-af2d-daca713ccc51&attest=mWBGmfzrJO0Xa1jjV6SO0cTol2_26ym1HXHi0y0FwTo
+[info] 
+[info] 3. Paste or enter the authorization code below once you have it:
+[info] 
+[debug] [2026-07-17T19:41:27.210Z] >>> [apiv2][query] POST https://accounts.google.com/o/oauth2/token [none]
+[debug] [2026-07-17T19:41:27.212Z] >>> [apiv2][body] POST https://accounts.google.com/o/oauth2/token [omitted]
+[debug] [2026-07-17T19:41:27.436Z] <<< [apiv2][status] POST https://accounts.google.com/o/oauth2/token 200
+[debug] [2026-07-17T19:41:44.503Z] ----------------------------------------------------------------------
+[debug] [2026-07-17T19:41:44.504Z] Command:       /Users/matthewloeffler/.nvm/versions/node/v20.14.0/bin/node /Users/matthewloeffler/.npm/_npx/7750544ccf494d8b/node_modules/.bin/firebase deploy --only database
+[debug] [2026-07-17T19:41:44.505Z] CLI Version:   15.24.0
+[debug] [2026-07-17T19:41:44.505Z] Platform:      darwin
+[debug] [2026-07-17T19:41:44.505Z] Node Version:  v20.14.0
+[debug] [2026-07-17T19:41:44.505Z] Detected Agent: codex_cli
+[debug] [2026-07-17T19:41:44.505Z] Time:          Fri Jul 17 2026 15:41:44 GMT-0400 (Eastern Daylight Time)
+[debug] [2026-07-17T19:41:44.505Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-07-17T19:41:45.292Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-07-17T19:41:45.293Z] > authorizing via signed-in user (netprospecthockey@gmail.com)
+[debug] [2026-07-17T19:41:45.293Z] [iam] checking project netprospect-hockey for permissions ["firebase.projects.get","firebasedatabase.instances.update"]
+[debug] [2026-07-17T19:41:45.294Z] Checked if tokens are valid: true, expires at: 1784320886436
+[debug] [2026-07-17T19:41:45.294Z] Checked if tokens are valid: true, expires at: 1784320886436
+[debug] [2026-07-17T19:41:45.294Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/netprospect-hockey:testIamPermissions [none]
+[debug] [2026-07-17T19:41:45.295Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/netprospect-hockey:testIamPermissions  x-goog-user-project=netprospect-hockey
+[debug] [2026-07-17T19:41:45.295Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/netprospect-hockey:testIamPermissions {"permissions":["firebase.projects.get","firebasedatabase.instances.update"]}
+[debug] [2026-07-17T19:41:45.473Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/netprospect-hockey:testIamPermissions 200
+[debug] [2026-07-17T19:41:45.473Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/netprospect-hockey:testIamPermissions {"permissions":["firebase.projects.get","firebasedatabase.instances.update"]}
+[debug] [2026-07-17T19:41:45.474Z] Checked if tokens are valid: true, expires at: 1784320886436
+[debug] [2026-07-17T19:41:45.474Z] Checked if tokens are valid: true, expires at: 1784320886436
+[debug] [2026-07-17T19:41:45.475Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/netprospect-hockey [none]
+[debug] [2026-07-17T19:41:45.819Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/netprospect-hockey 200
+[debug] [2026-07-17T19:41:45.819Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/netprospect-hockey {"projectId":"netprospect-hockey","projectNumber":"711580111074","displayName":"NetProspect","name":"projects/netprospect-hockey","resources":{"hostingSite":"netprospect-hockey","realtimeDatabaseInstance":"netprospect-hockey-default-rtdb"},"state":"ACTIVE","labels":{"firebase":"enabled"},"etag":"1_9042184b-f093-4601-9b21-8c3728dac258"}
+[info] 
+[info] === Deploying to 'netprospect-hockey'...
+[info] 
+[info] i  deploying database 
+[info] i  database: checking rules syntax... 
+[debug] [2026-07-17T19:41:45.826Z] Checked if tokens are valid: true, expires at: 1784320886436
+[debug] [2026-07-17T19:41:45.827Z] Checked if tokens are valid: true, expires at: 1784320886436
+[debug] [2026-07-17T19:41:45.827Z] >>> [apiv2][query] GET https://firebasedatabase.googleapis.com/v1beta/projects/netprospect-hockey/locations/-/instances/netprospect-hockey-default-rtdb [none]
+[debug] [2026-07-17T19:41:46.182Z] <<< [apiv2][status] GET https://firebasedatabase.googleapis.com/v1beta/projects/netprospect-hockey/locations/-/instances/netprospect-hockey-default-rtdb 200
+[debug] [2026-07-17T19:41:46.182Z] <<< [apiv2][body] GET https://firebasedatabase.googleapis.com/v1beta/projects/netprospect-hockey/locations/-/instances/netprospect-hockey-default-rtdb {"name":"projects/711580111074/locations/us-central1/instances/netprospect-hockey-default-rtdb","project":"projects/711580111074","databaseUrl":"https://netprospect-hockey-default-rtdb.firebaseio.com","type":"DEFAULT_DATABASE","state":"ACTIVE"}
+[debug] [2026-07-17T19:41:46.187Z] Checked if tokens are valid: true, expires at: 1784320886436
+[debug] [2026-07-17T19:41:46.188Z] Checked if tokens are valid: true, expires at: 1784320886436
+[debug] [2026-07-17T19:41:46.189Z] >>> [apiv2][query] PUT https://netprospect-hockey-default-rtdb.firebaseio.com/.settings/rules.json dryRun=true
+[debug] [2026-07-17T19:41:46.189Z] >>> [apiv2][body] PUT https://netprospect-hockey-default-rtdb.firebaseio.com/.settings/rules.json "{\n  \"rules\": {\n    \"forumTopics\": {\n      \".read\": true,\n      \"$topicId\": {\n        \".write\": \"auth != null && ((!data.exists() && newData.child('author/id').val() === auth.uid && newData.child('approved').val() === false && newData.child('likes').val() === 0 && newData.child('views').val() === 0 && newData.child('title').isString() && newData.child('title').val().length <= 120 && newData.child('body').isString() && newData.child('body').val().length <= 10000 && (newData.child('category').val() === 'Mock Drafts' || newData.child('pending').val() === true)) || root.child('users').child(auth.uid).child('role').val() === 'admin')\",\n        \"likes\": {\n          \".write\": \"auth != null && newData.isNumber() && newData.val() === data.val() + 1\"\n        },\n        \"comments\": {\n          \"$commentId\": {\n            \".write\": \"auth != null && ((!data.exists() && newData.child('author/id').val() === auth.uid && newData.child('body').isString() && newData.child('body').val().length > 0 && newData.child('body').val().length <= 5000) || root.child('users').child(auth.uid).child('role').val() === 'admin')\"\n          }\n        },\n        \"updatedAt\": {\n          \".write\": \"auth != null && newData.isNumber() && newData.val() >= data.val() && newData.val() <= now\"\n        },\n        \"pending\": {\n          \".write\": \"root.child('users').child(auth.uid).child('role').val() === 'admin'\"\n        },\n        \"approved\": {\n          \".write\": \"root.child('users').child(auth.uid).child('role').val() === 'admin'\"\n        }\n      }\n    },\n    \"users\": {\n      \"$uid\": {\n        \".read\": \"auth != null && ($uid === auth.uid || root.child('users').child(auth.uid).child('role').val() === 'admin')\",\n        \".write\": \"$uid === auth.uid && ((!data.exists() && newData.child('role').val() === 'member') || (data.exists() && newData.child('role').val() === data.child('role').val()))\"\n      }\n    },\n    \"usernames\": {\n      \"$username\": {\n        \".read\": \"auth != null && data.child('uid').val() === auth.uid\",\n        \".write\": \"auth != null && newData.child('uid').val() === auth.uid && (!data.exists() || data.child('uid').val() === auth.uid)\"\n      }\n    }\n  }\n}\n"
+[debug] [2026-07-17T19:41:46.390Z] <<< [apiv2][status] PUT https://netprospect-hockey-default-rtdb.firebaseio.com/.settings/rules.json 200
+[debug] [2026-07-17T19:41:46.390Z] <<< [apiv2][body] PUT https://netprospect-hockey-default-rtdb.firebaseio.com/.settings/rules.json {"status":"ok"}
+[info] ✔  database: rules syntax for database netprospect-hockey-default-rtdb is valid 
+[info] i  database: releasing rules... 
+[debug] [2026-07-17T19:41:46.391Z] Checked if tokens are valid: true, expires at: 1784320886436
+[debug] [2026-07-17T19:41:46.391Z] Checked if tokens are valid: true, expires at: 1784320886436
+[debug] [2026-07-17T19:41:46.391Z] >>> [apiv2][query] GET https://firebasedatabase.googleapis.com/v1beta/projects/netprospect-hockey/locations/-/instances/netprospect-hockey-default-rtdb [none]
+[debug] [2026-07-17T19:41:46.537Z] <<< [apiv2][status] GET https://firebasedatabase.googleapis.com/v1beta/projects/netprospect-hockey/locations/-/instances/netprospect-hockey-default-rtdb 200
+[debug] [2026-07-17T19:41:46.537Z] <<< [apiv2][body] GET https://firebasedatabase.googleapis.com/v1beta/projects/netprospect-hockey/locations/-/instances/netprospect-hockey-default-rtdb {"name":"projects/711580111074/locations/us-central1/instances/netprospect-hockey-default-rtdb","project":"projects/711580111074","databaseUrl":"https://netprospect-hockey-default-rtdb.firebaseio.com","type":"DEFAULT_DATABASE","state":"ACTIVE"}
+[debug] [2026-07-17T19:41:46.538Z] Checked if tokens are valid: true, expires at: 1784320886436
+[debug] [2026-07-17T19:41:46.538Z] Checked if tokens are valid: true, expires at: 1784320886436
+[debug] [2026-07-17T19:41:46.538Z] >>> [apiv2][query] PUT https://netprospect-hockey-default-rtdb.firebaseio.com/.settings/rules.json 
+[debug] [2026-07-17T19:41:46.539Z] >>> [apiv2][body] PUT https://netprospect-hockey-default-rtdb.firebaseio.com/.settings/rules.json "{\n  \"rules\": {\n    \"forumTopics\": {\n      \".read\": true,\n      \"$topicId\": {\n        \".write\": \"auth != null && ((!data.exists() && newData.child('author/id').val() === auth.uid && newData.child('approved').val() === false && newData.child('likes').val() === 0 && newData.child('views').val() === 0 && newData.child('title').isString() && newData.child('title').val().length <= 120 && newData.child('body').isString() && newData.child('body').val().length <= 10000 && (newData.child('category').val() === 'Mock Drafts' || newData.child('pending').val() === true)) || root.child('users').child(auth.uid).child('role').val() === 'admin')\",\n        \"likes\": {\n          \".write\": \"auth != null && newData.isNumber() && newData.val() === data.val() + 1\"\n        },\n        \"comments\": {\n          \"$commentId\": {\n            \".write\": \"auth != null && ((!data.exists() && newData.child('author/id').val() === auth.uid && newData.child('body').isString() && newData.child('body').val().length > 0 && newData.child('body').val().length <= 5000) || root.child('users').child(auth.uid).child('role').val() === 'admin')\"\n          }\n        },\n        \"updatedAt\": {\n          \".write\": \"auth != null && newData.isNumber() && newData.val() >= data.val() && newData.val() <= now\"\n        },\n        \"pending\": {\n          \".write\": \"root.child('users').child(auth.uid).child('role').val() === 'admin'\"\n        },\n        \"approved\": {\n          \".write\": \"root.child('users').child(auth.uid).child('role').val() === 'admin'\"\n        }\n      }\n    },\n    \"users\": {\n      \"$uid\": {\n        \".read\": \"auth != null && ($uid === auth.uid || root.child('users').child(auth.uid).child('role').val() === 'admin')\",\n        \".write\": \"$uid === auth.uid && ((!data.exists() && newData.child('role').val() === 'member') || (data.exists() && newData.child('role').val() === data.child('role').val()))\"\n      }\n    },\n    \"usernames\": {\n      \"$username\": {\n        \".read\": \"auth != null && data.child('uid').val() === auth.uid\",\n        \".write\": \"auth != null && newData.child('uid').val() === auth.uid && (!data.exists() || data.child('uid').val() === auth.uid)\"\n      }\n    }\n  }\n}\n"
+[debug] [2026-07-17T19:41:46.707Z] <<< [apiv2][status] PUT https://netprospect-hockey-default-rtdb.firebaseio.com/.settings/rules.json 200
