@@ -24,10 +24,24 @@ Object.assign(POINT_STATS,{
   "Paul Sintschnig":{team:"Villacher SV",league:"ICEHL",games:32,goals:5,assists:2,points:7,ppg:.22},
   "Marcus Laraque":{team:"Seattle Thunderbirds",league:"WHL",games:59,goals:4,assists:7,points:11,ppg:.19},
   "Jett Deschamps":{team:"Virden Oil Capitals",league:"MJHL",games:49,goals:2,assists:15,points:17,ppg:.35},
-  "Jack Johnson":{team:"Navan Grads",league:"CCHL",games:44,goals:4,assists:26,points:30,ppg:.68}
+  "Jack Johnson":{team:"Navan Grads",league:"CCHL",games:44,goals:4,assists:26,points:30,ppg:.68},
+  "Dmitri Savin":{team:"CSKA Juniors",league:"Moscow Juniors",games:19,goals:24,assists:21,points:45,ppg:2.37},
+  "Fyodor Andreyev":{team:"CSKA 2009",league:"Moscow 2009",games:23,goals:1,assists:10,points:11,ppg:.48},
+  "Hampus Zirath":{team:"Djurgårdens IF U20",league:"U20 Nationell",games:33,goals:11,assists:15,points:26,ppg:.79}
 });
 
 const POINT_STAT_LINES={
+  "Dmitri Savin":[
+    {season:"2025–26",team:"CSKA Juniors",teamUrl:"https://fhmoscow.com/player/7838",league:"Moscow Juniors",leagueUrl:"https://fhmoscow.com/player/7838",games:19,goals:24,assists:21,points:45,ppg:2.37},
+    {season:"2025–26",team:"CSKA 2009",teamUrl:"https://fhmoscow.com/player/7838",league:"Moscow 2009",leagueUrl:"https://fhmoscow.com/player/7838",games:32,goals:29,assists:29,points:58,ppg:1.81}
+  ],
+  "Fyodor Andreyev":[
+    {season:"2025–26",team:"CSKA 2009",teamUrl:"https://fhmoscow.com/player/7819",league:"Moscow 2009",leagueUrl:"https://fhmoscow.com/player/7819",games:23,goals:1,assists:10,points:11,ppg:.48},
+    {season:"2025–26",team:"CSKA Juniors",teamUrl:"https://fhmoscow.com/player/7819",league:"Moscow Juniors",leagueUrl:"https://fhmoscow.com/player/7819",games:10,goals:1,assists:5,points:6,ppg:.60}
+  ],
+  "Hampus Zirath":[
+    {season:"2025–26",team:"Djurgårdens IF U20",teamUrl:"https://www.eliteprospects.com/team/599/djurgardens-if-u20/2025-2026?tab=stats",league:"U20 Nationell",leagueUrl:"https://www.eliteprospects.com/league/u20-nationell/stats/2025-2026",games:33,goals:11,assists:15,points:26,ppg:.79,playoffs:{games:12,goals:8,assists:2,points:10,ppg:.83}}
+  ],
   "Illarion Babkin":[
     {season:"2025–26",team:"MHK Spartak Moskva",teamUrl:"https://www.eliteprospects.com/team/4924/mhk-spartak-moskva/2025-2026?tab=stats",league:"MHL",leagueUrl:"https://www.eliteprospects.com/league/mhl/stats/2025-2026",games:22,goals:0,assists:5,points:5,ppg:.23},
     {season:"2025–26",team:"MHK Spartak-MAH Moskva",teamUrl:"https://www.eliteprospects.com/team/45254/mhk-spartak-mah-moskva/2025-2026?tab=stats",league:"MHL",leagueUrl:"https://www.eliteprospects.com/league/mhl/stats/2025-2026",games:12,goals:0,assists:9,points:9,ppg:.75},

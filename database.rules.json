@@ -1,0 +1,42 @@
+{
+  "rules": {
+    "forumTopics": {
+      ".read": true,
+      "$topicId": {
+        ".write": "auth != null && ((!data.exists() && newData.child('author/id').val() === auth.uid && newData.child('approved').val() === false && (newData.child('category').val() === 'Mock Drafts' || newData.child('pending').val() === true)) || root.child('users').child(auth.uid).child('role').val() === 'admin')",
+        "likes": {
+          ".write": "auth != null"
+        },
+        "comments": {
+          "$commentId": {
+            ".write": "auth != null && ((!data.exists() && newData.child('author/id').val() === auth.uid) || root.child('users').child(auth.uid).child('role').val() === 'admin')"
+          }
+        },
+        "pending": {
+          ".write": "root.child('users').child(auth.uid).child('role').val() === 'admin'"
+        },
+        "approved": {
+          ".write": "root.child('users').child(auth.uid).child('role').val() === 'admin'"
+        }
+      }
+    },
+    "communityPlayers": {
+      ".read": true,
+      "$playerId": {
+        ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() === 'admin'"
+      }
+    },
+    "users": {
+      ".read": true,
+      "$uid": {
+        ".write": "$uid === auth.uid && ((!data.exists() && newData.child('role').val() === 'member') || (data.exists() && newData.child('role').val() === data.child('role').val()))"
+      }
+    },
+    "usernames": {
+      ".read": true,
+      "$username": {
+        ".write": "auth != null && (!data.exists() || data.child('uid').val() === auth.uid)"
+      }
+    }
+  }
+}

@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=32">
+  <link rel="stylesheet" href="styles.css?v=69">
 </head>
 <body>
 
@@ -15,17 +15,17 @@
   <div class="brand"><img class="brand-logo" src="assets/netprospect-logo.png" alt="NetProspect"><div class="sub">2027 NHL</div></div>
   <div class="tabs">
     <button class="tab active" data-view="home">Home</button>
-    <button class="tab" data-view="players">Players</button>
+    <button class="tab" data-view="players">Prospects</button>
     <button class="tab" data-view="board">Leaderboard</button>
     <button class="tab" data-view="stock">Stock Watch</button>
     <button class="tab" data-view="draft">Mock Draft</button>
     <button class="tab" data-view="forum">Scout Room</button>
-    <button class="tab" data-view="draft2026">2026 Stats</button>
+    <button class="tab" data-view="draft2026">2026 Draft</button>
   </div>
   <div class="spacer"></div>
   <div class="iobtns">
     <button class="iobtn auth-btn" id="authBtn"><span>◎</span> Sign in</button>
-    <button class="iobtn primary" id="addBtn">+ Add Player</button>
+    <button class="iobtn primary" id="addBtn" hidden>+ Add Prospect</button>
   </div>
 </div></div>
 
@@ -34,32 +34,34 @@
   <section class="view active" id="view-home">
     <section class="home-overview">
       <div class="home-overview-copy"><span>2027 NHL Draft · Live workspace</span><h1>Build a clearer view of the class.</h1><p>One place for the board, production history and community scouting—kept useful as players move between leagues and clubs.</p><div class="home-overview-points"><span>✓ Club-by-club 2025–26 production</span><span>✓ Regular season and playoff splits</span><span>✓ 2026–27 team paths and draft tools</span></div><div class="home-overview-facts"><div><strong id="homeProspectCount">—</strong><small>Prospects tracked</small></div><div><strong id="homeCountryCount">—</strong><small>Countries represented</small></div></div></div>
-      <div class="home-country-chart"><div class="home-chart-head"><div><span>Class composition</span><strong>Players by country</strong></div><small>Click a bar to filter players</small></div><div class="home-country-bars" id="homeCountryBars"></div></div>
+      <div class="home-country-chart"><div class="home-chart-head"><div><span>Class composition</span><strong>Prospects by country</strong></div><small>Click a bar to filter prospects</small></div><div class="home-country-bars" id="homeCountryBars"></div></div>
     </section>
     <div class="home-gateway" aria-label="NetProspect sections">
-      <article class="home-gateway-card"><button class="home-card-action" data-go="players"><span class="home-gateway-image"><img src="assets/home/players.jpg" alt="Hockey prospect in a Canada jersey"><i></i></span><span class="home-gateway-caption"><strong>Players</strong></span></button><a class="photo-credit" href="https://publish.dailyfaceoff.com/wp-content/uploads/2024/11/SE5_1739-scaled.jpg" target="_blank" rel="noopener">Image source: Daily Faceoff ↗</a></article>
+      <article class="home-gateway-card"><button class="home-card-action" data-go="players"><span class="home-gateway-image"><img src="assets/home/players.jpg" alt="Hockey prospect in a Canada jersey"><i></i></span><span class="home-gateway-caption"><strong>Prospects</strong></span></button><a class="photo-credit" href="https://publish.dailyfaceoff.com/wp-content/uploads/2024/11/SE5_1739-scaled.jpg" target="_blank" rel="noopener">Image source: Daily Faceoff ↗</a></article>
       <article class="home-gateway-card"><button class="home-card-action" data-go="board"><span class="home-gateway-image"><img src="assets/home/leaderboard.jpg" alt="Hockey prospect skating in red"><i></i></span><span class="home-gateway-caption"><strong>Leaderboard</strong></span></button><a class="photo-credit" href="https://static01.nyt.com/athletic/uploads/wp/2025/11/10114847/RISH8558.jpg?width=1200&amp;height=1200&amp;fit=cover" target="_blank" rel="noopener">Image source: The Athletic ↗</a></article>
       <article class="home-gateway-card"><button class="home-card-action" data-go="stock"><span class="home-gateway-image"><img src="assets/home/stock-watch.jpg" alt="United States hockey prospect"><i></i></span><span class="home-gateway-caption"><strong>Stock Watch</strong></span></button><a class="photo-credit" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnG7IFXFGNYzOV7uSzR8ul-mHBQGJ42qcoOF8KveilwYbibHYo6wTOVI5-&amp;s=10" target="_blank" rel="noopener">Original image source ↗</a></article>
       <article class="home-gateway-card"><button class="home-card-action" data-go="draft"><span class="home-gateway-image"><img src="assets/home/mock-draft.jpg" alt="Hockey prospect skating in white and blue"><i></i></span><span class="home-gateway-caption"><strong>Mock Draft</strong></span></button><a class="photo-credit" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTONfumQrHSPe1EedNadepMSuxfCqtXBfDvBzsBI1YidR4ODrZUM170MVU&amp;s=10" target="_blank" rel="noopener">Original image source ↗</a></article>
       <article class="home-gateway-card"><button class="home-card-action" data-go="forum"><span class="home-gateway-image"><img src="assets/home/scouts-room.jpg" alt="Bosse Meijer skating for Sweden"><i></i></span><span class="home-gateway-caption"><strong>Scouts Room</strong></span></button><a class="photo-credit" href="https://files.eliteprospects.com/layout/players/bosse_meijer2.jpg" target="_blank" rel="noopener">Image source: Elite Prospects ↗</a></article>
-      <article class="home-gateway-card"><button class="home-card-action" data-go="draft2026"><span class="home-gateway-image"><img src="assets/home/featured-blick.jpg" alt="Hockey player skating for EHC Biel-Bienne"><i></i></span><span class="home-gateway-caption"><strong>2026 Draft Stats</strong></span></button><a class="photo-credit" href="https://www.blick.ch/fr/sport/hockey/mondial/je-ne-compte-plus-les-matches-niklas-blessing-ponctue-sa-saison-exceptionnelle-avec-la-nati-id21872514.html" target="_blank" rel="noopener">Photo: Pius Koller / Blick ↗</a></article>
+      <article class="home-gateway-card"><button class="home-card-action" data-go="draft2026"><span class="home-gateway-image"><img src="assets/home/featured-blick.jpg" alt="Hockey player skating for EHC Biel-Bienne"><i></i></span><span class="home-gateway-caption"><strong>2026 Draft</strong></span></button><a class="photo-credit" href="https://www.blick.ch/fr/sport/hockey/mondial/je-ne-compte-plus-les-matches-niklas-blessing-ponctue-sa-saison-exceptionnelle-avec-la-nati-id21872514.html" target="_blank" rel="noopener">Photo: Pius Koller / Blick ↗</a></article>
     </div>
   </section>
 
   <section class="view" id="view-draft2026">
     <div class="draft26-head">
-      <div class="draft26-title"><span class="eyebrow">Draft archive · complete class</span><h1>2026 NHL Draft <em>Stats</em></h1><p>Every selection, source club and draft-year production line—built as the baseline for the 2027 class comparison.</p><div class="draft26-head-notes"><span>✓ All seven rounds</span><span>✓ 2025–26 club production</span><span>✓ Player headshots</span></div><span class="draft26-profile-note">↗ Player names open their Elite Prospects profiles</span></div>
+      <div class="draft26-title"><span class="eyebrow">Draft archive · complete class</span><h1>2026 NHL Draft</h1><p>Every selection, source club and draft-year production line—built as the baseline for the 2027 class comparison.</p><div class="draft26-head-notes"><span>✓ All seven rounds</span><span id="draft26SeasonNote">✓ 2025–26 club production</span><span>✓ Player headshots</span></div><span class="draft26-profile-note">↗ Player names open their Elite Prospects profiles</span></div>
       <div class="draft26-year"><span>Draft class</span><strong>20<em>26</em></strong><small id="draft26Count">224 players</small></div>
       <div class="draft26-summary"><div><strong>224</strong><span>Selections</span></div><div><strong>16</strong><span>Nations</span></div><div><strong>27</strong><span>Leagues</span></div></div>
     </div>
+    <div class="draft26-season-switch"><div><span>Season view</span><strong id="draft26SeasonTitle">Draft year production</strong><small id="draft26SeasonHelp">Showing the 2025–26 team and league from the current dataset.</small></div><div class="seg draft26-season-toggle" id="draft26SeasonToggle"><button class="on" data-d26-season="draft">Draft year</button><button data-d26-season="d1">D-1 season</button></div></div>
     <div class="draft26-breakdown"><section><div class="draft26-breakdown-head"><div><span>Country breakdown</span><h2>Players drafted per nation</h2></div><small>Choose a flag to filter</small></div><div class="draft26-chips" id="draft26Nations"></div></section><section><div class="draft26-breakdown-head"><div><span>League breakdown</span><h2>Players drafted per league</h2></div><small>Choose a mark to filter</small></div><div class="draft26-chips" id="draft26Leagues"></div></section></div>
-    <div class="tablecard draft26-table"><table><thead><tr><th><button data-d26-sort="pick">Pick <span>↑</span></button></th><th><button data-d26-sort="round">Rd</button></th><th><button data-d26-sort="player">Player</button></th><th><button data-d26-sort="country">Nationality</button></th><th><button data-d26-sort="position">Pos</button></th><th><button data-d26-sort="nhlTeam">Drafted by</button></th><th><button data-d26-sort="team">2025–26 club</button></th><th><button data-d26-sort="league">League</button></th><th><button data-d26-sort="games">GP</button></th><th><button data-d26-sort="goals">G</button></th><th><button data-d26-sort="assists">A</button></th><th><button data-d26-sort="points">PTS</button></th><th><button data-d26-sort="ppg">P/GP</button></th><th><button data-d26-sort="gaa">GAA</button></th><th><button data-d26-sort="svPct">SV%</button></th></tr></thead><tbody id="draft26Body"></tbody></table></div>
+    <div class="draft26-data-note" id="draft26DataNote" hidden></div>
+    <div class="tablecard draft26-table"><table><thead><tr><th><button data-d26-sort="pick">Pick <span>↑</span></button></th><th><button data-d26-sort="round">Rd</button></th><th><button data-d26-sort="player">Player</button></th><th><button data-d26-sort="country">Nationality</button></th><th><button data-d26-sort="position">Pos</button></th><th><button data-d26-sort="nhlTeam">Drafted by</button></th><th><button data-d26-sort="team" id="draft26ClubHead">2025–26 club</button></th><th><button data-d26-sort="league">League</button></th><th><button data-d26-sort="games">GP</button></th><th><button data-d26-sort="goals">G</button></th><th><button data-d26-sort="assists">A</button></th><th><button data-d26-sort="points">PTS</button></th><th><button data-d26-sort="ppg">P/GP</button></th><th><button data-d26-sort="gaa">GAA</button></th><th><button data-d26-sort="svPct">SV%</button></th></tr></thead><tbody id="draft26Body"></tbody></table></div>
     <div class="column-filter-menu" id="draft26ColumnMenu" hidden></div>
     <div class="draft26-source">Data: 2026 nhl entry draft data.xlsx · Player headshots and photographer credits: <a href="https://www.eliteprospects.com/nhl-entry-draft-coverage" target="_blank" rel="noopener">Elite Prospects</a> (open a player to view its credited profile). Team and league marks: NHL, <a href="https://www.sportslogos.net/" target="_blank" rel="noopener">SportsLogos.Net</a> and individual clubs.</div>
   </section>
 
   <section class="view" id="view-players">
-    <div class="leaderboard-intro"><div><span class="eyebrow">Player database</span><h1>Prospects <small id="pCount"></small></h1></div><div class="player-table-tools"><div class="seg player-type-toggle" id="playerTypeToggle"><button class="on" data-type="skater">Skaters</button><button data-type="goalie">Goalies</button></div></div></div>
+    <div class="leaderboard-intro"><div><span class="eyebrow">Prospect database</span><h1>Prospects <small id="pCount"></small></h1></div><div class="player-table-tools"><div class="seg season-view-toggle" id="prospectSeasonToggle"><button class="on" data-prospect-season="d1">D-1 year</button><button data-prospect-season="draft">Draft year</button></div><div class="seg player-type-toggle" id="playerTypeToggle"><button class="on" data-type="skater">Skaters</button><button data-type="goalie">Goalies</button></div></div></div>
     <div class="tablecard players-table"><table>
       <colgroup id="pCols"></colgroup>
       <thead id="pHead"></thead>
@@ -69,25 +71,32 @@
   </section>
 
   <section class="view" id="view-stock">
-    <div class="stock-head"><span class="eyebrow">Player movement</span><h1>Stock Watch</h1><p>Largest score changes since each player’s previous evaluation.</p></div>
+    <div class="stock-head stock-watch-hero">
+      <div class="stock-head-copy"><span class="eyebrow">Player movement</span><h1>Stock Watch</h1><p>Track whose evaluations are moving, which profiles are heating up and where the board may need another look.</p><div class="stock-head-notes"><span>Risers and fallers</span><span>Previous vs. current grade</span><span>Tap any player for the full card</span></div></div>
+      <div class="stock-head-art"><img src="assets/stock-watch/header.jpg" alt="Stock Watch prospect header art"></div>
+    </div>
     <div class="stock-grid"><div class="stock-card rise"><div class="stock-title"><span>↗</span><div><h2>Trending up</h2><p>Biggest score increases</p></div></div><div id="risers"></div></div>
       <div class="stock-card fall"><div class="stock-title"><span>↘</span><div><h2>Trending down</h2><p>Biggest score decreases</p></div></div><div id="fallers"></div></div></div>
   </section>
 
   <section class="view" id="view-forum">
-    <div class="forum-hero"><div><span class="eyebrow">Community scouting</span><h1>Scout Room</h1><p>Start with the useful stuff: reports, Round 1 mocks and missing prospects.</p></div><span class="forum-slow-label">Early access</span></div>
-    <div class="scout-lanes">
-      <section class="scout-lane"><button class="scout-lane-action report-submit" data-submit-type="report"><span class="lane-icon">✎</span><small>Listed prospect</small><strong>Scout a player</strong><p>Choose anyone in the database and add your own viewing report.</p><b>Submit report →</b></button><div class="scout-lane-feed"><div><span>Most popular</span><small>Player reports</small></div><div id="popularReports"></div></div></section>
-      <section class="scout-lane"><button class="scout-lane-action mock-submit" data-forum-action="mock"><span class="lane-icon">Ⅰ</span><small>Round 1</small><strong>Post a mock draft</strong><p>Share a completed board, then let the room discuss every pick.</p><b>Post mock →</b></button><div class="scout-lane-feed"><div><span>Most commented</span><small>Community mocks</small></div><div id="commentedMocks"></div></div></section>
-      <section class="scout-lane"><button class="scout-lane-action prospect-submit" data-submit-type="prospect"><span class="lane-icon">＋</span><small>Missing prospect</small><strong>Submit a new player</strong><p>Nominate an eligible player for review and database approval.</p><b>Submit player →</b></button><div class="scout-lane-feed"><div><span>Recently approved</span><small>Added from submissions</small></div><div id="approvedPlayers"></div></div></section>
+    <div class="forum-hero scout-room-hero">
+      <div class="forum-hero-main"><span class="eyebrow">Community scouting</span><h1>Scout Room</h1><p>Read the room, post a board and keep the conversation around actual prospects instead of scattered notes.</p><div class="forum-radar"><span>Reports</span><i></i><span>Mock boards</span><i></i><span>Discussion</span></div><div class="forum-hero-actions"><button class="btn primary report-submit" data-submit-type="report">Submit report</button><button class="btn forum-secondary" data-forum-action="mock">Post mock</button></div></div>
+      <div class="forum-hero-panel"><span>Room pulse</span><div><strong id="forumReportCount">0</strong><small>Reports</small></div><div><strong id="forumMockCount">0</strong><small>Mocks</small></div><div><strong id="forumSubmissionCount">0</strong><small>Nominations</small></div></div>
     </div>
-    <div class="overlay" id="topicOverlay"><div class="modal topic-modal"><div class="modal-hd"><h2>Post a Round 1 mock</h2><button class="x" id="topicClose">&times;</button></div><form id="topicForm"><div class="topic-form-body"><label class="fld">Mock title</label><input type="text" id="topicTitle" maxlength="100" value="My early Round 1 mock" required><input type="hidden" id="topicCategory" value="Mock Drafts"><label class="fld">Picks 1–32</label><textarea id="topicBody" rows="12" maxlength="3000" placeholder="1. Team — Player&#10;2. Team — Player&#10;3. Team — Player…" required></textarea><div class="topic-error" id="topicError"></div></div><div class="modal-ft"><span class="topic-safe">Language filter active</span><span class="spacer"></span><button type="button" class="btn" id="topicCancel">Cancel</button><button type="submit" class="btn primary">Post mock</button></div></form></div></div>
+    <div class="scout-lanes">
+      <section class="scout-lane"><button class="scout-lane-action report-submit" data-submit-type="report"><img class="scout-lane-photo" src="assets/scout-room/add-report-nyt.jpg" alt=""><span class="lane-icon">✎</span><small>Listed prospect</small><strong>Scout a prospect</strong><p>Choose anyone in the database and add your own viewing report.</p><b>Submit report →</b></button><a class="scout-photo-credit" href="https://static01.nyt.com/images/2017/02/18/opinion/18sportingWeb/18sportingWeb-superJumbo.jpg" target="_blank" rel="noopener">Image source: The New York Times ↗</a><div class="scout-lane-feed"><div><span>Most popular</span><small>Prospect reports</small></div><div id="popularReports"></div></div></section>
+      <section class="scout-lane"><button class="scout-lane-action mock-submit" data-forum-action="mock"><img class="scout-lane-photo" src="assets/scout-room/mock-drafts-athletic.jpg" alt=""><span class="lane-icon">Ⅰ</span><small>Round 1</small><strong>Post a mock draft</strong><p>Share a completed board, then let the room discuss every pick.</p><b>Post mock →</b></button><a class="scout-photo-credit" href="https://static01.nyt.com/athletic/uploads/wp/2024/06/26122230/GettyImages-1504608505-scaled-e1719421575661.jpg?width=1200&amp;height=900&amp;fit=cover" target="_blank" rel="noopener">Image source: The Athletic ↗</a><div class="scout-lane-feed"><div><span>Most commented</span><small>Community mocks</small></div><div id="commentedMocks"></div></div></section>
+      <section class="scout-lane"><button class="scout-lane-action prospect-submit" data-submit-type="prospect"><img class="scout-lane-photo" src="assets/scout-room/submit-prospect-ap.jpg" alt=""><span class="lane-icon">＋</span><small>Missing prospect</small><strong>Submit a new prospect</strong><p>Nominate an eligible player for review and database approval.</p><b>Submit prospect →</b></button><a class="scout-photo-credit" href="https://dims.apnews.com/dims4/default/5bfdfbb/2147483647/strip/true/crop/3000x2096+0+0/resize/599x419!/quality/90/?url=https%3A%2F%2Fstorage.googleapis.com%2Fafs-prod%2Fmedia%2F725cee3d07684958909ab589fbd21ff6%2F3000.jpeg" target="_blank" rel="noopener">Image source: AP ↗</a><div class="scout-lane-feed"><div><span>Recently approved</span><small>Added from submissions</small></div><div id="approvedPlayers"></div></div></section>
+    </div>
+    <section class="admin-review" id="adminReview" hidden><div class="admin-review-head"><div><span class="eyebrow">Admin only</span><h2>Submission review</h2><p>Approve reports for Scout Room or approve prospects for the shared database.</p></div><strong id="adminReviewCount">0 pending</strong></div><div id="adminReviewList"></div></section>
+    <div class="overlay" id="topicOverlay"><div class="modal topic-modal mock-compose-modal"><div class="modal-hd"><div><span class="eyebrow">Mock board</span><h2>Post a Round 1 mock</h2></div><button class="x" id="topicClose">&times;</button></div><form id="topicForm"><div class="topic-form-body mock-compose-body"><aside><span>Format</span><strong>Pick number, team, player</strong><p>Paste from the mock draft tool or type a clean board. The room can like and comment once it is posted.</p></aside><div><label class="fld">Mock title</label><input type="text" id="topicTitle" maxlength="100" value="My early Round 1 mock" required><input type="hidden" id="topicCategory" value="Mock Drafts"><label class="fld">Picks 1–32</label><textarea id="topicBody" rows="12" maxlength="3000" placeholder="1. Team - Player&#10;2. Team - Player&#10;3. Team - Player..." required></textarea><div class="topic-error" id="topicError"></div></div></div><div class="modal-ft"><span class="topic-safe">Language filter active</span><span class="spacer"></span><button type="button" class="btn" id="topicCancel">Cancel</button><button type="submit" class="btn primary">Post mock</button></div></form></div></div>
     <div class="overlay" id="scoutOverlay"><div class="modal scout-submit-modal"><div class="modal-hd"><div><span class="eyebrow">Community contribution</span><h2 id="scoutSubmitTitle">Submit a prospect</h2></div><button class="x" id="scoutSubmitClose">&times;</button></div><form id="scoutSubmitForm"><input type="hidden" id="scoutSubmitType" value="prospect"><div class="scout-form-grid"><label id="scoutPlayerSelectWrap" hidden><span>Choose prospect *</span><select id="scoutPlayerSelect"></select></label><label id="scoutPlayerInputWrap"><span>Player name *</span><input type="text" id="scoutPlayer" maxlength="80" placeholder="Full name"></label><label><span>Position</span><input type="text" id="scoutPosition" maxlength="20" placeholder="C, RW/C, D…"></label><label><span>Country</span><input type="text" id="scoutCountry" maxlength="40" placeholder="Canada"></label><label><span>Current team</span><input type="text" id="scoutTeam" maxlength="80" placeholder="Club or school"></label><label class="scout-wide"><span id="scoutNotesLabel">Why should this player be tracked? *</span><textarea id="scoutNotes" rows="6" maxlength="1600" required placeholder="Add useful context, observations or a scouting report…"></textarea></label><label class="scout-wide"><span>Source or viewing link <i>optional</i></span><input type="text" id="scoutSource" maxlength="250" placeholder="Stats page, roster, video or article"></label><div class="topic-error scout-wide" id="scoutSubmitError"></div></div><div class="modal-ft"><span class="submission-review-note">Sent to review—never added directly to official data.</span><span class="spacer"></span><button type="button" class="btn" id="scoutSubmitCancel">Cancel</button><button type="submit" class="btn primary">Submit for review</button></div></form></div></div>
-    <div class="overlay" id="mockDetailOverlay"><div class="modal mock-detail-modal"><div class="modal-hd"><div><span class="eyebrow">Community mock</span><h2 id="mockDetailTitle">Mock draft</h2></div><button class="x" id="mockDetailClose">&times;</button></div><div class="mock-detail-body"><pre id="mockDetailBody"></pre><div class="mock-comments-head"><strong>Discussion</strong><span id="mockCommentCount">0 comments</span></div><div id="mockComments"></div><form id="mockCommentForm"><textarea id="mockCommentText" rows="3" maxlength="500" placeholder="Add a thoughtful comment…" required></textarea><div class="topic-error" id="mockCommentError"></div><button class="btn primary" type="submit">Post comment</button></form></div></div></div>
+    <div class="overlay" id="mockDetailOverlay"><div class="modal mock-detail-modal"><div class="modal-hd"><div><span class="eyebrow">Community mock</span><h2 id="mockDetailTitle">Mock draft</h2></div><button class="x" id="mockDetailClose">&times;</button></div><div class="mock-detail-body"><div class="mock-detail-meta" id="mockDetailMeta"></div><div class="mock-detail-board" id="mockDetailBody"></div><div class="mock-detail-actions"><button class="btn mock-like-btn" type="button" id="mockLikeBtn">Like</button></div><div class="mock-comments-head"><strong>Discussion</strong><span id="mockCommentCount">0 comments</span></div><div id="mockComments"></div><form id="mockCommentForm"><textarea id="mockCommentText" rows="3" maxlength="500" placeholder="Add a thoughtful comment..." required></textarea><div class="topic-error" id="mockCommentError"></div><button class="btn primary" type="submit">Post comment</button></form></div></div></div>
   </section>
 
   <section class="view" id="view-board">
-    <div class="leaderboard-intro"><div><span class="eyebrow">Sortable scouting table</span><h1>Leaderboard</h1></div><p>Click any column heading to sort or filter.</p></div>
+    <div class="leaderboard-intro"><div><span class="eyebrow">Sortable scouting table</span><h1>Leaderboard</h1></div><div class="leaderboard-tools"><p>Click any column heading to sort or filter.</p><div class="seg season-view-toggle" id="leaderSeasonToggle"><button class="on" data-prospect-season="d1">D-1 year</button><button data-prospect-season="draft">Draft year</button></div></div></div>
     <div class="tablecard leader-table"><table>
       <colgroup><col class="l-rank"><col class="l-photo"><col class="l-player"><col class="l-pos"><col class="l-grade" span="6"><col class="l-overall"><col class="l-tier"></colgroup>
       <thead><tr>
@@ -100,20 +109,22 @@
     <div class="column-filter-menu" id="lColumnMenu" hidden></div>
   </section>
 
-  <section class="view" id="view-draft">
+  <section class="view sleeper-draft" id="view-draft">
     <div class="draft-setup" id="draftSetup">
       <div class="draft-hero">
-        <div class="draft-hero-copy"><span class="eyebrow">Draft room · 2027 NHL</span><h1>Build your mock draft</h1><p>Draft from the player table, drag picks to reorder, and open any player’s full scouting breakdown.</p></div>
+        <div class="draft-hero-copy"><span class="eyebrow">2027 NHL Mock Draft</span><h1>Build your mock draft.</h1><p>Choose a player from the list, use Draft to make the next pick, or drag a player to any open slot.</p></div>
         <div class="hero-status"><div><span id="heroOnClock">On the clock · Pick 1</span><strong id="heroProgressCount">0 / 32</strong></div><div class="hero-track"><i id="heroProgressBar"></i></div></div>
       </div>
       <div class="draft-top">
         <div class="grp"><label class="fld">Rounds</label>
           <select id="dRounds"><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
-        <div class="grp team-order-control"><label class="fld">Draft order</label>
-          <button class="btn" id="editTeams">Edit team order…</button></div>
-        <div class="draft-top-actions"><button class="btn warn" id="clearDraft">Clear board</button>
+        <div class="draft-top-actions"><button class="btn" id="autoDraftBest">Draft best</button><button class="btn" id="autoFillRound">Fill round</button><button class="btn" id="undoDraftPick">Undo pick</button><button class="btn warn" id="clearDraft">Clear board</button>
           <button class="btn primary finish-btn" id="finishDraft">Finish &amp; view results</button></div>
       </div>
+    </div>
+    <div class="draft-order-strip">
+      <div><span class="eyebrow">Pick order</span><strong id="draftOrderStatus">Round 1 · Pick 1 on the clock</strong></div>
+      <div class="draft-board-actions"><div class="draft-board-meta" id="draftBoardMeta"></div><button class="btn compact" id="togglePool">Hide player list</button></div>
     </div>
     <div class="mobile-draft-switch" id="mobileDraftSwitch" aria-label="Mock draft workspace view">
       <button class="on" data-draft-pane="pool"><span>1</span> Player pool</button>
@@ -124,7 +135,6 @@
       <main class="draft-board-wrap">
         <div class="board-head">
           <div><span class="eyebrow">Draft room</span><h2>Pick board</h2></div>
-          <button class="btn compact" id="togglePool">Hide player list</button>
         </div>
         <div class="board" id="dBoard"></div>
       </main>
@@ -156,32 +166,31 @@
   </div>
 </div></div>
 
-<div class="overlay" id="teamsOverlay"><div class="modal" style="max-width:500px">
-  <div class="modal-hd"><h2>Team order</h2><button class="x" id="tClose">&times;</button></div>
-  <div style="padding:18px">
-    <label class="fld">One team per line, in draft order. Blank lines show "Pick #".</label>
-    <textarea id="teamsText" rows="13"></textarea>
-    <div class="hint">Leave empty to use pick numbers, or paste a real draft order.</div>
-  </div>
-  <div class="modal-ft">
-    <button class="btn" id="loadNHL">Load 32 NHL teams</button><span class="spacer"></span>
-    <button class="btn" id="tCancel">Cancel</button><button class="btn primary" id="tSave">Save order</button>
-  </div>
-</div></div>
-
 <div class="overlay" id="authOverlay"><div class="modal auth-modal">
   <div class="modal-hd"><h2>Welcome to NetProspect</h2><button class="x" id="authClose">&times;</button></div>
-  <div class="auth-body"><div class="auth-mark">DS</div><h2>Sign in or create an account</h2><p>Save boards, join Scout Room and sync mock drafts across devices.</p>
-    <button class="auth-provider"><b>G</b> Continue with Google</button><button class="auth-provider"><b></b> Continue with Apple</button><div class="auth-or"><span>or</span></div><button class="auth-provider email"><b>@</b> Continue with email</button><small>Authentication will be connected when accounts go live.</small></div>
+  <form class="auth-body" id="authForm"><div class="auth-mark">DS</div><h2>Sign in or create an account</h2><p>Use a clean username to post mocks, reports and comments in Scout Room.</p>
+    <div class="auth-mode" id="authMode"><button type="button" class="on" data-auth-mode="login">Sign in</button><button type="button" data-auth-mode="signup">Create account</button></div>
+    <label><span>Username</span><input id="authUsername" autocomplete="username" maxlength="24" pattern="[A-Za-z0-9_]{3,24}" placeholder="your_username" required></label>
+    <label><span>Password</span><input id="authPassword" type="password" autocomplete="current-password" minlength="8" placeholder="8+ characters" required></label>
+    <div class="topic-error" id="authError"></div>
+    <button class="btn primary auth-submit" type="submit" id="authSubmit">Sign in</button>
+    <small>Letters, numbers and underscores only. Profanity is blocked.</small></form>
 </div></div>
 
 <script src="players.js?v=5"></script>
+<script src="prospectOverrides.js?v=5"></script>
 <script src="bios.js?v=5"></script>
+<script src="biosOverrides.js?v=1"></script>
 <script src="points.js?v=8"></script>
-<script src="pointsOverrides.js?v=8"></script>
+<script src="pointsOverrides.js?v=10"></script>
+<script src="importProfileOverrides.js?v=3"></script>
 <script src="draft2026.js?v=1"></script>
 <script src="draft2026Countries.js?v=1"></script>
 <script src="draft2026Headshots.js?v=5"></script>
-<script src="app.js?v=38"></script>
+<script src="draft2026D1.js?v=1"></script>
+<script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-database-compat.js"></script>
+<script src="app.js?v=60"></script>
 </body>
 </html>
