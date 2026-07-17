@@ -751,20 +751,11 @@ let forumTopics=(()=>{try{const saved=JSON.parse(localStorage.getItem(FORUM_KEY)
 let forumCategory='all';
 const AUTH_TOKEN_KEY='netprospect_auth_token';
 let authMode='login',currentUser=null,forumRemote=false;
-const FIREBASE_CONFIG={
-  apiKey:'AIzaSyAvzO5WvPdtBjK6dgOiEa-DcfpL9gGzdCI',
-  authDomain:'netprospect-hockey.firebaseapp.com',
-  databaseURL:'https://netprospect-hockey-default-rtdb.firebaseio.com',
-  projectId:'netprospect-hockey',
-  storageBucket:'netprospect-hockey.firebasestorage.app',
-  messagingSenderId:'711580111074',
-  appId:'1:711580111074:web:0fc0a67076dd1f4912cebb',
-  measurementId:'G-Y4E1PPZ4S3'
-};
+const FIREBASE_CONFIG=window.__FIREBASE_CONFIG__||null;
 let firebaseApp=null,firebaseAuth=null,firebaseDb=null,firebaseAuthReady=null;
 function initFirebase(){
   if(firebaseApp!==null)return Boolean(firebaseApp);
-  if(typeof firebase==='undefined'){firebaseApp=false;return false;}
+  if(typeof firebase==='undefined'||!FIREBASE_CONFIG?.apiKey){firebaseApp=false;return false;}
   firebaseApp=firebase.apps.length?firebase.app():firebase.initializeApp(FIREBASE_CONFIG);
   firebaseAuth=firebase.auth();
   firebaseDb=firebase.database();

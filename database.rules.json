@@ -3,14 +3,17 @@
     "forumTopics": {
       ".read": true,
       "$topicId": {
-        ".write": "auth != null && ((!data.exists() && newData.child('author/id').val() === auth.uid && newData.child('approved').val() === false && (newData.child('category').val() === 'Mock Drafts' || newData.child('pending').val() === true)) || root.child('users').child(auth.uid).child('role').val() === 'admin')",
+        ".write": "auth != null && ((!data.exists() && newData.child('author/id').val() === auth.uid && newData.child('approved').val() === false && newData.child('likes').val() === 0 && newData.child('views').val() === 0 && newData.child('title').isString() && newData.child('title').val().length <= 120 && newData.child('body').isString() && newData.child('body').val().length <= 10000 && (newData.child('category').val() === 'Mock Drafts' || newData.child('pending').val() === true)) || root.child('users').child(auth.uid).child('role').val() === 'admin')",
         "likes": {
-          ".write": "auth != null"
+          ".write": "auth != null && newData.isNumber() && newData.val() === data.val() + 1"
         },
         "comments": {
           "$commentId": {
-            ".write": "auth != null && ((!data.exists() && newData.child('author/id').val() === auth.uid) || root.child('users').child(auth.uid).child('role').val() === 'admin')"
+            ".write": "auth != null && ((!data.exists() && newData.child('author/id').val() === auth.uid && newData.child('body').isString() && newData.child('body').val().length > 0 && newData.child('body').val().length <= 5000) || root.child('users').child(auth.uid).child('role').val() === 'admin')"
           }
+        },
+        "updatedAt": {
+          ".write": "auth != null && newData.isNumber() && newData.val() >= data.val() && newData.val() <= now"
         },
         "pending": {
           ".write": "root.child('users').child(auth.uid).child('role').val() === 'admin'"
@@ -21,15 +24,15 @@
       }
     },
     "users": {
-      ".read": true,
       "$uid": {
+        ".read": "auth != null && ($uid === auth.uid || root.child('users').child(auth.uid).child('role').val() === 'admin')",
         ".write": "$uid === auth.uid && ((!data.exists() && newData.child('role').val() === 'member') || (data.exists() && newData.child('role').val() === data.child('role').val()))"
       }
     },
     "usernames": {
-      ".read": true,
       "$username": {
-        ".write": "auth != null && (!data.exists() || data.child('uid').val() === auth.uid)"
+        ".read": "auth != null && data.child('uid').val() === auth.uid",
+        ".write": "auth != null && newData.child('uid').val() === auth.uid && (!data.exists() || data.child('uid').val() === auth.uid)"
       }
     }
   }
