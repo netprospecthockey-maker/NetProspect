@@ -820,22 +820,12 @@ async function loadForumRemote(){
       snapshot.forEach(child=>topics.push(firebaseTopicOut(child.key,child.val())));
       forumTopics=topics.reverse();
       forumRemote=true;
-      await firebaseLoadCommunityPlayers();
       renderForum();
       return;
     }catch(e){forumRemote=false;renderForum();return;}
   }
   forumRemote=false;
   renderForum();
-}
-async function firebaseLoadCommunityPlayers(){
-  if(!firebaseDb)return;
-  const snapshot=await firebaseDb.ref('communityPlayers').once('value'),remote=[];
-  snapshot.forEach(child=>remote.push({id:`community-${child.key}`,...child.val()}));
-  if(!remote.length)return;
-  const remoteIds=new Set(remote.map(player=>player.id));
-  state.players=state.players.filter(player=>!remoteIds.has(player.id)).concat(remote);
-  save();renderPlayers();
 }
 const normalizeForumText=s=>String(s||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[@4]/g,'a').replace(/[3]/g,'e').replace(/[1!]/g,'i').replace(/[0]/g,'o').replace(/[$5]/g,'s').replace(/[7]/g,'t');
 const FORUM_BLOCK_PATTERNS=[
@@ -941,7 +931,7 @@ const reportScore=t=>Number(t.views||0)+Number(t.likes||0)*3;
 function reportPreview(t){return `<button class="lane-post"><span>${esc(t.title.replace(/^Scouting report:\s*/i,''))}</span><small>${esc(t.body)}</small><b>${reportScore(t)} reads</b></button>`;}
 function mockPickLines(body){return String(body||'').split(/\r?\n/).map(line=>line.trim()).filter(Boolean).map((line,index)=>{const match=line.match(/^(\d+)[.)]\s*(.+)$/);return {number:match?Number(match[1]):index+1,text:match?match[2]:line};});}
 function mockPreview(t){const count=(t.comments||[]).length,likes=Number(t.likes||0),picks=mockPickLines(t.body),preview=picks.slice(0,3);return `<article class="mock-room-card" data-mock-id="${esc(t.id)}"><button class="mock-room-open" type="button" data-mock-open="${esc(t.id)}"><span>${esc(t.title)}</span><div class="mock-room-preview">${preview.map(p=>`<i><b>${p.number}</b><em>${esc(p.text)}</em></i>`).join('')}</div><small>${picks.length} ${picks.length===1?'pick':'picks'} · Open full board</small></button><div class="mock-room-actions"><button type="button" data-mock-like="${esc(t.id)}">Like <b>${likes}</b></button><button type="button" data-mock-open="${esc(t.id)}">${count} ${count===1?'comment':'comments'}</button></div></article>`;}
-function approvedPreview(t){return `<button class="lane-post"><span>${esc(t.player||t.title.replace(/^Prospect nomination:\s*/i,''))}</span><small>${esc(t.team||t.body||'Added to the 2027 database')}</small><b>Approved · ${esc(t.created||'Recently')}</b></button>`;}
+function approvedPreview(t){return `<button class="lane-post"><span>${esc(t.player||t.title.replace(/^Prospect nomination:\s*/i,''))}</span><small>${esc(t.team||t.body||'Accepted for administrator review')}</small><b>Accepted · ${esc(t.created||'Recently')}</b></button>`;}
 function renderForum(){
   const reports=forumTopics.filter(t=>t.category==='Scouting Report'&&!t.pending).sort((a,b)=>reportScore(b)-reportScore(a)).slice(0,3);
   const mocks=forumTopics.filter(t=>t.category==='Mock Drafts').sort((a,b)=>(b.comments||[]).length-(a.comments||[]).length).slice(0,3);
@@ -962,7 +952,7 @@ function renderAdminReview(){
   panel.hidden=!isAdmin();if(!isAdmin())return;
   const pending=forumTopics.filter(topic=>topic.pending&&(topic.category==='Scouting Report'||topic.category==='Player Submission'));
   count.textContent=`${pending.length} pending`;
-  list.innerHTML=pending.map(topic=>`<article class="admin-review-card"><div><span>${esc(topic.category==='Player Submission'?'Prospect submission':'Scouting report')}</span><strong>${esc(topic.player||topic.title)}</strong><small>${esc([topic.team,topic.created].filter(Boolean).join(' · '))}</small><p>${esc(topic.body)}</p></div><div><button class="btn" data-review-reject="${esc(topic.id)}">Reject</button><button class="btn primary" data-review-approve="${esc(topic.id)}">Approve</button></div></article>`).join('')||'<div class="admin-review-empty">No submissions are waiting for review.</div>';
+  list.innerHTML=pending.map(topic=>`<article class="admin-review-card"><div><span>${esc(topic.category==='Player Submission'?'Prospect submission':'Scouting report')}</span><strong>${esc(topic.player||topic.title)}</strong><small>${esc([topic.team,topic.created].filter(Boolean).join(' · '))}</small><p>${esc(topic.body)}</p></div><div><button class="btn" data-review-reject="${esc(topic.id)}">Reject</button><button class="btn primary" data-review-approve="${esc(topic.id)}">${topic.category==='Player Submission'?'Accept request':'Publish report'}</button></div></article>`).join('')||'<div class="admin-review-empty">No submissions are waiting for review.</div>';
   $$('#adminReviewList [data-review-approve]').forEach(button=>button.onclick=()=>approveSubmission(button.dataset.reviewApprove));
   $$('#adminReviewList [data-review-reject]').forEach(button=>button.onclick=()=>rejectSubmission(button.dataset.reviewReject));
 }
@@ -970,8 +960,7 @@ async function approveSubmission(id){
   if(!isAdmin()||!firebaseDb)return;const topic=forumTopics.find(item=>item.id===id);if(!topic)return;
   try{
     const updates={[`forumTopics/${id}/pending`]:false,[`forumTopics/${id}/approved`]:true,[`forumTopics/${id}/updatedAt`]:Date.now()};
-    if(topic.category==='Player Submission')updates[`communityPlayers/${id}`]={name:topic.player||topic.title.replace(/^Prospect nomination:\s*/i,''),team:topic.team||'',pos:topic.pos||'',shot:'L',country:topic.country||'',height:'',weight:'',headshot:'',league:'',games:'',goals:'',assists:'',points:'',ppg:'',gaa:'',svPct:'',wins:'',losses:'',shutouts:'',skating:75,shooting:75,iq:75,ozone:75,dzone:75,phys:75,role:[],source:topic.source||'',sourceSubmission:id,approvedAt:Date.now()};
-    await firebaseDb.ref().update(updates);topic.pending=false;topic.approved=true;await firebaseLoadCommunityPlayers();renderForum();renderBoard();
+    await firebaseDb.ref().update(updates);topic.pending=false;topic.approved=true;renderForum();
   }catch(error){alert(firebaseFriendlyError(error));}
 }
 async function rejectSubmission(id){
@@ -1268,14 +1257,12 @@ $('#mSave').onclick=async()=>{
     Object.assign(existing,draftP);
   } else { draftP.id=uid(); draftP.previousOverall=overall(draftP); state.players.push(draftP); }
   const savedId = editId || draftP.id;
-  if(savedId.startsWith('community-')&&firebaseDb){const remoteId=savedId.replace(/^community-/,'');const payload={...draftP};delete payload.id;await firebaseDb.ref(`communityPlayers/${remoteId}`).set(payload);}
   save(); renderPlayers(); if($('#view-home').classList.contains('active'))renderHome(); if($('#view-board').classList.contains('active'))renderBoard(); if($('#view-stock').classList.contains('active'))renderStock();
   openView(savedId);
 };
 $('#mDelete').onclick=async()=>{
   if(!isAdmin())return;
   if(!editId)return; if(!confirm('Delete this player? Also removes them from the draft board.'))return;
-  if(editId.startsWith('community-')&&firebaseDb)await firebaseDb.ref(`communityPlayers/${editId.replace(/^community-/,'')}`).remove();
   state.players=state.players.filter(p=>p.id!==editId);
   Object.keys(state.draft.picks).forEach(k=>{ if(state.draft.picks[k]===editId)delete state.draft.picks[k]; });
   save(); closeEditor(); renderPlayers(); if($('#view-home').classList.contains('active'))renderHome(); if($('#view-stock').classList.contains('active'))renderStock();

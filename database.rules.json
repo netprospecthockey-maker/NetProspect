@@ -20,12 +20,6 @@
         }
       }
     },
-    "communityPlayers": {
-      ".read": true,
-      "$playerId": {
-        ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() === 'admin'"
-      }
-    },
     "users": {
       ".read": true,
       "$uid": {
