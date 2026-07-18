@@ -1893,3 +1893,47 @@ body.launch-open{overflow:hidden}
   filter:saturate(1.08) contrast(1.03) brightness(1)!important;
   transform:none!important;
 }
+
+/* Keep the desktop section navigation visually centred in the full header. */
+@media(min-width:1080px){
+  .topinner{display:grid;grid-template-columns:minmax(190px,1fr) auto minmax(190px,1fr);gap:14px}
+  .topinner>.brand{justify-self:start}
+  .topinner>.tabs{justify-self:center}
+  .topinner>.spacer{display:none}
+  .topinner>.iobtns{justify-self:end}
+}
+
+/* Brighter, app-like mock-draft workspace. */
+#view-draft{--draft-app-navy:#102f45;--draft-app-blue:#237fad;--draft-app-line:#d7e5ed;--draft-app-soft:#f4f9fc;background:#fff}
+#view-draft .draft-setup{border-color:#163c55;background:#fff;box-shadow:0 9px 24px rgba(15,47,69,.1)}
+#view-draft .draft-hero{background:linear-gradient(115deg,#0d293d 0%,#174963 100%)}
+#view-draft .draft-top{border-top:0;border-bottom:1px solid var(--draft-app-line);background:#fff}
+#view-draft .draft-top select{border-color:#bdd1dd;background:#fff;color:#102f45}
+#view-draft .draft-top .btn{border-color:#c5d7e1;background:#fff;color:#234b63}
+#view-draft .draft-top .btn:hover{border-color:#72a9c8;background:#f2f9fd}
+#view-draft .draft-top .btn.primary{border-color:#176e9e;background:#176e9e;color:#fff}
+#view-draft .draft-top .btn.warn{border-color:#e3c2bd;background:#fff8f6;color:#9f4338}
+#view-draft .draft-order-strip{border-color:var(--draft-app-line);border-left:4px solid var(--draft-app-blue);background:#fff;box-shadow:0 5px 14px rgba(15,47,69,.07)}
+#view-draft .draft-board-meta span{border-color:#d0e1ea;background:#f4f9fc;color:#365c72}
+#view-draft .draft-layout{border:1px solid var(--draft-app-line);background:#fff;box-shadow:0 8px 22px rgba(15,47,69,.07)}
+#view-draft .best{border-color:#c7dbe6;background:#fff;box-shadow:0 3px 12px rgba(15,47,69,.06)}
+#view-draft .pool-head{border-color:#214c65;background:var(--draft-app-navy)}
+#view-draft .pool-search-wrap{border-color:#cedfe8;background:#fff}
+#view-draft .pool-search-wrap .pool-search{background:#fff!important;color:#102f45!important}
+#view-draft .pool-search-wrap button{border-color:#c9dce6;background:#f3f9fc;color:#2c6585}
+#view-draft .pool-tools{border-color:#d1e1ea;background:#fff}
+#view-draft .pool-seg{border-color:#c9dce6;background:#eef6fa}
+#view-draft .pool-seg button{color:#315d75}
+#view-draft .pool-seg button.on{background:#176e9e;color:#fff}
+#view-draft #poolCount{color:#3d687f}
+#view-draft .pool-columns{background:#eaf4f9;color:#315d75}
+#view-draft .pool-player,#view-draft .pool-player:nth-child(even){border-color:#e0ebf1;background:#fff}
+#view-draft .pool-player:hover{background:#eef8fd}
+#view-draft .drag-hint{border-color:#d0e1ea;background:#f7fbfd;color:#426a80}
+#view-draft .board-head{background:#fff}
+#view-draft .slot{border-color:#d6e5ed;background:#fff;box-shadow:0 2px 7px rgba(15,47,69,.06)}
+#view-draft .slot:hover{border-color:#65a4c6;background:#f8fcfe}
+#view-draft .open-pick{border-color:#c9dce6;background:var(--draft-app-soft)}
+#view-draft .open-pick strong{color:#23516b}
+#view-draft .picked{background:#f6fbfe;box-shadow:inset 0 0 0 1px #d8e7ef}
+#view-draft .round-h{background:linear-gradient(100deg,#102f45,#1b536e)}

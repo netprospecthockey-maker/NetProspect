@@ -1,5 +1,8 @@
 // Source-controlled overall snapshot for the public Stock Watch.
 // Current VS Code ratings are compared with these values for every visitor.
+// Keep the public list empty until an update is intentionally published.
+const STOCK_WATCH_PUBLISHED = false;
+
 const STOCK_WATCH_BASELINE = Object.freeze({
   "Landon Dupont": 89.9,
   "Nazar Privalov": 89.4,

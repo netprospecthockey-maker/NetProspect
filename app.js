@@ -665,11 +665,13 @@ $$('#prospectSeasonToggle, #leaderSeasonToggle').forEach(toggle=>toggle.addEvent
 
 function renderStock(){
   const baseline=typeof STOCK_WATCH_BASELINE==='object'?STOCK_WATCH_BASELINE:{};
-  const movers=state.players.filter(p=>Number.isFinite(Number(baseline[p.name]))).map(p=>({...p,_o:overall(p),_prev:Number(baseline[p.name])})).map(p=>({...p,_delta:Math.round((p._o-p._prev)*10)/10}));
+  const published=typeof STOCK_WATCH_PUBLISHED!=='undefined'&&STOCK_WATCH_PUBLISHED===true;
+  const movers=published?state.players.filter(p=>Number.isFinite(Number(baseline[p.name]))).map(p=>({...p,_o:overall(p),_prev:Number(baseline[p.name])})).map(p=>({...p,_delta:Math.round((p._o-p._prev)*10)/10})):[];
   const row=p=>`<button class="stock-row" data-id="${p.id}">${thumb(p,'stock-thumb')}<span class="stock-player"><strong>${esc(p.name)} ${flagFor(p.country)?`<span class="inline-flags">${flagFor(p.country)}</span>`:''}</strong><small>${esc(p.pos||'—')} · ${esc(p.team||'')}</small></span><span class="stock-scores"><b>${p._o.toFixed(1)}</b><small>was ${p._prev.toFixed(1)}</small></span><span class="stock-delta ${p._delta>0?'up':'down'}">${p._delta>0?'+':''}${p._delta.toFixed(1)}</span></button>`;
   const risers=movers.filter(p=>p._delta>0).sort((a,b)=>b._delta-a._delta).slice(0,10),fallers=movers.filter(p=>p._delta<0).sort((a,b)=>a._delta-b._delta).slice(0,10);
-  $('#risers').innerHTML=risers.map(row).join('')||'<div class="stock-empty">No score increases recorded yet.</div>';
-  $('#fallers').innerHTML=fallers.map(row).join('')||'<div class="stock-empty">No score decreases recorded yet.</div>';
+  const empty='<div class="stock-empty">Stock Watch updates have not been published yet.</div>';
+  $('#risers').innerHTML=risers.map(row).join('')||empty;
+  $('#fallers').innerHTML=fallers.map(row).join('')||empty;
   $$('#view-stock [data-id]').forEach(b=>b.onclick=()=>openView(b.dataset.id));
 }
 
