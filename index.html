@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=71">
+  <link rel="stylesheet" href="styles.css?v=74">
 </head>
 <body class="launch-open">
 
@@ -42,7 +42,12 @@
   </div>
   <div class="spacer"></div>
   <div class="iobtns">
-    <button class="iobtn auth-btn" id="authBtn"><span>◎</span> Sign in</button>
+    <nav class="social-links" aria-label="NetProspect social media">
+      <a href="https://www.instagram.com/netprospect/" target="_blank" rel="noopener" aria-label="NetProspect on Instagram" title="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="4"></rect><circle cx="12" cy="12" r="4"></circle><circle class="social-dot" cx="17.6" cy="6.5" r="1"></circle></svg></a>
+      <a href="https://x.com/net_prospect" target="_blank" rel="noopener" aria-label="NetProspect on X" title="X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.5 18.8 19.5M19 4.5 5.2 19.5"></path></svg></a>
+      <a href="https://www.linkedin.com/in/net-prospect-hockey" target="_blank" rel="noopener" aria-label="NetProspect on LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="1.5"></rect><path d="M8 10v7M8 7.3v.2M11.5 17v-7m0 3c.7-2 4.5-2.3 4.5 1V17"></path></svg></a>
+    </nav>
+    <button class="iobtn auth-btn" id="authBtn"><svg class="auth-user-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.25"></circle><path d="M5.75 19c.55-3.35 2.64-5.25 6.25-5.25s5.7 1.9 6.25 5.25"></path></svg><span>Sign in</span></button>
     <button class="iobtn primary" id="addBtn" hidden>+ Add Prospect</button>
   </div>
 </div></div>
@@ -197,7 +202,7 @@
 
 <script src="players.js?v=5"></script>
 <script src="prospectOverrides.js?v=5"></script>
-<script src="stockWatch.js?v=1"></script>
+<script src="stockWatch.js?v=2"></script>
 <script src="bios.js?v=5"></script>
 <script src="biosOverrides.js?v=1"></script>
 <script src="points.js?v=8"></script>
@@ -210,7 +215,7 @@
 <script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-database-compat.js"></script>
-<script src="/firebase-config.js"></script>
-<script src="app.js?v=64"></script>
+<script src="/firebase-config.js?v=2"></script>
+<script src="app.js?v=65"></script>
 </body>
 </html>

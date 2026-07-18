@@ -763,6 +763,15 @@ const AUTH_TOKEN_KEY='netprospect_auth_token';
 let authMode='login',currentUser=null,forumRemote=false;
 const FIREBASE_CONFIG=window.__FIREBASE_CONFIG__||null;
 let firebaseApp=null,firebaseAuth=null,firebaseDb=null,firebaseAuthReady=null;
+let firebaseSdkPromise=null;
+const FIREBASE_SDK_URLS=['firebase-app-compat.js','firebase-auth-compat.js','firebase-database-compat.js'];
+const loadFirebaseScript=file=>new Promise((resolve,reject)=>{const script=document.createElement('script');script.src=`https://www.gstatic.com/firebasejs/12.16.0/${file}?retry=1`;script.onload=resolve;script.onerror=()=>reject(new Error(`Could not load ${file}`));document.head.appendChild(script);});
+async function ensureFirebase(){
+  if(typeof firebase!=='undefined'&&typeof firebase.auth==='function'&&typeof firebase.database==='function')return true;
+  if(!FIREBASE_CONFIG?.apiKey)return false;
+  if(!firebaseSdkPromise)firebaseSdkPromise=(async()=>{for(const file of FIREBASE_SDK_URLS){if(file==='firebase-app-compat.js'&&typeof firebase!=='undefined')continue;if(file==='firebase-auth-compat.js'&&typeof firebase?.auth==='function')continue;if(file==='firebase-database-compat.js'&&typeof firebase?.database==='function')continue;await loadFirebaseScript(file);}return typeof firebase!=='undefined'&&typeof firebase.auth==='function'&&typeof firebase.database==='function';})().catch(()=>false);
+  const ready=await firebaseSdkPromise;if(ready&&firebaseApp===false)firebaseApp=null;return ready;
+}
 function initFirebase(){
   if(firebaseApp!==null)return Boolean(firebaseApp);
   if(typeof firebase==='undefined'||!FIREBASE_CONFIG?.apiKey){firebaseApp=false;return false;}
@@ -795,7 +804,8 @@ async function apiRequest(path,{method='GET',body,auth=false}={}){
 function setAuthMessage(message=''){const el=$('#authError');if(el)el.textContent=message;}
 function updateAuthUI(){
   const btn=$('#authBtn');if(!btn)return;
-  btn.innerHTML=currentUser?`<span>◎</span> ${esc(currentUser.username)}`:'<span>◎</span> Sign in';
+  const icon='<svg class="auth-user-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.25"></circle><path d="M5.75 19c.55-3.35 2.64-5.25 6.25-5.25S17.7 15.65 18.25 19"></path></svg>';
+  btn.innerHTML=`${icon}<span>${currentUser?esc(currentUser.username):'Sign in'}</span>`;
   $$('#authMode [data-auth-mode]').forEach(button=>button.classList.toggle('on',button.dataset.authMode===authMode));
   const submit=$('#authSubmit');if(submit)submit.textContent=authMode==='signup'?'Create account':'Sign in';
   applyAccessControl();
@@ -805,6 +815,7 @@ function requireAuth(message='Sign in to post in Scout Room.'){
   setAuthMessage(message);$('#authOverlay').classList.add('show');setTimeout(()=>$('#authUsername')?.focus(),0);return false;
 }
 async function loadAccount(){
+  await ensureFirebase();
   if(initFirebase()){
     await firebaseAuthReady;
     updateAuthUI();
@@ -814,6 +825,7 @@ async function loadAccount(){
   updateAuthUI();
 }
 async function loadForumRemote(){
+  await ensureFirebase();
   if(initFirebase()){
     try{
       await firebaseAuthReady;
@@ -1445,10 +1457,11 @@ $('#authForm')?.addEventListener('submit',async e=>{
   const username=$('#authUsername').value.trim(),password=$('#authPassword').value;
   if(moderateForumText(username)){setAuthMessage('That username is not allowed.');return;}
   try{
+    await ensureFirebase();
     if(initFirebase()){
       currentUser=authMode==='signup'?await firebaseSignup(username,password):await firebaseLogin(username,password);
     }else{
-      throw new Error('Firebase could not load. Check your internet connection and try again.');
+      throw new Error(FIREBASE_CONFIG?.apiKey?'Sign-in services were blocked by this browser. Disable content blocking for this site, then reload.':'The site configuration did not load. Reload the page and try again.');
     }
     updateAuthUI();$('#authOverlay').classList.remove('show');
     await loadForumRemote();

@@ -1,7 +1,0 @@
-[functions]
-  directory = "netlify/functions"
-
-[[redirects]]
-  from = "/firebase-config.js"
-  to = "/.netlify/functions/firebase-config"
-  status = 200

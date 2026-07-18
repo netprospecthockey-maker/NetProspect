@@ -1792,6 +1792,45 @@ td.at{text-align:center;color:var(--ink);width:40px}
   transform:none!important;
 }
 
+/* Clearer account control. */
+.auth-btn{gap:7px}.auth-btn .auth-user-icon{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.auth-btn>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* Scout Room uses square content modules; the hero remains the rounded anchor. */
+#view-forum .scout-lane,
+#view-forum .scout-lane-action,
+#view-forum .scout-lane-feed,
+#view-forum .lane-post,
+#view-forum .lane-empty,
+#view-forum .mock-room-card,
+#view-forum .mock-room-preview i,
+#view-forum .mock-room-actions button,
+#view-forum .admin-review,
+#view-forum .admin-review-card,
+#view-forum .admin-review-head{border-radius:0!important}
+#view-forum .scout-lane:hover{transform:none}
+
+/* Denser desktop data and draft workspaces. */
+.leader-table thead th:first-child{font-size:6px;letter-spacing:.2px;text-transform:uppercase}
+@media(min-width:821px){
+  #view-draft .draft-layout{grid-template-columns:minmax(290px,330px) minmax(0,1fr);gap:10px;padding:10px}
+  #view-draft .board{gap:8px}
+  #view-draft .slot{padding:9px;min-height:96px}
+}
+@media(min-width:1051px){#view-draft .draft-layout.pool-expanded{grid-template-columns:minmax(500px,1.15fr) minmax(390px,.85fr)}}
+@media(min-width:761px){
+  .draft26-table{overflow-x:hidden}
+  .draft26-table table{width:100%;min-width:0;table-layout:fixed}
+  .draft26-table th:nth-child(1){width:4%}.draft26-table th:nth-child(2){width:3%}.draft26-table th:nth-child(3){width:14%}.draft26-table th:nth-child(4){width:8%}.draft26-table th:nth-child(5){width:3.5%}.draft26-table th:nth-child(6){width:13%}.draft26-table th:nth-child(7){width:14%}.draft26-table th:nth-child(8){width:7%}.draft26-table th:nth-child(n+9){width:4.78%}
+  .draft26-table th button{padding-inline:2px;font-size:6.5px;letter-spacing:.15px;white-space:nowrap}
+  .draft26-table td{padding-inline:4px;font-size:7.5px}.draft26-table td:nth-child(3) strong{font-size:8px}
+  .draft26-table .draft26-photo{width:26px;height:26px;flex-basis:26px}.draft26-table .team-mark,.draft26-table .league-mark{width:22px;height:22px;flex-basis:22px}.draft26-table .draft26-team,.draft26-table .draft26-player,.draft26-table .draft26-country,.draft26-table .draft26-league-cell{gap:4px}
+}
+
+/* Compact social links in the persistent site header. */
+.social-links{display:flex;align-items:center;gap:4px;padding-right:3px;border-right:1px solid #D9E2E8}.social-links a{width:29px;height:29px;display:grid;place-items:center;border:1px solid transparent;border-radius:50%;color:#536C7E;text-decoration:none;transition:color .15s ease,background .15s ease,border-color .15s ease}.social-links a:hover{border-color:#CADAE5;background:#EEF5F9;color:#0E2A47}.social-links svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.social-links .social-dot{fill:currentColor;stroke:none}
+@media(max-width:760px){.social-links{gap:1px;padding-right:2px}.social-links a{width:25px;height:30px}.social-links svg{width:14px;height:14px}.iobtns{gap:3px}}
+@media(max-width:390px){.social-links a{width:22px}.social-links svg{width:13px;height:13px}.auth-btn{padding-inline:5px}}
+
 /* Admin submission queue */
 .admin-review{margin-top:18px;border:1px solid #b9ccd8;background:#f5f8fa}
 .admin-review-head{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:15px 17px;border-bottom:1px solid #c8d7e0;background:#e8f0f4}
