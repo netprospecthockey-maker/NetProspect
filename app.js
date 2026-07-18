@@ -511,6 +511,11 @@ const DEFAULT_GRADE_OVERRIDES={
   'Oliver Vanha':{skating:76,shooting:78,iq:77,ozone:78,dzone:75,phys:80},
   'Oleksii Kryvonos':{skating:78,shooting:76,iq:76,ozone:77,dzone:74,phys:72}
 };
+const SOURCE_RATINGS_BY_PLAYER=Object.fromEntries(SEED_PLAYERS.map(player=>{
+  const name=PLAYER_NAME_CORRECTIONS[player.name]||player.name,ratings=Object.fromEntries(ATTRS.map(([key])=>[key,Number(player[key])||0]));
+  const goalie=GOALIE_GRADES[name],defaults=DEFAULT_GRADE_OVERRIDES[name],stillDefault=ATTRS.every(([key])=>Number(player[key])===75);
+  return [name,{...ratings,...(goalie||(stillDefault&&defaults)||{})}];
+}));
 const seedState=()=>({players:SEED_PLAYERS.map(original=>{
   const p={...original,name:PLAYER_NAME_CORRECTIONS[original.name]||original.name},bio=EP_BIOS[p.name]||{},stats=POINT_STATS[p.name]||{},grades=GOALIE_GRADES[p.name]||DEFAULT_GRADE_OVERRIDES[p.name]||{},
     {team:rawStatsTeam,...production}=stats,statsTeam=cleanTeamName(rawStatsTeam)||p.team||'';
@@ -524,6 +529,10 @@ function load(){ const raw=rawGet(); let migrated=false;
     state.seedVersion=SEED_VERSION; migrated=true;
   }
   const migrateCountries=state.countryDataVersion!==COUNTRY_DATA_VERSION,migratePoints=state.pointStatsVersion!==POINT_STATS_VERSION,migrateBios=state.bioDataVersion!==BIO_DATA_VERSION,migrateStatLines=state.statLinesVersion!==STAT_LINES_VERSION,migrateGoalieGrades=state.goalieGradesVersion!==GOALIE_GRADES_VERSION,migrateDefaultGrades=state.defaultGradeVersion!==DEFAULT_GRADE_VERSION;
+  state.players.forEach(player=>{
+    const name=PLAYER_NAME_CORRECTIONS[player.name]||player.name,sourceRatings=SOURCE_RATINGS_BY_PLAYER[name];
+    if(sourceRatings&&ATTRS.some(([key])=>Number(player[key])!==sourceRatings[key])){Object.assign(player,sourceRatings);migrated=true;}
+  });
   state.players.forEach(p=>{ if(!p.id)p.id=uid(); const correctedName=PLAYER_NAME_CORRECTIONS[p.name];if(correctedName){p.name=correctedName;migrated=true;} const country=migrateCountries&&(COUNTRY_BY_PLAYER[p.name]||SEED_COUNTRY_BY_PLAYER[p.name]); if(country&&p.country!==country){p.country=country;migrated=true;} const bio=migrateBios&&EP_BIOS[p.name]; if(bio){const{photo,...facts}=bio;Object.assign(p,facts);if(!p.headshot&&photo)p.headshot=photo;migrated=true;} const stats=migratePoints&&POINT_STATS[p.name]; if(stats){const{team:rawStatsTeam,...production}=stats;Object.assign(p,production);p.statsTeam=cleanTeamName(rawStatsTeam)||p.statsTeam||'';p.team=SEED_TEAM_BY_PLAYER[p.name]||p.team||p.statsTeam;migrated=true;} const role=cleanRole(p.role); if(JSON.stringify(role)!==JSON.stringify(p.role)){p.role=role;migrated=true;} if(p.name==='Hampus Zirath'&&!p.headshot){p.headshot=HAMPUS_ZIRATH_PHOTO;migrated=true;} if(p.headshot==null)p.headshot='';
     const cleanTeam=cleanTeamName(p.team);if(cleanTeam!==p.team){p.team=cleanTeam;migrated=true;}
     const refreshedLines=(typeof POINT_STAT_LINES==='object'&&POINT_STAT_LINES[p.name])||VERIFIED_STAT_LINES[p.name];if(migrateStatLines&&refreshedLines){p.statLines=refreshedLines;migrated=true;}
@@ -655,7 +664,8 @@ $('#playerTypeToggle').onclick=e=>{const btn=e.target.closest('[data-type]');if(
 $$('#prospectSeasonToggle, #leaderSeasonToggle').forEach(toggle=>toggle.addEventListener('click',e=>{const btn=e.target.closest('[data-prospect-season]');if(btn)setProspectSeasonView(btn.dataset.prospectSeason);}));
 
 function renderStock(){
-  const movers=state.players.map(p=>({...p,_o:overall(p),_prev:Number(p.previousOverall)||overall(p)})).map(p=>({...p,_delta:Math.round((p._o-p._prev)*10)/10}));
+  const baseline=typeof STOCK_WATCH_BASELINE==='object'?STOCK_WATCH_BASELINE:{};
+  const movers=state.players.filter(p=>Number.isFinite(Number(baseline[p.name]))).map(p=>({...p,_o:overall(p),_prev:Number(baseline[p.name])})).map(p=>({...p,_delta:Math.round((p._o-p._prev)*10)/10}));
   const row=p=>`<button class="stock-row" data-id="${p.id}">${thumb(p,'stock-thumb')}<span class="stock-player"><strong>${esc(p.name)} ${flagFor(p.country)?`<span class="inline-flags">${flagFor(p.country)}</span>`:''}</strong><small>${esc(p.pos||'—')} · ${esc(p.team||'')}</small></span><span class="stock-scores"><b>${p._o.toFixed(1)}</b><small>was ${p._prev.toFixed(1)}</small></span><span class="stock-delta ${p._delta>0?'up':'down'}">${p._delta>0?'+':''}${p._delta.toFixed(1)}</span></button>`;
   const risers=movers.filter(p=>p._delta>0).sort((a,b)=>b._delta-a._delta).slice(0,10),fallers=movers.filter(p=>p._delta<0).sort((a,b)=>a._delta-b._delta).slice(0,10);
   $('#risers').innerHTML=risers.map(row).join('')||'<div class="stock-empty">No score increases recorded yet.</div>';
