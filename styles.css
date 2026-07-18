@@ -1803,6 +1803,42 @@ td.at{text-align:center;color:var(--ink);width:40px}
 .admin-review-empty{padding:24px;color:#668092;font-size:9px;text-align:center}
 @media(max-width:680px){.admin-review-card{grid-template-columns:1fr}.admin-review-card>div:last-child .btn{flex:1}.admin-review-card>div:last-child{width:100%}}
 
+/* Scrollable community mock feed with compact player identity rows. */
+#commentedMocks{max-height:510px;overflow-y:auto;overscroll-behavior:contain;padding-right:4px;scrollbar-width:thin;scrollbar-color:#9bb8ca transparent}
+#commentedMocks::-webkit-scrollbar{width:6px}#commentedMocks::-webkit-scrollbar-thumb{border-radius:8px;background:#9bb8ca}
+#view-forum .mock-room-card{border-radius:10px;box-shadow:0 3px 10px rgba(15,48,70,.05)}
+#view-forum .mock-room-author{margin:3px 0 0;color:#2878aa;font-size:7px;font-weight:850;text-transform:none}
+.mock-room-preview i{grid-template-columns:22px 30px minmax(0,1fr);min-height:34px}
+.mock-room-preview i .mock-pick-photo{width:25px;height:29px;margin-left:3px;border-radius:5px;object-fit:cover;background:#dce8ef;color:#406176;font-size:7px}
+.mock-room-preview i em{display:flex;flex-direction:column;justify-content:center;min-width:0}
+.mock-room-preview i em strong{overflow:hidden;color:#17344a;font-size:8px;text-overflow:ellipsis;white-space:nowrap}
+.mock-room-preview i em small{overflow:hidden;margin-top:1px;color:#718797;font-size:6px;font-weight:650;text-overflow:ellipsis;white-space:nowrap}
+.mock-pick-fallback{display:grid;place-items:center;background:#dce8ef;color:#587487;font-weight:900}
+.mock-detail-pick{grid-template-columns:32px 38px minmax(0,1fr)}
+.mock-detail-photo{width:34px;height:40px;border-radius:7px;object-fit:cover;background:#dce8ef;color:#406176;font-size:8px}
+.mock-detail-pick>span:last-child{display:flex;flex-direction:column;min-width:0}
+.mock-detail-pick>span:last-child strong{color:#17344a;font-size:10px}
+.mock-detail-pick>span:last-child small{margin-top:2px;color:#718797;font-size:7px}
+
+/* First-load source and methodology gate, based on the supplied landing reference. */
+body.launch-open{overflow:hidden}
+.launch-gate{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:24px;background:rgba(238,242,245,.97);backdrop-filter:blur(9px);transition:opacity .2s ease,visibility .2s ease}
+.launch-gate.leaving{opacity:0;visibility:hidden}
+.launch-card{width:min(790px,100%);padding:30px;border:1px solid #C5D1D9;border-radius:18px;background:#fff;box-shadow:0 30px 80px rgba(7,30,48,.18)}
+.launch-brand{display:flex;align-items:center;justify-content:center;gap:19px;margin-bottom:22px;text-align:left}.launch-brand img{width:138px;height:auto}.launch-brand>div{padding-left:19px;border-left:1px solid #D8E1E7}.launch-brand span{display:block;color:#4A8DB8;font-size:8px;font-weight:900;letter-spacing:1px;text-transform:uppercase}.launch-brand h1{margin:3px 0 0;color:#0E2A47;font-size:25px;letter-spacing:-.7px}
+.launch-notes{padding:20px 24px;border:1px solid #CCD6DD;border-radius:12px;background:#F0F2F3}.launch-notes p{position:relative;margin:0;padding:9px 0 9px 20px;color:#183247;font-size:12px;font-weight:650;line-height:1.45}.launch-notes p:before{content:'';position:absolute;left:0;top:16px;width:5px;height:5px;border-radius:50%;background:#2D84B8}.launch-notes p+p{border-top:1px solid #DCE3E7}.launch-notes a{color:#0E2A47;font-weight:850;text-decoration:underline;text-underline-offset:2px}.launch-notes a:hover{color:#2D84B8}.launch-notes a span{font-size:9px;text-decoration:none}
+.launch-enter{width:100%;min-height:58px;margin-top:14px;border:0;border-radius:10px;background:linear-gradient(100deg,#071927,#315A75);color:#fff;font:800 15px/1 Inter,sans-serif;letter-spacing:.8px;text-transform:uppercase;cursor:pointer;box-shadow:0 10px 22px rgba(7,25,39,.18)}.launch-enter span{display:inline-block;margin-left:8px;transition:transform .15s ease}.launch-enter:hover{background:linear-gradient(100deg,#0A2235,#3D7192)}.launch-enter:hover span{transform:translateX(4px)}.launch-enter:focus-visible{outline:3px solid #74C6F4;outline-offset:3px}
+
+@media(max-width:600px){
+  .launch-gate{align-items:end;padding:10px 10px max(10px,env(safe-area-inset-bottom));background:rgba(7,25,39,.72)}
+  .launch-card{max-height:calc(100dvh - 20px);overflow:auto;padding:18px 14px 14px;border-radius:18px 18px 12px 12px}
+  .launch-brand{justify-content:flex-start;gap:12px;margin-bottom:14px;padding:0 4px}.launch-brand img{width:105px}.launch-brand>div{padding-left:12px}.launch-brand span{font-size:7px}.launch-brand h1{font-size:20px}
+  .launch-notes{padding:8px 13px;border-radius:10px}.launch-notes p{padding:8px 0 8px 16px;font-size:10.5px;line-height:1.38}.launch-notes p:before{top:14px;width:4px;height:4px}
+  .launch-enter{position:sticky;bottom:0;min-height:52px;margin-top:10px;font-size:13px}
+  #view-stock .stock-grid{gap:10px}.stock-card{border-radius:11px}.stock-title{padding:12px}.stock-title>span{width:31px;height:31px}.stock-title h2{font-size:15px}
+  .stock-row{grid-template-columns:38px minmax(0,1fr) auto;min-height:58px;padding:8px}.stock-thumb{width:36px;height:36px}.stock-scores{display:none}.stock-delta{min-width:44px;padding:6px;border-radius:8px;background:#F2F6F8;text-align:center}
+}
+
 /* Hover polish without cropping or scaling the full image. */
 #view-forum .scout-lane{
   transition:transform .18s ease,box-shadow .18s ease;

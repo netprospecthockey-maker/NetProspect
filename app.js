@@ -611,7 +611,7 @@ function renderPlayerTableFrame(){
   $('#pHead').innerHTML=`<tr>${shared}${production}${pHeaderButton('ovr','Overall','c')}${pHeaderButton('tier','Tier')}</tr>`;
   $$('.players-table .p-th-filter').forEach(btn=>btn.onclick=e=>{e.stopPropagation();if(pOpenColumn===btn.dataset.pcol){closePlayerMenu();return;}renderPlayerMenu(btn.dataset.pcol,btn);});
 }
-function pColumnValue(p,key){ if(key==='ovr')return p._o;if(key==='tier')return tierOf(p._o).name;if(key==='height')return heightInches(p.height);if(key==='weight')return weightLbs(p.weight);if(key==='player')return p.name;if(key==='team')return prospectTeamFor(p);if(PROSPECT_PRODUCTION_KEYS.includes(key))return prospectStatFor(p,key);return p[key]; }
+function pColumnValue(p,key){ if((key==='ovr'||key==='tier')&&prospectSeasonView==='draft')return '';if(key==='ovr')return p._o;if(key==='tier')return tierOf(p._o).name;if(key==='height')return heightInches(p.height);if(key==='weight')return weightLbs(p.weight);if(key==='player')return p.name;if(key==='team')return prospectTeamFor(p);if(PROSPECT_PRODUCTION_KEYS.includes(key))return prospectStatFor(p,key);return p[key]; }
 function pFilterValues(key){ if(key==='country')return [...new Set(state.players.flatMap(p=>String(p.country||'').split(/\s*\/\s*/)).filter(Boolean))].sort(); if(key==='pos')return POSITION_FILTERS.filter(pos=>state.players.some(p=>positionTokens(p.pos).includes(pos))); if(key==='tier')return TIERS.map(t=>t.name); return [...new Set(state.players.map(p=>pColumnValue(p,key)).filter(Boolean))].sort(); }
 function updatePlayerHeaders(){ $$('.players-table .p-th-filter').forEach(btn=>{const key=btn.dataset.pcol,active=pTableSort&&pTableSort.key===key,filtered=P_NUMERIC.includes(key)?(pTableFilters[key].min!==''||pTableFilters[key].max!==''):pTableFilters[key]!=='';btn.classList.toggle('active',active);btn.classList.toggle('filtered',filtered);const icon=btn.querySelector('span');if(key==='player'&&!active)icon.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4 4"></path></svg>';else icon.textContent=active?(pTableSort.dir==='asc'?'↑':'↓'):'↕';}); }
 function closePlayerMenu(){ $('#pColumnMenu').hidden=true;pOpenColumn=null; }
@@ -645,8 +645,8 @@ function renderPlayers(){
       <td class="c">${esc(p.shot||'—')}</td><td class="c tnum">${esc(p.height||'—')}</td><td class="c tnum">${esc(p.weight||'—')}</td>
       <td><span class="team-cell">${teamMark(seasonTeam,'table-team-mark',p.country)}<span>${esc(seasonTeam||'')}</span></span></td>
       <td class="c statnum tnum">${showStat(prospectStatFor(p,'games'))}</td>${goalie?`<td class="c statnum tnum">${showStat(prospectStatFor(p,'gaa'),2)}</td><td class="c statnum strong tnum">${hasStat(prospectStatFor(p,'svPct'))?Number(prospectStatFor(p,'svPct')).toFixed(3).replace(/^0/,''):''}</td><td class="c statnum tnum">${showStat(prospectStatFor(p,'wins'))}</td><td class="c statnum tnum">${showStat(prospectStatFor(p,'losses'))}</td><td class="c statnum tnum">${showStat(prospectStatFor(p,'shutouts'))}</td>`:`<td class="c statnum tnum">${showStat(prospectStatFor(p,'goals'))}</td><td class="c statnum tnum">${showStat(prospectStatFor(p,'assists'))}</td><td class="c statnum strong tnum">${showStat(prospectStatFor(p,'points'))}</td><td class="c statnum tnum">${showStat(prospectStatFor(p,'ppg'),2)}</td>`}
-      <td class="c"><span class="ovrn tnum">${p._o.toFixed(1)}</span></td>
-      <td class="tier-cell"><span class="chip" style="background:${t.color}">${t.name}</span></td>
+      <td class="c">${prospectSeasonView==='draft'?'':`<span class="ovrn tnum">${p._o.toFixed(1)}</span>`}</td>
+      <td class="tier-cell">${prospectSeasonView==='draft'?'':`<span class="chip" style="background:${t.color}">${t.name}</span>`}</td>
     </tr>`; }).join('');
   $$('#pBody tr[data-id]').forEach(tr=>tr.onclick=()=>openView(tr.dataset.id));
   hydrateTeamLogos($('#pBody'));
@@ -806,7 +806,11 @@ async function loadAccount(){
 async function loadForumRemote(){
   if(initFirebase()){
     try{
-      const snapshot=await firebaseDb.ref('forumTopics').orderByChild('createdAt').limitToLast(100).once('value');
+      await firebaseAuthReady;
+      const query=isAdmin()
+        ?firebaseDb.ref('forumTopics').orderByChild('createdAt').limitToLast(100)
+        :firebaseDb.ref('forumTopics').orderByChild('pending').equalTo(false).limitToLast(100);
+      const snapshot=await query.once('value');
       const topics=[];
       snapshot.forEach(child=>topics.push(firebaseTopicOut(child.key,child.val())));
       forumTopics=topics.reverse();
@@ -921,11 +925,13 @@ const forumEmpty=copy=>`<div class="lane-empty">${esc(copy)}</div>`;
 const reportScore=t=>Number(t.views||0)+Number(t.likes||0)*3;
 function reportPreview(t){return `<button class="lane-post"><span>${esc(t.title.replace(/^Scouting report:\s*/i,''))}</span><small>${esc(t.body)}</small><b>${reportScore(t)} reads</b></button>`;}
 function mockPickLines(body){return String(body||'').split(/\r?\n/).map(line=>line.trim()).filter(Boolean).map((line,index)=>{const match=line.match(/^(\d+)[.)]\s*(.+)$/);return {number:match?Number(match[1]):index+1,text:match?match[2]:line};});}
-function mockPreview(t){const count=(t.comments||[]).length,likes=Number(t.likes||0),picks=mockPickLines(t.body),preview=picks.slice(0,3);return `<article class="mock-room-card" data-mock-id="${esc(t.id)}"><button class="mock-room-open" type="button" data-mock-open="${esc(t.id)}"><span>${esc(t.title)}</span><div class="mock-room-preview">${preview.map(p=>`<i><b>${p.number}</b><em>${esc(p.text)}</em></i>`).join('')}</div><small>${picks.length} ${picks.length===1?'pick':'picks'} · Open full board</small></button><div class="mock-room-actions"><button type="button" data-mock-like="${esc(t.id)}">Like <b>${likes}</b></button><button type="button" data-mock-open="${esc(t.id)}">${count} ${count===1?'comment':'comments'}</button></div></article>`;}
+function mockPickPlayer(text){const haystack=normalizeForumText(text);return [...state.players].sort((a,b)=>b.name.length-a.name.length).find(player=>haystack.includes(normalizeForumText(player.name)))||null;}
+function mockPickCompact(p){const player=mockPickPlayer(p.text);return `<i><b>${p.number}</b>${player?thumb(player,'mock-pick-photo'):`<span class="mock-pick-photo mock-pick-fallback">?</span>`}<em><strong>${esc(player?.name||p.text)}</strong>${player?`<small>${esc(player.team||player.pos||'Prospect')}</small>`:''}</em></i>`;}
+function mockPreview(t){const count=(t.comments||[]).length,likes=Number(t.likes||0),picks=mockPickLines(t.body),preview=picks.slice(0,3),author=t.author?.username||'Scout Room member';return `<article class="mock-room-card" data-mock-id="${esc(t.id)}"><button class="mock-room-open" type="button" data-mock-open="${esc(t.id)}"><span>${esc(t.title)}</span><small class="mock-room-author">By ${esc(author)}</small><div class="mock-room-preview">${preview.map(mockPickCompact).join('')}</div><small>${picks.length} ${picks.length===1?'pick':'picks'} · Open full board</small></button><div class="mock-room-actions"><button type="button" data-mock-like="${esc(t.id)}">Like <b>${likes}</b></button><button type="button" data-mock-open="${esc(t.id)}">${count} ${count===1?'comment':'comments'}</button></div></article>`;}
 function approvedPreview(t){return `<button class="lane-post"><span>${esc(t.player||t.title.replace(/^Prospect nomination:\s*/i,''))}</span><small>${esc(t.team||t.body||'Accepted for administrator review')}</small><b>Accepted · ${esc(t.created||'Recently')}</b></button>`;}
 function renderForum(){
   const reports=forumTopics.filter(t=>t.category==='Scouting Report'&&!t.pending).sort((a,b)=>reportScore(b)-reportScore(a)).slice(0,3);
-  const mocks=forumTopics.filter(t=>t.category==='Mock Drafts').sort((a,b)=>(b.comments||[]).length-(a.comments||[]).length).slice(0,3);
+  const mocks=forumTopics.filter(t=>t.category==='Mock Drafts').sort((a,b)=>Number(b.createdAt||0)-Number(a.createdAt||0));
   const approved=forumTopics.filter(t=>t.category==='Player Submission'&&t.approved).slice(0,3);
   const setForumCount=(id,value)=>{const el=$('#'+id);if(el)el.textContent=value;};
   setForumCount('forumReportCount',forumTopics.filter(t=>t.category==='Scouting Report'&&!t.pending).length);
@@ -976,9 +982,9 @@ function closeMockDetail(){$('#mockDetailOverlay').classList.remove('show');open
 function openMockDetail(id){
   const topic=forumTopics.find(t=>t.id===id);if(!topic)return;openMockId=id;topic.views=Number(topic.views||0)+1;forumSave();
   const picks=mockPickLines(topic.body);
-  $('#mockDetailTitle').textContent=topic.title;$('#mockDetailBody').innerHTML=picks.map(p=>`<div class="mock-detail-pick"><b>${p.number}</b><span>${esc(p.text)}</span></div>`).join('');
+  $('#mockDetailTitle').textContent=topic.title;$('#mockDetailBody').innerHTML=picks.map(p=>{const player=mockPickPlayer(p.text);return `<div class="mock-detail-pick"><b>${p.number}</b>${player?thumb(player,'mock-detail-photo'):`<span class="mock-detail-photo mock-pick-fallback">?</span>`}<span><strong>${esc(player?.name||p.text)}</strong>${player?`<small>${esc(player.team||player.pos||'Prospect')}</small>`:''}</span></div>`;}).join('');
   const comments=topic.comments||[];$('#mockCommentCount').textContent=`${comments.length} ${comments.length===1?'comment':'comments'}`;
-  $('#mockDetailMeta').innerHTML=`<span>${Number(topic.likes||0)} likes</span><span>${Number(topic.views||0)} views</span><span>${comments.length} comments</span>`;
+  $('#mockDetailMeta').innerHTML=`<span>By ${esc(topic.author?.username||'Scout Room member')}</span><span>${Number(topic.likes||0)} likes</span><span>${Number(topic.views||0)} views</span><span>${comments.length} comments</span>`;
   $('#mockLikeBtn').textContent=`Like (${Number(topic.likes||0)})`;
   $('#mockComments').innerHTML=comments.map(c=>`<article class="mock-comment"><strong>${esc(c.author?.username||'Scout Room member')}</strong><p>${esc(c.body)}</p><small>${esc(c.created||'Recently')}</small></article>`).join('')||'<div class="lane-empty">No comments yet. Start the discussion.</div>';
   $('#mockCommentText').value='';$('#mockDetailOverlay').classList.add('show');
@@ -1444,5 +1450,8 @@ if(new URLSearchParams(location.search).get('type')==='goalie'){pPlayerType='goa
 renderPlayers(); renderHome();
 loadAccount().then(loadForumRemote);
 const initialView=location.hash.slice(1);if(initialView&&$(`.tab[data-view="${initialView}"]`))$(`.tab[data-view="${initialView}"]`).click();
+const launchGate=$('#launchGate'),launchEnter=$('#launchEnter');
+function enterSite(){launchGate?.classList.add('leaving');document.body.classList.remove('launch-open');setTimeout(()=>launchGate?.remove(),220);}
+if(launchEnter){launchEnter.onclick=enterSite;requestAnimationFrame(()=>launchEnter.focus({preventScroll:true}));}
 const profileName=new URLSearchParams(location.search).get('player');if(profileName){const profile=state.players.find(p=>p.name.toLowerCase()===profileName.toLowerCase());if(profile){$('.tab[data-view="players"]').click();setTimeout(()=>openView(profile.id),0);}}
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeEditor(); closeTopicForm(); closeMockDetail(); closeScoutSubmit(); $('#authOverlay').classList.remove('show'); } });

@@ -1,7 +1,8 @@
 {
   "rules": {
     "forumTopics": {
-      ".read": true,
+      ".read": "(auth != null && root.child('users').child(auth.uid).child('role').val() === 'admin') || (query.orderByChild === 'pending' && query.equalTo === false)",
+      ".indexOn": ["createdAt", "pending"],
       "$topicId": {
         ".write": "auth != null && ((!data.exists() && newData.child('author/id').val() === auth.uid && newData.child('approved').val() === false && newData.child('likes').val() === 0 && newData.child('views').val() === 0 && newData.child('title').isString() && newData.child('title').val().length <= 120 && newData.child('body').isString() && newData.child('body').val().length <= 10000 && (newData.child('category').val() === 'Mock Drafts' || newData.child('pending').val() === true)) || root.child('users').child(auth.uid).child('role').val() === 'admin')",
         "likes": {

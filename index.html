@@ -7,9 +7,27 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=69">
+  <link rel="stylesheet" href="styles.css?v=71">
 </head>
-<body>
+<body class="launch-open">
+
+<div class="launch-gate" id="launchGate" role="dialog" aria-modal="true" aria-labelledby="launchTitle" aria-describedby="launchNotes">
+  <div class="launch-card">
+    <header class="launch-brand">
+      <img src="assets/netprospect-logo.png" alt="">
+      <div><span>2027 NHL Draft</span><h1 id="launchTitle">Before you enter</h1></div>
+    </header>
+    <div class="launch-notes" id="launchNotes">
+      <p>Player statistics are sourced from <a href="https://www.eliteprospects.com/" target="_blank" rel="noopener">Elite Prospects <span>↗</span></a>.</p>
+      <p>Rankings and ratings are relative specifically to the 2027 NHL Draft class.</p>
+      <p>Evaluations will be updated throughout the draft year as players develop and more information becomes available.</p>
+      <p>All ratings are completed by one independent evaluator and represent informed opinions that may not always be completely accurate.</p>
+      <p>Community members can submit player recommendations, scouting reports and mock drafts through Scout Room.</p>
+      <p>Player images, team logos, statistics and other third-party materials remain the property of their respective owners. NetProspect claims no ownership of those materials, and no copyright infringement is intended.</p>
+    </div>
+    <button class="launch-enter" id="launchEnter" type="button">Enter site <span>→</span></button>
+  </div>
+</div>
 
 <div class="topbar"><div class="topinner">
   <button class="brand brand-home" type="button" data-go="home" aria-label="Go to the NetProspect home page"><img class="brand-logo" src="assets/netprospect-logo.png" alt="NetProspect"><span class="sub">2027 NHL</span></button>
@@ -86,7 +104,7 @@
     </div>
     <div class="scout-lanes">
       <section class="scout-lane"><button class="scout-lane-action report-submit" data-submit-type="report"><img class="scout-lane-photo" src="assets/scout-room/add-report-nyt.jpg" alt=""><span class="lane-icon">✎</span><small>Listed prospect</small><strong>Scout a prospect</strong><p>Choose anyone in the database and add your own viewing report.</p><b>Submit report →</b></button><a class="scout-photo-credit" href="https://static01.nyt.com/images/2017/02/18/opinion/18sportingWeb/18sportingWeb-superJumbo.jpg" target="_blank" rel="noopener">Image source: The New York Times ↗</a><div class="scout-lane-feed"><div><span>Most popular</span><small>Prospect reports</small></div><div id="popularReports"></div></div></section>
-      <section class="scout-lane"><button class="scout-lane-action mock-submit" data-forum-action="mock"><img class="scout-lane-photo" src="assets/scout-room/mock-drafts-athletic.jpg" alt=""><span class="lane-icon">Ⅰ</span><small>Round 1</small><strong>Post a mock draft</strong><p>Share a completed board, then let the room discuss every pick.</p><b>Post mock →</b></button><a class="scout-photo-credit" href="https://static01.nyt.com/athletic/uploads/wp/2024/06/26122230/GettyImages-1504608505-scaled-e1719421575661.jpg?width=1200&amp;height=900&amp;fit=cover" target="_blank" rel="noopener">Image source: The Athletic ↗</a><div class="scout-lane-feed"><div><span>Most commented</span><small>Community mocks</small></div><div id="commentedMocks"></div></div></section>
+      <section class="scout-lane"><button class="scout-lane-action mock-submit" data-forum-action="mock"><img class="scout-lane-photo" src="assets/scout-room/mock-drafts-athletic.jpg" alt=""><span class="lane-icon">Ⅰ</span><small>Round 1</small><strong>Post a mock draft</strong><p>Share a completed board, then let the room discuss every pick.</p><b>Post mock →</b></button><a class="scout-photo-credit" href="https://static01.nyt.com/athletic/uploads/wp/2024/06/26122230/GettyImages-1504608505-scaled-e1719421575661.jpg?width=1200&amp;height=900&amp;fit=cover" target="_blank" rel="noopener">Image source: The Athletic ↗</a><div class="scout-lane-feed"><div><span>Latest submissions</span><small>Scroll to see all</small></div><div id="commentedMocks"></div></div></section>
       <section class="scout-lane"><button class="scout-lane-action prospect-submit" data-submit-type="prospect"><img class="scout-lane-photo" src="assets/scout-room/submit-prospect-ap.jpg" alt=""><span class="lane-icon">＋</span><small>Missing prospect</small><strong>Submit a new prospect</strong><p>Nominate an eligible player for review by the site administrator.</p><b>Submit prospect →</b></button><a class="scout-photo-credit" href="https://dims.apnews.com/dims4/default/5bfdfbb/2147483647/strip/true/crop/3000x2096+0+0/resize/599x419!/quality/90/?url=https%3A%2F%2Fstorage.googleapis.com%2Fafs-prod%2Fmedia%2F725cee3d07684958909ab589fbd21ff6%2F3000.jpeg" target="_blank" rel="noopener">Image source: AP ↗</a><div class="scout-lane-feed"><div><span>Recently accepted</span><small>Reviewed requests</small></div><div id="approvedPlayers"></div></div></section>
     </div>
     <section class="admin-review" id="adminReview" hidden><div class="admin-review-head"><div><span class="eyebrow">Admin only</span><h2>Submission review</h2><p>Publish approved reports or accept prospect requests for manual entry in VS Code.</p></div><strong id="adminReviewCount">0 pending</strong></div><div id="adminReviewList"></div></section>
@@ -192,6 +210,6 @@
 <script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-database-compat.js"></script>
 <script src="/firebase-config.js"></script>
-<script src="app.js?v=61"></script>
+<script src="app.js?v=63"></script>
 </body>
 </html>
