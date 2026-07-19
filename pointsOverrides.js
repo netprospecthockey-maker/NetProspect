@@ -31,6 +31,10 @@ Object.assign(POINT_STATS,{
 });
 
 const POINT_STAT_LINES={
+  "James Scantlebury":[
+    {season:"2025–26",team:"Chicago Steel",league:"USHL",games:62,goals:16,assists:23,points:39,ppg:.63},
+    {season:"2026–27",team:"Québec Remparts",league:"QMJHL"}
+  ],
   "Dmitri Savin":[
     {season:"2025–26",team:"CSKA Juniors",teamUrl:"https://fhmoscow.com/player/7838",league:"Moscow Juniors",leagueUrl:"https://fhmoscow.com/player/7838",games:19,goals:24,assists:21,points:45,ppg:2.37},
     {season:"2025–26",team:"CSKA 2009",teamUrl:"https://fhmoscow.com/player/7838",league:"Moscow 2009",leagueUrl:"https://fhmoscow.com/player/7838",games:32,goals:29,assists:29,points:58,ppg:1.81}
