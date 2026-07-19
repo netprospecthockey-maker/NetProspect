@@ -589,7 +589,7 @@ const PROSPECT_DRAFT_TEAM_OVERRIDES={
   'Rocco Pelosi':'CHL team TBA',
   'Noah Davidson':'Medicine Hat Tigers',
   'Timothy Kazda':'CHL team TBA',
-  'James Scantlebury':'CHL team TBA',
+  'James Scantlebury':'Québec Remparts',
   'Ryerson Edgar':'Niagara IceDogs',
   'Eli McKamey':'Victoria Royals'
 };
