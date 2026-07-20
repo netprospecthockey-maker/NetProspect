@@ -337,7 +337,7 @@ td.at{text-align:center;color:var(--ink);width:40px}
 .home-dashboard{gap:12px}.dash-hero{min-height:142px;padding:19px 23px;border-radius:11px;gap:22px;background:linear-gradient(115deg,#0D2945 0%,#153A5D 68%,#1B527E 125%)}.dash-hero:after{width:270px;height:270px;border-width:38px;right:-92px;top:-126px}.dash-mark{width:48px;height:48px;border-radius:10px;font-size:16px}.dash-identity{gap:14px}.dash-identity>div:last-child>span{font-size:8px}.dash-identity h1{font-size:22px;letter-spacing:-.45px;margin:1px 0}.dash-identity p{font-size:10px}.dash-update{min-width:185px;padding-left:18px}.dash-update strong{font-size:16px}.dash-update small{font-size:8px}
 .dash-stats{border-radius:9px}.dash-stats>div{padding:10px 14px}.dash-stats span{font-size:8px}.dash-stats strong{font-size:14px}.dash-stats>button{padding:0 15px;font-size:9px}.dash-grid{gap:12px;grid-template-columns:minmax(0,1.7fr) minmax(285px,.72fr)}.dash-main,.dash-side{gap:12px}.dash-panel{border-radius:10px}.dash-panel-head{padding:12px 14px}.dash-panel-head h2{font-size:13px}.dash-tools button{min-height:92px;padding:14px}.dash-tools i{margin-bottom:8px}.dash-tools strong{font-size:11px}.dash-note>p{padding:13px 14px;font-size:10px}.dash-season{padding:15px}.dash-season h2{font-size:15px}.country-directory{max-height:292px}.country-directory button{padding:8px 12px}.country-flag{font-size:18px}
 .score-filters{padding:0;margin:-5px 0 16px;border-radius:12px;overflow:hidden;background:#fff}.filter-head{margin:0;padding:10px 12px;border-bottom:1px solid var(--line2);background:#FAFBFD}.filter-mode{border:1px solid var(--line);background:#fff;padding:2px}.filter-mode button{font-size:10px!important;padding:6px 13px!important}.filter-pane{padding:13px}.filter-pane>p{margin-bottom:9px}.filter-grid,.info-filter-grid{gap:8px}.score-filter,.info-filter-grid label{background:#fff;border-color:var(--line);border-radius:7px;padding:9px}.score-filter:focus-within,.info-filter-grid label:focus-within{border-color:#9DC2E2;box-shadow:0 0 0 2px #EEF6FC}.score-filter>span,.info-filter-grid label>span{font-size:8px;margin-bottom:6px}.score-filter input,.info-filter-grid input,.info-filter-grid select{background:#F8FAFC!important;border-color:#E4EAF0!important;height:31px}.filter-toggle{height:35px}
-.read-only #mEdit,.read-only #mDelete,.read-only #mSave{display:none!important}
+.read-only #mDelete{display:none!important}
 @media(max-width:680px){.dash-hero{padding:18px}.dash-update{padding-top:12px}.dash-grid{grid-template-columns:1fr}}
 
 /* Symmetrical slider filters */
@@ -1904,6 +1904,43 @@ body.launch-open{overflow:hidden}
 .draft26-breakdown-toggle:hover b,.draft26-breakdown-toggle:focus-visible b{border-color:#4B96C7;background:#E3F1F8}
 .draft26-breakdown .draft26-chips{padding:0 13px 13px;border-top:1px solid #E6EEF3;padding-top:11px}
 .draft26-breakdown .draft26-chips[hidden]{display:none}
+
+/* Consistent rounded navigation tabs, including Scout Room and 2026 Draft. */
+.tab{border-radius:8px}
+.tab:hover{background:rgba(255,255,255,.055)}
+.tab.active{background:rgba(255,255,255,.075)}
+@media(max-width:760px){.tab{border-radius:7px 7px 0 0}}
+
+/* Match Scout Room and the 2026 archive to the site's rounded card system. */
+#view-forum .forum-hero-panel,
+#view-forum .forum-hero-actions .btn,
+#view-forum .scout-room-strip>div,
+#view-forum .scout-lane,
+#view-forum .scout-lane-action,
+#view-forum .scout-lane-feed,
+#view-forum .lane-post,
+#view-forum .lane-empty,
+#view-forum .mock-room-card,
+#view-forum .mock-room-preview i,
+#view-forum .mock-room-actions button,
+#view-forum .admin-review,
+#view-forum .admin-review-card,
+#view-forum .admin-review-head{border-radius:10px!important}
+#view-forum .scout-lane{overflow:hidden}
+#view-forum .scout-lane-action{border-radius:10px 10px 0 0!important}
+#view-forum .scout-lane-feed{border-radius:0 0 10px 10px!important}
+#view-forum .lane-icon{border-radius:8px}
+#view-forum .mock-compose-modal,#view-forum .mock-detail-modal{border-radius:12px}
+
+#view-draft2026 .draft26-head{border-radius:12px}
+#view-draft2026 .draft26-year,#view-draft2026 .draft26-summary>div{border-radius:8px}
+#view-draft2026 .draft26-season-switch{margin-top:9px;border:1px solid var(--line);border-radius:10px}
+#view-draft2026 .draft26-breakdown{margin-top:9px;padding:9px;border:1px solid var(--line);border-radius:10px}
+#view-draft2026 .draft26-breakdown>section{overflow:hidden;border-radius:8px}
+#view-draft2026 .draft26-breakdown-toggle b{border-radius:7px}
+#view-draft2026 .draft26-chips button{border-radius:7px}
+#view-draft2026 .draft26-data-note{margin-top:9px;border:1px solid #D9E8F2;border-radius:9px}
+#view-draft2026 .draft26-table{border-radius:11px}
 
 /* Keep the desktop section navigation visually centred in the full header. */
 @media(min-width:1080px){

@@ -531,7 +531,7 @@ function load(){ const raw=rawGet(); let migrated=false;
   const migrateCountries=state.countryDataVersion!==COUNTRY_DATA_VERSION,migratePoints=state.pointStatsVersion!==POINT_STATS_VERSION,migrateBios=state.bioDataVersion!==BIO_DATA_VERSION,migrateStatLines=state.statLinesVersion!==STAT_LINES_VERSION,migrateGoalieGrades=state.goalieGradesVersion!==GOALIE_GRADES_VERSION,migrateDefaultGrades=state.defaultGradeVersion!==DEFAULT_GRADE_VERSION;
   state.players.forEach(player=>{
     const name=PLAYER_NAME_CORRECTIONS[player.name]||player.name,sourceRatings=SOURCE_RATINGS_BY_PLAYER[name];
-    if(sourceRatings&&ATTRS.some(([key])=>Number(player[key])!==sourceRatings[key])){Object.assign(player,sourceRatings);migrated=true;}
+    if(sourceRatings&&!player._localEdit&&ATTRS.some(([key])=>Number(player[key])!==sourceRatings[key])){Object.assign(player,sourceRatings);migrated=true;}
   });
   state.players.forEach(p=>{ if(!p.id)p.id=uid(); const correctedName=PLAYER_NAME_CORRECTIONS[p.name];if(correctedName){p.name=correctedName;migrated=true;} const country=migrateCountries&&(COUNTRY_BY_PLAYER[p.name]||SEED_COUNTRY_BY_PLAYER[p.name]); if(country&&p.country!==country){p.country=country;migrated=true;} const bio=migrateBios&&EP_BIOS[p.name]; if(bio){const{photo,...facts}=bio;Object.assign(p,facts);if(!p.headshot&&photo)p.headshot=photo;migrated=true;} const stats=migratePoints&&POINT_STATS[p.name]; if(stats){const{team:rawStatsTeam,...production}=stats;Object.assign(p,production);p.statsTeam=cleanTeamName(rawStatsTeam)||p.statsTeam||'';p.team=SEED_TEAM_BY_PLAYER[p.name]||p.team||p.statsTeam;migrated=true;} const role=cleanRole(p.role); if(JSON.stringify(role)!==JSON.stringify(p.role)){p.role=role;migrated=true;} if(p.name==='Hampus Zirath'&&!p.headshot){p.headshot=HAMPUS_ZIRATH_PHOTO;migrated=true;} if(p.headshot==null)p.headshot='';
     const cleanTeam=cleanTeamName(p.team);if(cleanTeam!==p.team){p.team=cleanTeam;migrated=true;}
@@ -1228,7 +1228,7 @@ function setFooter(){
   const v=mode==='view';
   $('#editHint').style.display=v?'none':'flex';
   $('#mClose2').style.display=v?'inline-block':'none';
-  $('#mEdit').style.display=(v&&isAdmin())?'inline-block':'none';
+  $('#mEdit').style.display=v?'inline-block':'none';
   $('#mCancel').style.display=v?'none':'inline-block';
   $('#mSave').style.display=v?'none':'inline-block';
   $('#mDelete').style.display=(!v && editId && isAdmin())?'inline-block':'none';
@@ -1243,13 +1243,12 @@ function openView(id){
 $('#addBtn').onclick=()=>{if(isAdmin())openEditor(null);};
 $('#mClose').onclick=closeEditor;
 $('#mClose2').onclick=closeEditor;
-$('#mEdit').onclick=()=>{ if(isAdmin()&&viewId)openEditor(viewId); };
+$('#mEdit').onclick=()=>{ if(viewId)openEditor(viewId); };
 $('#mCancel').onclick=()=>{ if(editId)openView(editId); else closeEditor(); };
 $('#overlay').onclick=e=>{ if(e.target.id==='overlay')closeEditor(); };
 const blankPlayer=()=>({id:null,name:'',team:'',pos:'',shot:'L',country:'',height:'',weight:'',headshot:'',
   league:'',games:'',goals:'',assists:'',points:'',ppg:'',gaa:'',svPct:'',wins:'',losses:'',shutouts:'',skating:80,shooting:80,iq:80,ozone:80,dzone:80,phys:80,role:[]});
 function openEditor(id){
-  if(!isAdmin())return;
   mode='edit'; editId=id; const src=id?byId(id):blankPlayer(); draftP=JSON.parse(JSON.stringify(src));
   $('#mTitle').textContent=id?'Edit Prospect':'Add Prospect';
   buildCardEditor(); setFooter(); $('#overlay').classList.add('show');
@@ -1277,13 +1276,13 @@ function buildCardEditor(){
 }
 function closeEditor(){ $('#overlay').classList.remove('show'); editId=null; draftP=null; viewId=null; }
 $('#mSave').onclick=async()=>{
-  if(!isAdmin())return;
   draftP.name=(draftP.name||'').trim();
   if(!draftP.name){ const n=$('#ceName'); if(n){ n.focus(); n.style.borderColor='#E0705A'; } return; }
   ATTRS.forEach(([k])=>draftP[k]=Math.max(0,Math.min(100,Math.round(+draftP[k]||0))));
   ['games','goals','assists','points','ppg','gaa','svPct','wins','losses','shutouts'].forEach(k=>{draftP[k]=draftP[k]===''?'':Math.max(0,Number(draftP[k])||0);});
   if(editId){ const existing=byId(editId),oldScore=overall(existing),newScore=overall(draftP);
     draftP.previousOverall=Math.abs(newScore-oldScore)>=.05?oldScore:(Number(existing.previousOverall)||oldScore);
+    draftP._localEdit=true;
     Object.assign(existing,draftP);
   } else { draftP.id=uid(); draftP.previousOverall=overall(draftP); state.players.push(draftP); }
   const savedId = editId || draftP.id;
