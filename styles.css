@@ -1894,6 +1894,10 @@ body.launch-open{overflow:hidden}
   transform:none!important;
 }
 
+/* Expandable 2026 draft breakdown controls. */
+.draft26-breakdown-toggle{min-height:27px;padding:5px 8px;border:1px solid #C9D9E3;background:#F6FAFC;color:#245F82;font:800 6px/1 Inter,sans-serif;letter-spacing:.25px;text-transform:uppercase;cursor:pointer;white-space:nowrap}
+.draft26-breakdown-toggle:hover,.draft26-breakdown-toggle:focus-visible{border-color:#4B96C7;background:#E7F3FA;outline:0}
+
 /* Keep the desktop section navigation visually centred in the full header. */
 @media(min-width:1080px){
   .topinner{display:grid;grid-template-columns:minmax(190px,1fr) auto minmax(190px,1fr);gap:14px}

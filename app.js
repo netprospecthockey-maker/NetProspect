@@ -716,9 +716,18 @@ const draft26Portrait=player=>{const source=/^No selection/i.test(player.player)
 const draft26PlayerCell=player=>{const profile=typeof DRAFT_2026_PROFILES_BY_PICK==='object'?DRAFT_2026_PROFILES_BY_PICK[player.pick]:null,content=`${draft26Portrait(player)}<strong>${esc(player.player)}</strong>`;return profile?`<a class="draft26-player" href="${esc(profile.url)}" target="_blank" rel="noopener" title="Photo: ${esc(profile.credit)} · Elite Prospects profile">${content}</a>`:`<span class="draft26-player">${content}</span>`;};
 const DRAFT26_NATIONS=[['Canada',71,'can'],['USA',54,'usa'],['Russia',26,'rus'],['Sweden',24,'swe'],['Czechia',13,'cze'],['Finland',13,'fin'],['Slovakia',8,'svk'],['Latvia',4,'lva'],['Belarus',3,'blr'],['Denmark',1,'dnk'],['Germany',1,'deu'],['Hungary',1,'hun'],['Lithuania',1,'ltu'],['Moldova',1,'mda'],['Norway',1,'nor'],['Switzerland',1,'che']];
 const DRAFT26_LEAGUES=[['OHL',45,'ohl'],['WHL',37,'whl'],['USHL',25,'ushl'],['QMJHL',20,'qmjhl'],['MHL',16,'mhl'],['U20 Nationell',16,'u20-nationell'],['U20 SM-sarja',12,'u20-sm-sarja'],['NCAA',11,'ncaa'],['NTDP',9,'ntdp'],['SHL',5,'shl'],['USHS-Prep',4,'ushs-prep'],['Liiga',3,'liiga'],['Slovakia',3,'slovakia'],['Czechia U20',2,'czechia-u20'],['HockeyAllsvenskan',2,'hockeyallsvenskan'],['USHS-MN',2,'ushs-mn'],['VHL',2,'vhl'],['KHL',1,'khl'],['PHC',1,'phc'],['NL',1,'nl'],['NAHL',1,'nahl'],['U18 AAA',1,'u18-aaa'],['GOJHL',1,'gojhl'],['Division 2',1,'division-2'],['Denmark',1,'denmark'],['Latvia',1,'latvia'],['Czechia',1,'czechia']];
+let draft26BreakdownOpen={country:false,league:false};
+const draft26LeagueTokens=value=>String(value||'').split(/\s*\/\s*/).map(item=>item.trim()).filter(Boolean);
+function draft26LeagueBreakdown(){
+  const counts={},d1Map=draft26D1Map();
+  DRAFT_2026_DATA.map(player=>draft26DisplayRow(player,d1Map)).forEach(player=>draft26LeagueTokens(player.league).forEach(league=>counts[league]=(counts[league]||0)+1));
+  return Object.entries(counts).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]));
+}
 function renderDraft26Breakdown(){
-  $('#draft26Nations').innerHTML=DRAFT26_NATIONS.map(([label,count])=>`<button type="button" data-d26-country="${esc(label)}"><b class="draft26-chip-flag">${flagFor(label)}</b><span>${esc(label)}</span><strong>${count}</strong><small>${count===1?'plr':'plrs'}</small></button>`).join('');
-  $('#draft26Leagues').innerHTML=DRAFT26_LEAGUES.map(([label,count])=>`<button type="button" data-d26-league="${esc(label)}">${leagueMark(label,'chip-league-mark')}<span>${esc(label)}</span><strong>${count}</strong><small>${count===1?'plr':'plrs'}</small></button>`).join('');
+  const nations=draft26BreakdownOpen.country?DRAFT26_NATIONS:DRAFT26_NATIONS.slice(0,6),allLeagues=draft26LeagueBreakdown(),leagues=draft26BreakdownOpen.league?allLeagues:allLeagues.slice(0,8);
+  $('#draft26Nations').innerHTML=nations.map(([label,count])=>`<button type="button" data-d26-country="${esc(label)}"><b class="draft26-chip-flag">${flagFor(label)}</b><span>${esc(label)}</span><strong>${count}</strong><small>${count===1?'plr':'plrs'}</small></button>`).join('');
+  $('#draft26Leagues').innerHTML=leagues.map(([label,count])=>`<button type="button" data-d26-league="${esc(label)}">${leagueMark(label,'chip-league-mark')}<span>${esc(label)}</span><strong>${count}</strong><small>${count===1?'plr':'plrs'}</small></button>`).join('');
+  [['country','#draft26CountryToggle',DRAFT26_NATIONS.length],['league','#draft26LeagueToggle',allLeagues.length]].forEach(([key,selector,total])=>{const button=$(selector);button.setAttribute('aria-expanded',String(draft26BreakdownOpen[key]));button.textContent=draft26BreakdownOpen[key]?'Show less':`View all ${total}`;button.onclick=()=>{draft26BreakdownOpen[key]=!draft26BreakdownOpen[key];renderDraft26Breakdown();renderDraft2026();};});
   $$('#draft26Nations [data-d26-country]').forEach(button=>button.onclick=()=>{draft26Filters.country=draft26Filters.country===button.dataset.d26Country?'':button.dataset.d26Country;renderDraft2026();});
   $$('#draft26Leagues [data-d26-league]').forEach(button=>button.onclick=()=>{draft26Filters.league=draft26Filters.league===button.dataset.d26League?'':button.dataset.d26League;renderDraft2026();});
 }
@@ -739,7 +748,7 @@ function renderDraft26Menu(key,anchor){
 function renderDraft2026(){
   const source=Array.isArray(DRAFT_2026_DATA)?DRAFT_2026_DATA:[],d1Map=draft26D1Map(),hasD1=draft26SeasonView==='d1'&&d1Map.size>0;
   const data=source.map(player=>draft26DisplayRow(player,d1Map));
-  let rows=data.filter(player=>(!draft26Filters.country||draft26Country(player)===draft26Filters.country)&&(!draft26Filters.player||player.player.toLowerCase().includes(draft26Filters.player.toLowerCase()))&&D26_VALUES.every(key=>!draft26Filters[key]||String(draft26Value(player,key))===String(draft26Filters[key]))&&D26_NUMERIC.every(key=>{const f=draft26Filters[key],v=draft26Value(player,key);if((f.min!==''||f.max!=='')&&!hasStat(v))return false;return(f.min===''||Number(v)>=+f.min)&&(f.max===''||Number(v)<=+f.max);}));
+  let rows=data.filter(player=>(!draft26Filters.country||draft26Country(player)===draft26Filters.country)&&(!draft26Filters.player||player.player.toLowerCase().includes(draft26Filters.player.toLowerCase()))&&D26_VALUES.every(key=>!draft26Filters[key]||(key==='league'?draft26LeagueTokens(draft26Value(player,key)).includes(draft26Filters[key]):String(draft26Value(player,key))===String(draft26Filters[key])))&&D26_NUMERIC.every(key=>{const f=draft26Filters[key],v=draft26Value(player,key);if((f.min!==''||f.max!=='')&&!hasStat(v))return false;return(f.min===''||Number(v)>=+f.min)&&(f.max===''||Number(v)<=+f.max);}));
   rows.sort((a,b)=>{const av=draft26Value(a,draft26Sort.key),bv=draft26Value(b,draft26Sort.key),missingA=av==='',missingB=bv==='';if(missingA!==missingB)return missingA?1:-1;const comparison=typeof av==='number'&&typeof bv==='number'?av-bv:String(av).localeCompare(String(bv));return draft26Sort.dir==='asc'?comparison:-comparison;});
   $('#draft26Count').textContent=`${rows.length} ${rows.length===1?'player':'players'}${draft26SeasonView==='d1'&&!hasD1?' · D-1 pending':''}`;
   const note=$('#draft26DataNote');if(note){note.hidden=!(draft26SeasonView==='d1'&&!hasD1);note.textContent='D-1 team, league and stats are not included in the current 2026 dataset yet. The toggle is ready for DRAFT_2026_D1_DATA once those rows are added.';}
@@ -754,7 +763,7 @@ function renderDraft2026(){
 }
 renderDraft26Breakdown();
 $$('#view-draft2026 [data-d26-sort]').forEach(button=>button.onclick=e=>{e.stopPropagation();const key=button.dataset.d26Sort;if(draft26OpenColumn===key){closeDraft26Menu();return;}renderDraft26Menu(key,button);});
-$('#draft26SeasonToggle')?.addEventListener('click',e=>{const button=e.target.closest('[data-d26-season]');if(!button)return;draft26SeasonView=button.dataset.d26Season;draft26Filters.team='';draft26Filters.league='';renderDraft2026();});
+$('#draft26SeasonToggle')?.addEventListener('click',e=>{const button=e.target.closest('[data-d26-season]');if(!button)return;draft26SeasonView=button.dataset.d26Season;draft26Filters.team='';draft26Filters.league='';renderDraft26Breakdown();renderDraft2026();});
 document.addEventListener('click',e=>{if(!$('#draft26ColumnMenu').hidden&&!e.target.closest('#draft26ColumnMenu'))closeDraft26Menu();});
 
 const FORUM_KEY='draftscout_forum_v2';
