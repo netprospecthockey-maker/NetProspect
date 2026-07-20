@@ -1895,8 +1895,15 @@ body.launch-open{overflow:hidden}
 }
 
 /* Expandable 2026 draft breakdown controls. */
-.draft26-breakdown-toggle{min-height:27px;padding:5px 8px;border:1px solid #C9D9E3;background:#F6FAFC;color:#245F82;font:800 6px/1 Inter,sans-serif;letter-spacing:.25px;text-transform:uppercase;cursor:pointer;white-space:nowrap}
-.draft26-breakdown-toggle:hover,.draft26-breakdown-toggle:focus-visible{border-color:#4B96C7;background:#E7F3FA;outline:0}
+.draft26-breakdown>section:has(.draft26-breakdown-toggle){padding:0}
+.draft26-breakdown-toggle{width:100%;min-height:58px;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto;align-items:center;column-gap:14px;padding:11px 13px;border:0;background:#fff;color:#245F82;text-align:left;cursor:pointer}
+.draft26-breakdown-toggle span{font-size:6px;font-weight:900;letter-spacing:.65px;text-transform:uppercase}
+.draft26-breakdown-toggle strong{grid-column:1;color:var(--navy);font-size:10.5px}
+.draft26-breakdown-toggle b{grid-column:2;grid-row:1/3;width:28px;height:28px;display:grid;place-items:center;border:1px solid #C9D9E3;background:#F2F8FB;color:#287EAC;font-size:15px}
+.draft26-breakdown-toggle:hover,.draft26-breakdown-toggle:focus-visible{background:#F6FAFC;outline:0}
+.draft26-breakdown-toggle:hover b,.draft26-breakdown-toggle:focus-visible b{border-color:#4B96C7;background:#E3F1F8}
+.draft26-breakdown .draft26-chips{padding:0 13px 13px;border-top:1px solid #E6EEF3;padding-top:11px}
+.draft26-breakdown .draft26-chips[hidden]{display:none}
 
 /* Keep the desktop section navigation visually centred in the full header. */
 @media(min-width:1080px){

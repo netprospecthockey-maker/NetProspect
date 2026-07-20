@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=77">
+  <link rel="stylesheet" href="styles.css?v=78">
 </head>
 <body class="launch-open">
 
@@ -76,7 +76,7 @@
       <div class="draft26-summary"><div><strong>224</strong><span>Selections</span></div><div><strong>16</strong><span>Nations</span></div><div><strong>27</strong><span>Leagues</span></div></div>
     </div>
     <div class="draft26-season-switch"><div><span>Season view</span><strong id="draft26SeasonTitle">Draft year production</strong><small id="draft26SeasonHelp">Showing the 2025–26 team and league from the current dataset.</small></div><div class="seg draft26-season-toggle" id="draft26SeasonToggle"><button class="on" data-d26-season="draft">Draft year</button><button data-d26-season="d1">D-1 season</button></div></div>
-    <div class="draft26-breakdown"><section><div class="draft26-breakdown-head"><div><span>Country breakdown</span><h2>Players drafted per nation</h2></div><button class="draft26-breakdown-toggle" id="draft26CountryToggle" type="button" aria-expanded="false">View full breakdown</button></div><div class="draft26-chips" id="draft26Nations"></div></section><section><div class="draft26-breakdown-head"><div><span>League breakdown</span><h2>Players drafted per league</h2></div><button class="draft26-breakdown-toggle" id="draft26LeagueToggle" type="button" aria-expanded="false">View full breakdown</button></div><div class="draft26-chips" id="draft26Leagues"></div></section></div>
+    <div class="draft26-breakdown"><section><button class="draft26-breakdown-toggle" id="draft26CountryToggle" type="button" aria-expanded="false"><span>Country breakdown</span><strong>View players drafted per nation</strong><b>＋</b></button><div class="draft26-chips" id="draft26Nations" hidden></div></section><section><button class="draft26-breakdown-toggle" id="draft26LeagueToggle" type="button" aria-expanded="false"><span>League breakdown</span><strong>View players drafted per league</strong><b>＋</b></button><div class="draft26-chips" id="draft26Leagues" hidden></div></section></div>
     <div class="draft26-data-note" id="draft26DataNote" hidden></div>
     <div class="tablecard draft26-table"><table><thead><tr><th><button data-d26-sort="pick">Pick <span>↑</span></button></th><th><button data-d26-sort="round">Rd</button></th><th><button data-d26-sort="player">Player</button></th><th><button data-d26-sort="country">Nationality</button></th><th><button data-d26-sort="position">Pos</button></th><th><button data-d26-sort="nhlTeam">Drafted by</button></th><th><button data-d26-sort="team" id="draft26ClubHead">2025–26 club</button></th><th><button data-d26-sort="league">League</button></th><th><button data-d26-sort="games">GP</button></th><th><button data-d26-sort="goals">G</button></th><th><button data-d26-sort="assists">A</button></th><th><button data-d26-sort="points">PTS</button></th><th><button data-d26-sort="ppg">P/GP</button></th><th><button data-d26-sort="gaa">GAA</button></th><th><button data-d26-sort="svPct">SV%</button></th></tr></thead><tbody id="draft26Body"></tbody></table></div>
     <div class="column-filter-menu" id="draft26ColumnMenu" hidden></div>
@@ -216,6 +216,6 @@
 <script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-database-compat.js"></script>
 <script src="/firebase-config.js?v=2"></script>
-<script src="app.js?v=69"></script>
+<script src="app.js?v=70"></script>
 </body>
 </html>
