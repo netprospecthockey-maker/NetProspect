@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=81">
+  <link rel="stylesheet" href="styles.css?v=85">
 </head>
 <body class="launch-open">
 
@@ -121,9 +121,9 @@
   <section class="view" id="view-board">
     <div class="leaderboard-intro"><div><span class="eyebrow">Sortable scouting table</span><h1>Leaderboard</h1></div><div class="leaderboard-tools"><p>Click any column heading to sort or filter.</p><div class="seg season-view-toggle" id="leaderSeasonToggle"><button class="on" data-prospect-season="d1">D-1 year</button><button data-prospect-season="draft">Draft year</button></div></div></div>
     <div class="tablecard leader-table"><table>
-      <colgroup><col class="l-rank"><col class="l-photo"><col class="l-player"><col class="l-pos"><col class="l-grade" span="6"><col class="l-overall"><col class="l-tier"></colgroup>
+      <colgroup><col class="l-rank"><col class="l-photo"><col class="l-player"><col class="l-pos"><col class="l-league"><col class="l-team"><col class="l-grade" span="6"><col class="l-overall"><col class="l-tier"></colgroup>
       <thead><tr>
-        <th class="c">Rank</th><th colspan="2"><button class="th-filter" data-lcol="player">Player <span>↕</span></button></th><th><button class="th-filter" data-lcol="pos">Position <span>↕</span></button></th>
+        <th class="c">Rank</th><th colspan="2"><button class="th-filter" data-lcol="player">Player <span>↕</span></button></th><th><button class="th-filter" data-lcol="pos">Position <span>↕</span></button></th><th><button class="th-filter" data-lcol="league">League <span>↕</span></button></th><th><button class="th-filter" data-lcol="team">Team <span>↕</span></button></th>
         <th class="c"><button class="th-filter" data-lcol="skating">Skating <span>↕</span></button></th><th class="c"><button class="th-filter" data-lcol="shooting">Shooting <span>↕</span></button></th><th class="c"><button class="th-filter" data-lcol="iq">Hockey IQ <span>↕</span></button></th><th class="c"><button class="th-filter" data-lcol="ozone">Offensive Zone <span>↕</span></button></th><th class="c"><button class="th-filter" data-lcol="dzone">Defensive Zone <span>↕</span></button></th><th class="c"><button class="th-filter" data-lcol="phys">Physicality <span>↕</span></button></th>
         <th class="c"><button class="th-filter active" data-lcol="ovr">Overall <span>↓</span></button></th><th><button class="th-filter" data-lcol="tier">Tier <span>↕</span></button></th>
       </tr></thead>
@@ -216,6 +216,6 @@
 <script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-database-compat.js"></script>
 <script src="/firebase-config.js?v=2"></script>
-<script src="app.js?v=71"></script>
+<script src="app.js?v=74"></script>
 </body>
 </html>

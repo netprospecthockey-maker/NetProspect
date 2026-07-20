@@ -67,7 +67,7 @@ label.fld{display:block;font-size:11px;font-weight:600;letter-spacing:.4px;text-
   display:inline-flex;align-items:center;justify-content:center;color:#8493A1;font-weight:700;font-size:12px;flex:none}
 
 .tablecard{background:var(--bg);border:1px solid var(--line);border-radius:11px;overflow:hidden}
-.players-table{overflow-x:auto;scrollbar-color:#B8C8D6 #EEF3F7}.players-table table{min-width:1180px}.players-table th,.players-table td{padding-left:6px;padding-right:6px;white-space:nowrap}.players-table tbody td:nth-child(2){min-width:145px}.players-table tbody td:nth-child(3){min-width:94px}.players-table tbody td:nth-child(8){min-width:175px;max-width:210px;white-space:normal;line-height:1.25}.nation-cell{display:flex;align-items:center;gap:5px}.nation-cell b{font-size:15px;letter-spacing:1px}.nation-cell small{font-size:8px;color:var(--muted);white-space:nowrap}.statnum{font-size:10px;color:var(--muted)}.statnum.strong{font-weight:800;color:var(--navy)}
+.players-table{overflow-x:auto;scrollbar-color:#B8C8D6 #EEF3F7}.players-table table{min-width:1260px}.players-table th,.players-table td{padding-left:6px;padding-right:6px;white-space:nowrap}.players-table tbody td:nth-child(2){min-width:145px}.players-table tbody td:nth-child(3){min-width:94px}.players-table tbody td:nth-child(9){min-width:175px;max-width:210px;white-space:normal;line-height:1.25}.nation-cell{display:flex;align-items:center;gap:5px}.nation-cell b{font-size:15px;letter-spacing:1px}.nation-cell small{font-size:8px;color:var(--muted);white-space:nowrap}.statnum{font-size:10px;color:var(--muted)}.statnum.strong{font-weight:800;color:var(--navy)}
 table{width:100%;border-collapse:collapse;font-size:13.5px}
 thead th{background:var(--panel2);text-align:left;padding:10px 12px;font-size:11px;font-weight:700;letter-spacing:.5px;
   text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line);white-space:nowrap}
@@ -414,7 +414,7 @@ td.at{text-align:center;color:var(--ink);width:40px}
 /* Single-viewport player table */
 .players-table{overflow-x:hidden}
 .players-table table{width:100%;min-width:0;table-layout:fixed}
-.players-table col.p-photo{width:3.6%}.players-table col.p-player{width:12%}.players-table col.p-country{width:8%}.players-table col.p-position{width:6%}.players-table col.p-shot{width:4.5%}.players-table col.p-height{width:5.3%}.players-table col.p-weight{width:5.5%}.players-table col.p-team{width:16%}.players-table col.p-games{width:6.4%}.players-table col.p-goals{width:4.3%}.players-table col.p-assists{width:4.8%}.players-table col.p-points{width:4.8%}.players-table col.p-ppg{width:7%}.players-table col.p-overall{width:5.3%}.players-table col.p-tier{width:6.5%}
+.players-table col.p-photo{width:3.4%}.players-table col.p-player{width:10.5%}.players-table col.p-country{width:7%}.players-table col.p-position{width:5%}.players-table col.p-shot{width:4%}.players-table col.p-height{width:4.8%}.players-table col.p-weight{width:5%}.players-table col.p-league{width:7%}.players-table col.p-team{width:14%}.players-table col.p-games{width:5.8%}.players-table col.p-goals{width:4%}.players-table col.p-assists{width:4.3%}.players-table col.p-points{width:4.3%}.players-table col.p-ppg{width:6.2%}.players-table col.p-overall{width:5%}.players-table col.p-tier{width:6%}
 .players-table col.p-gaa{width:7%}.players-table col.p-svpct{width:7%}.players-table col.p-wins,.players-table col.p-losses{width:4.4%}.players-table col.p-shutouts{width:5.5%}
 .players-table th,.players-table td{min-width:0!important;max-width:none!important;padding-left:3px;padding-right:3px;white-space:normal;overflow:hidden;text-overflow:ellipsis}
 .players-table .th-filter{min-height:47px;padding:7px 3px;font-size:7.5px;line-height:1.12;justify-content:center!important;gap:3px;text-align:center}
@@ -427,7 +427,7 @@ td.at{text-align:center;color:var(--ink);width:40px}
 
 /* Leaderboard stays inside the page at every desktop width. */
 .leader-table{overflow-x:hidden}.leader-table table{width:100%;min-width:0;table-layout:fixed}
-.leader-table col.l-rank{width:4.5%}.leader-table col.l-photo{width:4%}.leader-table col.l-player{width:17.5%}.leader-table col.l-pos{width:6%}.leader-table col.l-grade{width:8%}.leader-table col.l-overall{width:7%}.leader-table col.l-tier{width:13%}
+.leader-table col.l-rank{width:3.5%}.leader-table col.l-photo{width:3.5%}.leader-table col.l-player{width:12%}.leader-table col.l-pos{width:4.5%}.leader-table col.l-league{width:7%}.leader-table col.l-team{width:14%}.leader-table col.l-grade{width:6.2%}.leader-table col.l-overall{width:6%}.leader-table col.l-tier{width:11%}
 .leader-table th,.leader-table td{min-width:0!important;padding-left:4px;padding-right:4px;overflow:hidden;text-overflow:ellipsis}
 .leader-table .th-filter{min-height:45px;padding:7px 3px;justify-content:center;gap:3px;text-align:center;font-size:7.5px;line-height:1.12}.leader-table .th-filter span{flex:none}
 .leader-table tbody td{font-size:9px;padding-top:8px;padding-bottom:8px}.leader-table tbody .tm{font-size:8px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.leader-table .thumb{width:30px;height:30px}.leader-table .chip{max-width:100%;font-size:7.5px;padding:3px 5px;overflow:hidden;text-overflow:ellipsis}
@@ -442,6 +442,7 @@ td.at{text-align:center;color:var(--ink);width:40px}
 /* Team identity, centered tiers and the quieter Scout Room launch. */
 .team-mark{width:28px;height:28px;flex:0 0 28px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#102F4D,#2478B9);color:#fff;font-size:7px;font-weight:900;letter-spacing:.2px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.18)}
 .team-cell{display:flex;align-items:center;gap:7px;min-width:0;color:var(--muted)}.team-cell>span:last-child{overflow:hidden;text-overflow:ellipsis}.table-team-mark{width:24px;height:24px;flex-basis:24px;border-radius:7px;font-size:6px}
+.prospect-league-cell{display:flex;align-items:center;gap:6px;min-width:0;color:var(--muted)}.prospect-league-cell>span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .leader-team{display:flex;align-items:center;gap:5px!important;color:var(--muted);min-width:0}.leader-team span:last-child{overflow:hidden;text-overflow:ellipsis}.leader-team-mark{width:17px;height:17px;flex-basis:17px;border-radius:5px;font-size:5px}
 .tier-cell{text-align:center!important}.tier-cell .chip{display:inline-flex;justify-content:center;margin-inline:auto}.players-table thead th:last-child .th-filter,.leader-table thead th:last-child .th-filter{justify-content:center}
 .forum-three{grid-template-columns:repeat(3,1fr)}.forum-slow-label{position:relative;z-index:1;align-self:center;padding:7px 10px;border:1px solid rgba(255,255,255,.22);border-radius:20px;color:#C9DBEA;font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:1px}.mock-submit>span{background:#F3EDF9;color:#7352A0}.forum-three .submission-card{min-height:126px}.forum-three .submission-card>span{font-family:Georgia,serif;font-weight:700}.forum-layout{grid-template-columns:minmax(0,1fr) 270px}.scout-form-grid select{height:38px;font-size:11px}.forum-empty{display:flex;flex-direction:column;gap:5px}.forum-empty strong{font-size:13px;color:var(--navy)}.forum-empty span{font-size:9px;color:var(--muted)}
@@ -1905,12 +1906,6 @@ body.launch-open{overflow:hidden}
 .draft26-breakdown .draft26-chips{padding:0 13px 13px;border-top:1px solid #E6EEF3;padding-top:11px}
 .draft26-breakdown .draft26-chips[hidden]{display:none}
 
-/* Consistent rounded navigation tabs, including Scout Room and 2026 Draft. */
-.tab{border-radius:8px}
-.tab:hover{background:rgba(255,255,255,.055)}
-.tab.active{background:rgba(255,255,255,.075)}
-@media(max-width:760px){.tab{border-radius:7px 7px 0 0}}
-
 /* Match Scout Room and the 2026 archive to the site's rounded card system. */
 #view-forum .forum-hero-panel,
 #view-forum .forum-hero-actions .btn,
@@ -1941,6 +1936,11 @@ body.launch-open{overflow:hidden}
 #view-draft2026 .draft26-chips button{border-radius:7px}
 #view-draft2026 .draft26-data-note{margin-top:9px;border:1px solid #D9E8F2;border-radius:9px}
 #view-draft2026 .draft26-table{border-radius:11px}
+
+/* Draft-page headers use a sharper editorial edge. */
+#view-draft .draft-setup{border-radius:0 0 10px 10px}
+#view-draft .draft-hero{border-radius:0}
+#view-draft2026 .draft26-head{border-radius:0}
 
 /* Keep the desktop section navigation visually centred in the full header. */
 @media(min-width:1080px){

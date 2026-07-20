@@ -343,6 +343,7 @@ function leagueForTeam(team,country=''){
   if(/Pontiacs|Grande Prairie Storm|Grizzlys|Dragons|Kodiaks/i.test(t))return 'AJHL';
   if(/Portage Terriers/i.test(t))return 'MJHL';if(/Séminaire St-François/i.test(t))return 'QM18AAA';
   if(/Yverdon.*U21/i.test(t))return 'Swiss U21-Elit';if(/RB Hockey Academy U18/i.test(t))return 'Austria U18';
+  if(/Lule[aå] HF U18/i.test(t))return 'U18 Nationell';
   if(/U20/i.test(t)&&/Finland/i.test(c))return 'U20 SM-sarja';if(/U18/i.test(t)&&/Finland/i.test(c))return 'U18 SM-sarja';
   if(/U20/i.test(t)&&/Sweden/i.test(c))return 'U20 Nationell';if(/U18/i.test(t)&&/Sweden/i.test(c))return 'U18 Nationell';
   if(/U20/i.test(t)&&/Czechia/i.test(c))return 'Czechia U20';if(/U18|U20/i.test(t)&&/Germany/i.test(c))return 'DNL U20';
@@ -576,8 +577,8 @@ const heightInches=h=>{const m=String(h||'').match(/(\d+)\D+(\d+)/);return m?(+m
 const weightLbs=w=>Number(String(w||'').match(/\d+/)?.[0]||0);
 const PROSPECT_PRODUCTION_KEYS=['games','goals','assists','points','ppg','gaa','svPct','wins','losses','shutouts'];
 const P_NUMERIC=['height','weight','games','goals','assists','points','ppg','gaa','svPct','wins','losses','shutouts','ovr'];
-const P_VALUES=['country','pos','shot','team','tier'];
-const P_LABELS={player:'Player',country:'Nationality',pos:'Position',shot:'Shoots / catches',height:'Height',weight:'Weight',team:'Team',games:'Games played',goals:'Goals',assists:'Assists',points:'Points',ppg:'Points per game',gaa:'Goals-against average',svPct:'Save percentage',wins:'Wins',losses:'Losses',shutouts:'Shutouts',ovr:'Overall',tier:'Tier'};
+const P_VALUES=['country','pos','shot','league','team','tier'];
+const P_LABELS={player:'Player',country:'Nationality',pos:'Position',shot:'Shoots / catches',height:'Height',weight:'Weight',league:'League',team:'Team',games:'Games played',goals:'Goals',assists:'Assists',points:'Points',ppg:'Points per game',gaa:'Goals-against average',svPct:'Save percentage',wins:'Wins',losses:'Losses',shutouts:'Shutouts',ovr:'Overall',tier:'Tier'};
 let pTableFilters={player:'',...Object.fromEntries(P_VALUES.map(k=>[k,''])),...Object.fromEntries(P_NUMERIC.map(k=>[k,{min:'',max:''}]))},pTableSort={key:'ovr',dir:'desc'},pOpenColumn=null,pPlayerType='skater',prospectSeasonView='d1';
 const prospectSeasonLabel=()=>prospectSeasonView==='draft'?'Draft year':'D-1 year';
 const PROSPECT_DRAFT_TEAM_OVERRIDES={
@@ -601,26 +602,27 @@ function prospectDraftTeamFor(p){
   return p.team||p.statsTeam||'';
 }
 function prospectTeamFor(p){return prospectSeasonView==='draft'?prospectDraftTeamFor(p):(p.statsTeam||p.team||'');}
+function prospectLeagueFor(p){const team=prospectTeamFor(p);return prospectSeasonView==='draft'?(leagueForTeam(team,p.country)||''):(p.league||leagueForTeam(team,p.country)||'');}
 function prospectStatFor(p,key){return prospectSeasonView==='draft'&&PROSPECT_PRODUCTION_KEYS.includes(key)?'':p[key];}
 function syncProspectSeasonToggles(){
   $$('#prospectSeasonToggle [data-prospect-season], #leaderSeasonToggle [data-prospect-season]').forEach(btn=>btn.classList.toggle('on',btn.dataset.prospectSeason===prospectSeasonView));
 }
 function setProspectSeasonView(view){
   prospectSeasonView=view==='draft'?'draft':'d1';
-  pTableFilters.team='';
+  pTableFilters.team='';pTableFilters.league='';
   PROSPECT_PRODUCTION_KEYS.forEach(key=>{if(pTableFilters[key])pTableFilters[key]={min:'',max:''};});
   closePlayerMenu();closeLeaderMenu();syncProspectSeasonToggles();renderPlayers();if($('#view-board').classList.contains('active'))renderBoard();
 }
 const pHeaderButton=(key,label,cls='')=>`<th class="${cls}"${key==='player'?' colspan="2"':''}><button class="th-filter p-th-filter" data-pcol="${key}">${label} <span${key==='player'?' class="header-icon"':''}>↕</span></button></th>`;
 function renderPlayerTableFrame(){
   const goalie=pPlayerType==='goalie';
-  $('#pCols').innerHTML=goalie?'<col class="p-photo"><col class="p-player"><col class="p-country"><col class="p-shot"><col class="p-height"><col class="p-weight"><col class="p-team"><col class="p-games"><col class="p-gaa"><col class="p-svpct"><col class="p-wins"><col class="p-losses"><col class="p-shutouts"><col class="p-overall"><col class="p-tier">':'<col class="p-photo"><col class="p-player"><col class="p-country"><col class="p-position"><col class="p-shot"><col class="p-height"><col class="p-weight"><col class="p-team"><col class="p-games"><col class="p-goals"><col class="p-assists"><col class="p-points"><col class="p-ppg"><col class="p-overall"><col class="p-tier">';
-  const shared=`${pHeaderButton('player','Player')} ${pHeaderButton('country','Nationality')} ${goalie?'':pHeaderButton('pos','Position')} ${pHeaderButton('shot',goalie?'Catches':'Shoots','c')} ${pHeaderButton('height','Height','c')} ${pHeaderButton('weight','Weight','c')} ${pHeaderButton('team',prospectSeasonView==='draft'?'Draft Year Team':'D-1 Team')} ${pHeaderButton('games',prospectSeasonView==='draft'?'Draft GP':'D-1 GP','c')}`;
+  $('#pCols').innerHTML=goalie?'<col class="p-photo"><col class="p-player"><col class="p-country"><col class="p-shot"><col class="p-height"><col class="p-weight"><col class="p-league"><col class="p-team"><col class="p-games"><col class="p-gaa"><col class="p-svpct"><col class="p-wins"><col class="p-losses"><col class="p-shutouts"><col class="p-overall"><col class="p-tier">':'<col class="p-photo"><col class="p-player"><col class="p-country"><col class="p-position"><col class="p-shot"><col class="p-height"><col class="p-weight"><col class="p-league"><col class="p-team"><col class="p-games"><col class="p-goals"><col class="p-assists"><col class="p-points"><col class="p-ppg"><col class="p-overall"><col class="p-tier">';
+  const shared=`${pHeaderButton('player','Player')} ${pHeaderButton('country','Nationality')} ${goalie?'':pHeaderButton('pos','Position')} ${pHeaderButton('shot',goalie?'Catches':'Shoots','c')} ${pHeaderButton('height','Height','c')} ${pHeaderButton('weight','Weight','c')} ${pHeaderButton('league','League')} ${pHeaderButton('team',prospectSeasonView==='draft'?'Draft Year Team':'D-1 Team')} ${pHeaderButton('games',prospectSeasonView==='draft'?'Draft GP':'D-1 GP','c')}`;
   const production=goalie?`${pHeaderButton('gaa','Goals-Against Average','c')} ${pHeaderButton('svPct','Save Percentage','c')} ${pHeaderButton('wins','Wins','c')} ${pHeaderButton('losses','Losses','c')} ${pHeaderButton('shutouts','Shutouts','c')}`:`${pHeaderButton('goals','Goals','c')} ${pHeaderButton('assists','Assists','c')} ${pHeaderButton('points','Points','c')} ${pHeaderButton('ppg','Points / Game','c')}`;
   $('#pHead').innerHTML=`<tr>${shared}${production}${pHeaderButton('ovr','Overall','c')}${pHeaderButton('tier','Tier')}</tr>`;
   $$('.players-table .p-th-filter').forEach(btn=>btn.onclick=e=>{e.stopPropagation();if(pOpenColumn===btn.dataset.pcol){closePlayerMenu();return;}renderPlayerMenu(btn.dataset.pcol,btn);});
 }
-function pColumnValue(p,key){ if((key==='ovr'||key==='tier')&&prospectSeasonView==='draft')return '';if(key==='ovr')return p._o;if(key==='tier')return tierOf(p._o).name;if(key==='height')return heightInches(p.height);if(key==='weight')return weightLbs(p.weight);if(key==='player')return p.name;if(key==='team')return prospectTeamFor(p);if(PROSPECT_PRODUCTION_KEYS.includes(key))return prospectStatFor(p,key);return p[key]; }
+function pColumnValue(p,key){ if((key==='ovr'||key==='tier')&&prospectSeasonView==='draft')return '';if(key==='ovr')return p._o;if(key==='tier')return tierOf(p._o).name;if(key==='height')return heightInches(p.height);if(key==='weight')return weightLbs(p.weight);if(key==='player')return p.name;if(key==='league')return prospectLeagueFor(p);if(key==='team')return prospectTeamFor(p);if(PROSPECT_PRODUCTION_KEYS.includes(key))return prospectStatFor(p,key);return p[key]; }
 function pFilterValues(key){ if(key==='country')return [...new Set(state.players.flatMap(p=>String(p.country||'').split(/\s*\/\s*/)).filter(Boolean))].sort(); if(key==='pos')return POSITION_FILTERS.filter(pos=>state.players.some(p=>positionTokens(p.pos).includes(pos))); if(key==='tier')return TIERS.map(t=>t.name); return [...new Set(state.players.map(p=>pColumnValue(p,key)).filter(Boolean))].sort(); }
 function updatePlayerHeaders(){ $$('.players-table .p-th-filter').forEach(btn=>{const key=btn.dataset.pcol,active=pTableSort&&pTableSort.key===key,filtered=P_NUMERIC.includes(key)?(pTableFilters[key].min!==''||pTableFilters[key].max!==''):pTableFilters[key]!=='';btn.classList.toggle('active',active);btn.classList.toggle('filtered',filtered);const icon=btn.querySelector('span');if(key==='player'&&!active)icon.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4 4"></path></svg>';else icon.textContent=active?(pTableSort.dir==='asc'?'↑':'↓'):'↕';}); }
 function closePlayerMenu(){ $('#pColumnMenu').hidden=true;pOpenColumn=null; }
@@ -644,14 +646,15 @@ function renderPlayers(){
   if(pTableSort)list.sort((a,b)=>{const av=pColumnValue(a,pTableSort.key),bv=pColumnValue(b,pTableSort.key),am=av===''||av==null,bm=bv===''||bv==null;if(am!==bm)return am?1:-1;const cmp=P_NUMERIC.includes(pTableSort.key)?Number(av)-Number(bv):String(av).localeCompare(String(bv));return pTableSort.dir==='asc'?cmp:-cmp;});
   updatePlayerHeaders();$('#pCount').textContent=`${list.length} ${list.length===1?'player':'players'}`;
   const b=$('#pBody');
-  if(!list.length){ b.innerHTML=`<tr><td colspan="15" class="empty">No prospects match the current table filters.</td></tr>`; return; }
-  b.innerHTML=list.map(p=>{ const t=tierOf(p._o),goalie=isGoalie(p),seasonTeam=prospectTeamFor(p);
+  if(!list.length){ b.innerHTML=`<tr><td colspan="16" class="empty">No prospects match the current table filters.</td></tr>`; return; }
+  b.innerHTML=list.map(p=>{ const t=tierOf(p._o),goalie=isGoalie(p),seasonTeam=prospectTeamFor(p),seasonLeague=prospectLeagueFor(p);
     return `<tr data-id="${p.id}">
       <td style="width:48px">${thumb(p)}</td>
       <td><div class="pl"><div><div class="nm">${esc(p.name)}</div></div></div></td>
       <td><span class="nation-cell" title="${esc(p.country||'')}"><b>${flagFor(p.country)||'—'}</b><small>${esc(p.country||'')}</small></span></td>
       ${goalie?'':`<td><span class="posbadge">${esc(p.pos||'—')}</span></td>`}
       <td class="c">${esc(p.shot||'—')}</td><td class="c tnum">${esc(p.height||'—')}</td><td class="c tnum">${esc(p.weight||'—')}</td>
+      <td><span class="prospect-league-cell">${seasonLeague?leagueMark(seasonLeague,'table-league-mark'):''}<span>${esc(seasonLeague||'—')}</span></span></td>
       <td><span class="team-cell">${teamMark(seasonTeam,'table-team-mark',p.country)}<span>${esc(seasonTeam||'')}</span></span></td>
       <td class="c statnum tnum">${showStat(prospectStatFor(p,'games'))}</td>${goalie?`<td class="c statnum tnum">${showStat(prospectStatFor(p,'gaa'),2)}</td><td class="c statnum strong tnum">${hasStat(prospectStatFor(p,'svPct'))?Number(prospectStatFor(p,'svPct')).toFixed(3).replace(/^0/,''):''}</td><td class="c statnum tnum">${showStat(prospectStatFor(p,'wins'))}</td><td class="c statnum tnum">${showStat(prospectStatFor(p,'losses'))}</td><td class="c statnum tnum">${showStat(prospectStatFor(p,'shutouts'))}</td>`:`<td class="c statnum tnum">${showStat(prospectStatFor(p,'goals'))}</td><td class="c statnum tnum">${showStat(prospectStatFor(p,'assists'))}</td><td class="c statnum strong tnum">${showStat(prospectStatFor(p,'points'))}</td><td class="c statnum tnum">${showStat(prospectStatFor(p,'ppg'),2)}</td>`}
       <td class="c">${prospectSeasonView==='draft'?'':`<span class="ovrn tnum">${p._o.toFixed(1)}</span>`}</td>
@@ -942,17 +945,17 @@ async function firebaseCreateTopic(topic){
   return firebaseTopicOut(ref.key,payload);
 }
 async function firebaseLikeTopic(id){
-  await firebaseDb.ref(`forumTopics/${id}/likes`).transaction(value=>Number(value||0)+1);
-  const snap=await firebaseDb.ref(`forumTopics/${id}`).once('value');
-  return firebaseTopicOut(id,snap.val()||{});
+  await firebaseDb.ref(`forumTopics/${id}/likes`).set(firebase.database.ServerValue.increment(1));
 }
 async function firebaseCommentTopic(id,body){
   if(!currentUser)throw new Error('Sign in required.');
   const ref=firebaseDb.ref(`forumTopics/${id}/comments`).push();
-  await ref.set({body,created:'Just now',createdAt:Date.now(),author:currentUser});
-  await firebaseDb.ref(`forumTopics/${id}/updatedAt`).set(Date.now());
-  const snap=await firebaseDb.ref(`forumTopics/${id}`).once('value');
-  return firebaseTopicOut(id,snap.val()||{});
+  const comment={id:ref.key,body,created:'Just now',createdAt:Date.now(),author:currentUser};
+  await firebaseDb.ref().update({
+    [`forumTopics/${id}/comments/${ref.key}`]:comment,
+    [`forumTopics/${id}/updatedAt`]:firebase.database.ServerValue.TIMESTAMP
+  });
+  return comment;
 }
 const forumEmpty=copy=>`<div class="lane-empty">${esc(copy)}</div>`;
 const reportScore=t=>Number(t.views||0)+Number(t.likes||0)*3;
@@ -1027,21 +1030,21 @@ async function likeMock(id){
   if(initFirebase()&&forumRemote&&!currentUser){requireAuth('Sign in to like Scout Room posts.');return;}
   try{
     if(initFirebase()&&forumRemote){
-      const updated=await firebaseLikeTopic(id);
-      const index=forumTopics.findIndex(t=>t.id===id);if(index>=0)forumTopics[index]=updated;
+      await firebaseLikeTopic(id);
+      topic.likes=Number(topic.likes||0)+1;
     }else{
       topic.likes=Number(topic.likes||0)+1;forumSave();
     }
     if(openMockId===id)openMockDetail(id);
     renderForum();
   }catch(error){
-    topic.likes=Number(topic.likes||0)+1;forumSave();if(openMockId===id)openMockDetail(id);renderForum();
+    if(openMockId===id)$('#mockCommentError').textContent=firebaseFriendlyError(error);
   }
 }
 $('#mockDetailClose').onclick=closeMockDetail;
 $('#mockDetailOverlay').onclick=e=>{if(e.target.id==='mockDetailOverlay')closeMockDetail();};
 $('#mockLikeBtn').onclick=()=>{if(openMockId)likeMock(openMockId);};
-$('#mockCommentForm').onsubmit=async e=>{e.preventDefault();if(!requireAuth('Sign in to comment in Scout Room.'))return;const body=$('#mockCommentText').value.trim(),topic=forumTopics.find(t=>t.id===openMockId);if(!topic)return;if(moderateForumText(body)){$('#mockCommentError').textContent='This comment contains language that is not allowed in Scout Room.';return;}try{if(initFirebase()&&forumRemote){const updated=await firebaseCommentTopic(topic.id,body);const index=forumTopics.findIndex(t=>t.id===topic.id);if(index>=0)forumTopics[index]=updated;}else{topic.comments=topic.comments||[];topic.comments.push({body,created:'Just now',author:currentUser});forumSave();}openMockDetail(topic.id);renderForum();}catch(error){$('#mockCommentError').textContent=error.message;}};
+$('#mockCommentForm').onsubmit=async e=>{e.preventDefault();if(!requireAuth('Sign in to comment in Scout Room.'))return;const body=$('#mockCommentText').value.trim(),topic=forumTopics.find(t=>t.id===openMockId);if(!topic)return;if(moderateForumText(body)){$('#mockCommentError').textContent='This comment contains language that is not allowed in Scout Room.';return;}try{topic.comments=topic.comments||[];if(initFirebase()&&forumRemote){topic.comments.push(await firebaseCommentTopic(topic.id,body));}else{topic.comments.push({body,created:'Just now',author:currentUser});forumSave();}openMockDetail(topic.id);renderForum();}catch(error){$('#mockCommentError').textContent=firebaseFriendlyError(error);}};
 function closeScoutSubmit(){ $('#scoutOverlay').classList.remove('show'); $('#scoutSubmitError').textContent=''; }
 function openScoutSubmit(type='prospect'){
   $('#scoutSubmitForm').reset(); $('#scoutSubmitType').value=type; $('#scoutSubmitError').textContent='';
@@ -1069,18 +1072,19 @@ $('#scoutSubmitForm').onsubmit=async e=>{ e.preventDefault(); if(!requireAuth('S
 };
 
 const L_NUMERIC=['skating','shooting','iq','ozone','dzone','phys','ovr'];
-const L_LABELS={player:'Player',pos:'Position',skating:'Skating',shooting:'Shooting',iq:'Hockey IQ',ozone:'Offensive Zone',dzone:'Defensive Zone',phys:'Physicality',ovr:'Overall',tier:'Tier'};
-let lFilters={player:'',pos:'',tier:'',...Object.fromEntries(L_NUMERIC.map(k=>[k,{min:'',max:''}]))},lSort={key:'ovr',dir:'desc'},lOpenColumn=null;
-const lColumnValue=(p,key)=>key==='ovr'?p._o:key==='tier'?tierOf(p._o).name:key==='player'?p.name:p[key];
+const L_VALUES=['pos','league','team','tier'];
+const L_LABELS={player:'Player',pos:'Position',league:'League',team:'Team',skating:'Skating',shooting:'Shooting',iq:'Hockey IQ',ozone:'Offensive Zone',dzone:'Defensive Zone',phys:'Physicality',ovr:'Overall',tier:'Tier'};
+let lFilters={player:'',...Object.fromEntries(L_VALUES.map(k=>[k,''])),...Object.fromEntries(L_NUMERIC.map(k=>[k,{min:'',max:''}]))},lSort={key:'ovr',dir:'desc'},lOpenColumn=null;
+const lColumnValue=(p,key)=>key==='ovr'?p._o:key==='tier'?tierOf(p._o).name:key==='player'?p.name:key==='team'?prospectTeamFor(p):key==='league'?prospectLeagueFor(p):p[key];
 function updateLeaderHeaders(){
   $$('.leader-table .th-filter').forEach(btn=>{ const key=btn.dataset.lcol,active=lSort.key===key,filtered=L_NUMERIC.includes(key)?(lFilters[key].min!==''||lFilters[key].max!==''):lFilters[key]!=='';
     btn.classList.toggle('active',active); btn.classList.toggle('filtered',filtered); btn.querySelector('span').textContent=active?(lSort.dir==='asc'?'↑':'↓'):'↕'; });
 }
 function closeLeaderMenu(){ $('#lColumnMenu').hidden=true; lOpenColumn=null; }
 function renderLeaderMenu(key,anchor){
-  const menu=$('#lColumnMenu'),numeric=L_NUMERIC.includes(key),positions=POSITION_FILTERS.filter(pos=>state.players.some(p=>positionTokens(p.pos).includes(pos))),tiers=TIERS.map(t=>t.name);
+  const menu=$('#lColumnMenu'),numeric=L_NUMERIC.includes(key),positions=POSITION_FILTERS.filter(pos=>state.players.some(p=>positionTokens(p.pos).includes(pos))),tiers=TIERS.map(t=>t.name),values=key==='pos'?positions:key==='tier'?tiers:[...new Set(state.players.map(p=>lColumnValue(p,key)).filter(Boolean))].sort();
   const valueFilter=key==='player'?`<label>Contains<input id="lTextFilter" type="text" value="${esc(lFilters.player)}" placeholder="Search player, team or country"></label>`:
-    key==='pos'||key==='tier'?`<label>Show<select id="lValueFilter"><option value="">All values</option>${(key==='pos'?positions:tiers).map(v=>`<option value="${esc(v)}" ${lFilters[key]===v?'selected':''}>${esc(v)}</option>`).join('')}</select></label>`:
+    L_VALUES.includes(key)?`<label>Show<select id="lValueFilter"><option value="">All values</option>${values.map(v=>`<option value="${esc(v)}" ${lFilters[key]===v?'selected':''}>${esc(v)}</option>`).join('')}</select></label>`:
     `<div class="column-range"><label>Minimum<input id="lMinFilter" type="number" min="0" max="100" value="${lFilters[key].min}" placeholder="Any"></label><label>Maximum<input id="lMaxFilter" type="number" min="0" max="100" value="${lFilters[key].max}" placeholder="Any"></label></div>`;
   menu.innerHTML=`<div class="column-menu-head"><strong>${L_LABELS[key]}</strong><button id="lMenuClose">×</button></div><div class="column-sort"><button data-sort="asc">↑ Sort ascending</button><button data-sort="desc">↓ Sort descending</button></div><div class="column-menu-filter">${valueFilter}</div><button class="column-clear" id="lClearColumn">Clear ${L_LABELS[key]} filter</button>`;
   const rect=anchor.getBoundingClientRect(); menu.style.left=Math.min(rect.left,window.innerWidth-255)+'px'; menu.style.top=(rect.bottom+5)+'px'; menu.hidden=false; lOpenColumn=key;
@@ -1098,21 +1102,23 @@ function renderBoard(){
   let list=state.players.map(p=>({...p,_o:overall(p)}));
   const q=lFilters.player.trim().toLowerCase();
   syncProspectSeasonToggles();
-  list=list.filter(p=>(!q||(p.name+' '+prospectTeamFor(p)+' '+p.country).toLowerCase().includes(q))&&(!lFilters.pos||positionTokens(p.pos).includes(lFilters.pos))&&(!lFilters.tier||tierOf(p._o).name===lFilters.tier)&&L_NUMERIC.every(k=>{const f=lFilters[k],v=Number(lColumnValue(p,k));return(f.min===''||v>=+f.min)&&(f.max===''||v<=+f.max);}));
+  list=list.filter(p=>(!q||(p.name+' '+prospectLeagueFor(p)+' '+prospectTeamFor(p)+' '+p.country).toLowerCase().includes(q))&&L_VALUES.every(k=>!lFilters[k]||(k==='pos'?positionTokens(p.pos).includes(lFilters[k]):String(lColumnValue(p,k))===lFilters[k]))&&L_NUMERIC.every(k=>{const f=lFilters[k],v=Number(lColumnValue(p,k));return(f.min===''||v>=+f.min)&&(f.max===''||v<=+f.max);}));
   list.sort((a,b)=>{const av=lColumnValue(a,lSort.key),bv=lColumnValue(b,lSort.key),cmp=typeof av==='number'||L_NUMERIC.includes(lSort.key)?Number(av)-Number(bv):String(av).localeCompare(String(bv));return lSort.dir==='asc'?cmp:-cmp;});
   updateLeaderHeaders();
   const showRatings=prospectSeasonView!=='draft';
-  $('#lBody').innerHTML=list.map((p,i)=>{ const t=tierOf(p._o),seasonTeam=prospectTeamFor(p),rating=v=>showRatings?v:'';
+  $('#lBody').innerHTML=list.map((p,i)=>{ const t=tierOf(p._o),seasonTeam=prospectTeamFor(p),seasonLeague=prospectLeagueFor(p),rating=v=>showRatings?v:'';
     return `<tr data-id="${p.id}">
       <td class="rank tnum">${i+1}</td>
       <td style="width:48px">${thumb(p)}</td>
-      <td><div class="nm" style="font-weight:700;color:var(--navy)">${esc(p.name)} ${flagFor(p.country)?`<span class="inline-flags">${flagFor(p.country)}</span>`:''}</div><div class="tm leader-team">${teamMark(seasonTeam,'leader-team-mark',p.country)}<span>${esc(seasonTeam||'')}</span></div></td>
+      <td><div class="nm" style="font-weight:700;color:var(--navy)">${esc(p.name)} ${flagFor(p.country)?`<span class="inline-flags">${flagFor(p.country)}</span>`:''}</div></td>
       <td><span class="posbadge">${esc(p.pos||'—')}</span></td>
+      <td><span class="prospect-league-cell">${seasonLeague?leagueMark(seasonLeague,'table-league-mark'):''}<span>${esc(seasonLeague||'—')}</span></span></td>
+      <td><span class="team-cell">${teamMark(seasonTeam,'leader-team-mark',p.country)}<span>${esc(seasonTeam||'—')}</span></span></td>
       <td class="at tnum">${rating(p.skating)}</td><td class="at tnum">${rating(p.shooting)}</td><td class="at tnum">${rating(p.iq)}</td>
       <td class="at tnum">${rating(p.ozone)}</td><td class="at tnum">${rating(p.dzone)}</td><td class="at tnum">${rating(p.phys)}</td>
       <td class="c">${showRatings?`<span class="ovrn tnum">${p._o.toFixed(1)}</span>`:''}</td>
       <td class="tier-cell">${showRatings?`<span class="chip" style="background:${t.color}">${t.name}</span>`:''}</td>
-    </tr>`; }).join('') || `<tr><td colspan="12" class="empty">No prospects to rank.</td></tr>`;
+    </tr>`; }).join('') || `<tr><td colspan="14" class="empty">No prospects to rank.</td></tr>`;
   $$('#lBody tr[data-id]').forEach(tr=>tr.onclick=()=>openView(tr.dataset.id));
   hydrateTeamLogos($('#lBody'));
 }
