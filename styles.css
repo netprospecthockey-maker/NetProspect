@@ -1985,3 +1985,13 @@ body.launch-open{overflow:hidden}
 #view-draft .open-pick strong{color:#23516b}
 #view-draft .picked{background:#f6fbfe;box-shadow:inset 0 0 0 1px #d8e7ef}
 #view-draft .round-h{background:linear-gradient(100deg,#102f45,#1b536e)}
+
+/* Pick cards: clear hierarchy and editable NHL destination. */
+#view-draft .pick-context{display:flex;align-items:center;justify-content:space-between;gap:8px}
+#view-draft .pick-context>span{color:#54758a;font-weight:850;letter-spacing:.2px;text-transform:uppercase}
+#view-draft .pick-team-select{min-width:0;max-width:170px;height:25px;padding:2px 24px 2px 7px;border:1px solid #c5d9e4;border-radius:5px;background:#fff;color:#173e58;font:750 8px var(--f);cursor:pointer}
+#view-draft .slot:has(.picked){border-left:3px solid #237fad}
+#view-draft .slot.drop-target{border-color:#1688c5;background:#eaf7fd;box-shadow:0 0 0 3px rgba(35,127,173,.14)}
+#view-draft .draft-now:focus-visible,#view-draft .open-draft-best:focus-visible,#view-draft .pick-team-select:focus-visible{outline:2px solid #1688c5;outline-offset:2px}
+@media(max-width:520px){#view-draft .pick-team-select{max-width:145px}}
+.code-save-status{color:#24734b;font-size:12px;font-weight:800}.code-save-status.failed{color:#b24d3b}

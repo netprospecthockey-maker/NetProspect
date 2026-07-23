@@ -38,7 +38,7 @@ const NHL_TEAMS=["Anaheim Ducks","Boston Bruins","Buffalo Sabres","Calgary Flame
   "Colorado Avalanche","Columbus Blue Jackets","Dallas Stars","Detroit Red Wings","Edmonton Oilers","Florida Panthers",
   "Los Angeles Kings","Minnesota Wild","Montréal Canadiens","Nashville Predators","New Jersey Devils","New York Islanders",
   "New York Rangers","Ottawa Senators","Philadelphia Flyers","Pittsburgh Penguins","San Jose Sharks","Seattle Kraken",
-  "St. Louis Blues","Tampa Bay Lightning","Toronto Maple Leafs","Utah Hockey Club","Vancouver Canucks","Vegas Golden Knights",
+  "St. Louis Blues","Tampa Bay Lightning","Toronto Maple Leafs","Utah Mammoth","Vancouver Canucks","Vegas Golden Knights",
   "Washington Capitals","Winnipeg Jets"];
 
 const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
@@ -291,6 +291,7 @@ const TEAM_LOGOS={
 };
 const teamLogoSlug=name=>String(name).normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
 Object.assign(TEAM_LOGOS,{
+  ...EP_2027_D1_TEAM_LOGOS,
   'Akademiya SKA St. Petersburg':'https://files.eliteprospects.com/layout/logos/a1b0f30e-1ccd-444b-879b-74ecca07f16b_large.png',
   'CSKA 2009':'assets/teams/cska-moskva.svg',
   'CSKA Juniors':'assets/teams/cska-moskva.svg',
@@ -332,17 +333,25 @@ function teamMark(team,cls='',fallbackCountry=''){
 async function hydrateTeamLogos(){/* Only verified, club-specific artwork is rendered. */}
 function leagueForTeam(team,country=''){
   const t=String(team||''),c=String(country||'');
-  if(/CHL team TBA/i.test(t))return 'CHL';
+  if(/CHL team TBA/i.test(t))return '';
+  if(/Boston College|Boston University|Michigan Wolverines|Univ\. of (Michigan|North Dakota|Notre Dame)/i.test(t))return 'NCAA';
   if(/Tri-City Storm/i.test(t))return 'USHL';
-  if(/Hitmen|Wheat Kings|Silvertips|Medicine Hat Tigers|Raiders|Thunderbirds|Chiefs|Tri-City Americans|Royals|Hurricanes|Broncos|Giants|Wenatchee Wild|Moose Jaw Warriors/i.test(t))return 'WHL';
-  if(/Spirit|67's|Petes|Frontenacs|Wolves|Sting|Firebirds|Battalion|IceDogs|Guelph Storm|London Knights|Steelheads/i.test(t))return 'OHL';
-  if(/Sea Dogs|Remparts|Phoenix|Tigres|Voltigeurs|Océanic/i.test(t))return 'QMJHL';
+  if(/Hitmen|Wheat Kings|Silvertips|Medicine Hat Tigers|Raiders|Thunderbirds|Chiefs|Tri-City Americans|Royals|Hurricanes|Broncos|Giants|Wenatchee Wild|Moose Jaw Warriors|Penticton Vees|Oil Kings/i.test(t))return 'WHL';
+  if(/Spirit|67'?s|Petes|Frontenacs|Wolves|Sting|Firebirds|Battalion|IceDogs|Guelph Storm|London Knights|Steelheads|Greyhounds/i.test(t))return 'OHL';
+  if(/Sea Dogs|Remparts|Phoenix|Tigres|Voltigeurs|Océanic|Cataractes|Drakkar|Islanders|Saguenéens|Huskies/i.test(t))return 'QMJHL';
   if(/National U1[78]|USNTDP/i.test(t))return 'NTDP';
-  if(/Steel|Stampede|Storm|Buccaneers|Gamblers|Lancers/i.test(t))return 'USHL';
-  if(/Moskva|Yaroslavl|Irbis|Snaipery|Medvedi|Chaika|Akademiya SKA/i.test(t))return 'MHL';
+  if(/Chicago Steel|Stampede|Tri-City Storm|Buccaneers|Gamblers|Lancers|RoughRiders|Fargo Force|Lumberjacks|Black Hawks|Phantoms|Musketeers/i.test(t))return 'USHL';
+  if(/Moskva|Moscow|Yaroslavl|Irbis|Snaipery|Medvedi|Chaika|Akademiya SKA|AKM Novomoskovsk|MHK |Loko |SKA-1946/i.test(t))return 'MHL';
   if(/Pontiacs|Grande Prairie Storm|Grizzlys|Dragons|Kodiaks/i.test(t))return 'AJHL';
   if(/Portage Terriers/i.test(t))return 'MJHL';if(/Séminaire St-François/i.test(t))return 'QM18AAA';
   if(/Yverdon.*U21/i.test(t))return 'Swiss U21-Elit';if(/RB Hockey Academy U18/i.test(t))return 'Austria U18';
+  if(/RB Hockey Juniors/i.test(t))return 'AlpsHL';
+  if(/Davos U21/i.test(t))return 'U21-Elit';
+  if(/EHC Biel-Bienne$/i.test(t))return 'NL';
+  if(/Adler Mannheim|Augsburger Panther/i.test(t))return 'DEL';
+  if(/Ilves$/i.test(t))return 'Liiga';
+  if(/HC Energie Karlovy Vary$|Bílí Tygři Liberec$|HC Kometa Brno$|HK Nitra$/i.test(t))return /Nitra/i.test(t)?'Slovak Extraliga':'Czech Extraliga';
+  if(/HC Dynamo Pardubice U18/i.test(t))return 'Czechia U18';
   if(/Lule[aå] HF U18/i.test(t))return 'U18 Nationell';
   if(/U20/i.test(t)&&/Finland/i.test(c))return 'U20 SM-sarja';if(/U18/i.test(t)&&/Finland/i.test(c))return 'U18 SM-sarja';
   if(/U20/i.test(t)&&/Sweden/i.test(c))return 'U20 Nationell';if(/U18/i.test(t)&&/Sweden/i.test(c))return 'U18 Nationell';
@@ -399,7 +408,8 @@ const VERIFIED_STAT_LINES={
 };
 
 const KEY='draftscout_v2'; let _mem=null;
-const SEED_VERSION=6;
+const SEED_VERSION=15;
+const RECOVERED_U18_RATINGS_VERSION=1;
 const POINT_STATS_VERSION=18;
 const BIO_DATA_VERSION=7;
 const STAT_LINES_VERSION=18;
@@ -521,15 +531,36 @@ const seedState=()=>({players:SEED_PLAYERS.map(original=>{
   const p={...original,name:PLAYER_NAME_CORRECTIONS[original.name]||original.name},bio=EP_BIOS[p.name]||{},stats=POINT_STATS[p.name]||{},grades=GOALIE_GRADES[p.name]||DEFAULT_GRADE_OVERRIDES[p.name]||{},
     {team:rawStatsTeam,...production}=stats,statsTeam=cleanTeamName(rawStatsTeam)||p.team||'';
   return{id:uid(),...p,...grades,...bio,...production,team:p.team||statsTeam,statsTeam,statLines:(typeof POINT_STAT_LINES==='object'&&POINT_STAT_LINES[p.name])||VERIFIED_STAT_LINES[p.name]||p.statLines,headshot:p.headshot||bio.photo||'',country:COUNTRY_BY_PLAYER[p.name]||p.country,role:cleanRole(p.role)};
-}),draft:{rounds:1,teams:[],picks:{}},seedVersion:SEED_VERSION,countryDataVersion:COUNTRY_DATA_VERSION,pointStatsVersion:POINT_STATS_VERSION,bioDataVersion:BIO_DATA_VERSION,statLinesVersion:STAT_LINES_VERSION,goalieGradesVersion:GOALIE_GRADES_VERSION,defaultGradeVersion:DEFAULT_GRADE_VERSION});
+}),draft:{rounds:1,teams:[],picks:{}},seedVersion:SEED_VERSION,recoveredU18RatingsVersion:RECOVERED_U18_RATINGS_VERSION,countryDataVersion:COUNTRY_DATA_VERSION,pointStatsVersion:POINT_STATS_VERSION,bioDataVersion:BIO_DATA_VERSION,statLinesVersion:STAT_LINES_VERSION,goalieGradesVersion:GOALIE_GRADES_VERSION,defaultGradeVersion:DEFAULT_GRADE_VERSION});
 function load(){ const raw=rawGet(); let migrated=false;
   if(raw){ try{state=JSON.parse(raw);}catch(e){state=seedState();} } else state=seedState();
   if(state.seedVersion!==SEED_VERSION){
-    const have=new Set(state.players.map(p=>(p.name||'').trim().toLowerCase()));
-    SEED_PLAYERS.forEach(sp=>{ if(!have.has((sp.name||'').trim().toLowerCase())) state.players.push({id:uid(),...sp}); });
+    const ep2027EligibilityStart=new Date('2008-09-16T00:00:00Z'),ep2027EligibilityEnd=new Date('2009-09-15T23:59:59Z');
+    state.players=state.players.filter(player=>{
+      if(!/^https:\/\/www\.eliteprospects\.com\/player\//.test(player.source||''))return true;
+      const dob=EP_2027_D1_DETAILS?.[player.name]?.dob||player.dob;
+      if(!dob)return true;
+      const born=new Date(dob);
+      return born>=ep2027EligibilityStart&&born<=ep2027EligibilityEnd;
+    });
+    const have=new Map(state.players.map(p=>[(p.name||'').trim().toLowerCase(),p]));
+    SEED_PLAYERS.forEach(sp=>{
+      const key=(sp.name||'').trim().toLowerCase(),existing=have.get(key);
+      if(!existing){const added={id:uid(),...sp};state.players.push(added);have.set(key,added);return;}
+      const isEp2027Import=(sp.league==='U18 Nationell'||['Nathaniel Chizik','Ben Geiger','Braden Horton','Freddie Schneider'].includes(sp.name))&&/^https:\/\/www\.eliteprospects\.com\/player\//.test(sp.source||'');
+      if(isEp2027Import){
+        // Ratings are deliberately excluded: locally edited scouting grades are authoritative.
+        ['team','statsTeam','league','pos','country','shot','height','weight','dob','birthplace','games','goals','assists','points','ppg','source','statLines'].forEach(field=>{existing[field]=sp[field];});
+        if(sp.headshot)existing.headshot=sp.headshot;
+      }
+    });
     state.seedVersion=SEED_VERSION; migrated=true;
   }
   const migrateCountries=state.countryDataVersion!==COUNTRY_DATA_VERSION,migratePoints=state.pointStatsVersion!==POINT_STATS_VERSION,migrateBios=state.bioDataVersion!==BIO_DATA_VERSION,migrateStatLines=state.statLinesVersion!==STAT_LINES_VERSION,migrateGoalieGrades=state.goalieGradesVersion!==GOALIE_GRADES_VERSION,migrateDefaultGrades=state.defaultGradeVersion!==DEFAULT_GRADE_VERSION;
+  if(state.recoveredU18RatingsVersion!==RECOVERED_U18_RATINGS_VERSION){
+    state.players.forEach(player=>{const recovered=RECOVERED_U18_RATINGS[player.name];if(recovered){Object.assign(player,recovered);player._localEdit=true;player.previousOverall=overall(player);}});
+    state.recoveredU18RatingsVersion=RECOVERED_U18_RATINGS_VERSION;migrated=true;
+  }
   state.players.forEach(player=>{
     const name=PLAYER_NAME_CORRECTIONS[player.name]||player.name,sourceRatings=SOURCE_RATINGS_BY_PLAYER[name];
     if(sourceRatings&&!player._localEdit&&ATTRS.some(([key])=>Number(player[key])!==sourceRatings[key])){Object.assign(player,sourceRatings);migrated=true;}
@@ -558,7 +589,7 @@ function load(){ const raw=rawGet(); let migrated=false;
   if(migrateStatLines){state.statLinesVersion=STAT_LINES_VERSION;migrated=true;}
   if(migrateGoalieGrades){state.goalieGradesVersion=GOALIE_GRADES_VERSION;migrated=true;}
   if(migrateDefaultGrades){state.defaultGradeVersion=DEFAULT_GRADE_VERSION;migrated=true;}
-  if(!state.draft)state.draft={rounds:1,teams:[],picks:{}}; if(!state.draft.picks)state.draft.picks={};
+  if(!state.draft)state.draft={rounds:1,teams:[],picks:{}}; if(!state.draft.picks)state.draft.picks={}; if(!Array.isArray(state.draft.teams)){state.draft.teams=[];migrated=true;}
   if(migrated) save(); }
 const save=()=>rawSet(JSON.stringify(state));
 const byId=id=>state.players.find(p=>p.id===id);
@@ -583,13 +614,13 @@ let pTableFilters={player:'',...Object.fromEntries(P_VALUES.map(k=>[k,''])),...O
 const prospectSeasonLabel=()=>prospectSeasonView==='draft'?'Draft year':'D-1 year';
 const PROSPECT_DRAFT_TEAM_OVERRIDES={
   'Carter Meyer':'Québec Remparts',
-  'Sammy Nelson':'CHL team TBA',
+  'Sammy Nelson':'',
   'Jamie Glance':'Saint John Sea Dogs',
-  'Nolan Fitzhenry':'CHL team TBA',
+  'Nolan Fitzhenry':'',
   'Diego Gutierrez':'USNTDP Juniors',
-  'Rocco Pelosi':'CHL team TBA',
+  'Rocco Pelosi':'',
   'Noah Davidson':'Medicine Hat Tigers',
-  'Timothy Kazda':'CHL team TBA',
+  'Timothy Kazda':'',
   'James Scantlebury':'Québec Remparts',
   'Ryerson Edgar':'Niagara IceDogs',
   'Eli McKamey':'Victoria Royals'
@@ -597,8 +628,8 @@ const PROSPECT_DRAFT_TEAM_OVERRIDES={
 const FUTURE_COLLEGE_TEAMS=new Set(['Boston College','Boston University','Michigan Wolverines','Univ. of Michigan','Univ. of North Dakota','Univ. of Notre Dame']);
 function futureCollegeTeamFor(p){return FUTURE_COLLEGE_TEAMS.has(p.team)?p.team:'';}
 function prospectDraftTeamFor(p){
-  if(PROSPECT_DRAFT_TEAM_OVERRIDES[p.name])return PROSPECT_DRAFT_TEAM_OVERRIDES[p.name];
-  if(futureCollegeTeamFor(p)&&p.name!=='Landon Dupont')return p.statsTeam||'CHL team TBA';
+  if(Object.prototype.hasOwnProperty.call(PROSPECT_DRAFT_TEAM_OVERRIDES,p.name))return PROSPECT_DRAFT_TEAM_OVERRIDES[p.name];
+  if(futureCollegeTeamFor(p)&&p.name!=='Landon Dupont')return p.statsTeam||'';
   return p.team||p.statsTeam||'';
 }
 function prospectTeamFor(p){return prospectSeasonView==='draft'?prospectDraftTeamFor(p):(p.statsTeam||p.team||'');}
@@ -1234,6 +1265,7 @@ function setFooter(){
   const v=mode==='view';
   $('#editHint').style.display=v?'none':'flex';
   $('#mClose2').style.display=v?'inline-block':'none';
+  $('#mCommitCode').style.display=v?'inline-block':'none';
   $('#mEdit').style.display=v?'inline-block':'none';
   $('#mCancel').style.display=v?'none':'inline-block';
   $('#mSave').style.display=v?'none':'inline-block';
@@ -1249,7 +1281,7 @@ function openView(id){
 $('#addBtn').onclick=()=>{if(isAdmin())openEditor(null);};
 $('#mClose').onclick=closeEditor;
 $('#mClose2').onclick=closeEditor;
-$('#mEdit').onclick=()=>{ if(viewId)openEditor(viewId); };
+$('#mEdit').onclick=()=>{ const status=$('#codeSaveStatus');if(status)status.textContent='';if(viewId)openEditor(viewId); };
 $('#mCancel').onclick=()=>{ if(editId)openView(editId); else closeEditor(); };
 $('#overlay').onclick=e=>{ if(e.target.id==='overlay')closeEditor(); };
 const blankPlayer=()=>({id:null,name:'',team:'',pos:'',shot:'L',country:'',height:'',weight:'',headshot:'',
@@ -1281,6 +1313,20 @@ function buildCardEditor(){
     updateOvr(); });
 }
 function closeEditor(){ $('#overlay').classList.remove('show'); editId=null; draftP=null; viewId=null; }
+async function postLocalPlayerApi(path,body={}){
+  const options={method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)};
+  const endpoints=[path];
+  if(location.hostname==='localhost'||location.hostname==='127.0.0.1')endpoints.push(`http://127.0.0.1:8787${path}`);
+  for(const endpoint of [...new Set(endpoints)]){
+    try{
+      const response=await fetch(endpoint,options);
+      if(response.ok)return true;
+    }catch(error){console.warn(`Code save unavailable at ${endpoint}`,error);}
+  }
+  return false;
+}
+const persistPlayerOverride=player=>postLocalPlayerApi('/api/player-overrides',player);
+const commitPlayerOverrides=()=>postLocalPlayerApi('/api/player-overrides/commit');
 $('#mSave').onclick=async()=>{
   draftP.name=(draftP.name||'').trim();
   if(!draftP.name){ const n=$('#ceName'); if(n){ n.focus(); n.style.borderColor='#E0705A'; } return; }
@@ -1292,8 +1338,19 @@ $('#mSave').onclick=async()=>{
     Object.assign(existing,draftP);
   } else { draftP.id=uid(); draftP.previousOverall=overall(draftP); state.players.push(draftP); }
   const savedId = editId || draftP.id;
-  save(); renderPlayers(); if($('#view-home').classList.contains('active'))renderHome(); if($('#view-board').classList.contains('active'))renderBoard(); if($('#view-stock').classList.contains('active'))renderStock();
+  save();
+  const persisted=await persistPlayerOverride(byId(savedId));
+  renderPlayers(); if($('#view-home').classList.contains('active'))renderHome(); if($('#view-board').classList.contains('active'))renderBoard(); if($('#view-stock').classList.contains('active'))renderStock();
   openView(savedId);
+  const status=$('#codeSaveStatus');if(status){status.textContent=persisted?'✓ Saved — code update queued':'Saved in browser only';status.classList.toggle('failed',!persisted);}
+};
+$('#mCommitCode').onclick=async()=>{
+  const button=$('#mCommitCode'),status=$('#codeSaveStatus');
+  button.disabled=true;
+  if(status){status.textContent='Saving all edits to code…';status.classList.remove('failed');}
+  const committed=await commitPlayerOverrides();
+  button.disabled=false;
+  if(status){status.textContent=committed?'✓ All edits saved to code':'Could not save edits to code';status.classList.toggle('failed',!committed);}
 };
 $('#mDelete').onclick=async()=>{
   if(!isAdmin())return;
@@ -1310,13 +1367,14 @@ $('#finishDraft').onclick=()=>{ draftResultsOpen=true; renderDraftResults(); };
 $('#backToDraft').onclick=()=>{ draftResultsOpen=false; setDraftView(); };
 $('#postDraftMock').onclick=()=>{
   const total=(state.draft.rounds||1)*32,lines=[];
-  for(let slot=0;slot<total;slot++){const pl=byId(state.draft.picks[slot]);if(pl)lines.push(`${slot+1}. ${pl.name}`);}
+  for(let slot=0;slot<total;slot++){const pl=byId(state.draft.picks[slot]),team=teamName(slot);if(pl)lines.push(`${slot+1}. ${team?team+' — ':''}${pl.name}`);}
   const forumTab=$('.tab[data-view="forum"]');if(forumTab)forumTab.click();
   openMockComposer(lines.join('\n'),`My ${state.draft.rounds||1}-round 2027 mock`);
 };
 $('#togglePool').onclick=()=>{ playerPoolOpen=!playerPoolOpen; setPoolVisibility(); };
 $('#mobileDraftSwitch').onclick=e=>{const button=e.target.closest('[data-draft-pane]');if(!button)return;mobileDraftPane=button.dataset.draftPane;setMobileDraftPane();};
 const teamName=i=>{ const t=(state.draft.teams||[])[i]; return (t&&t.length)?t:''; };
+const draftTeamSelect=(slot)=>`<select class="pick-team-select" data-team-slot="${slot}" aria-label="NHL team for pick ${slot+1}"><option value="">Team TBD</option>${NHL_TEAMS.map(team=>`<option value="${esc(team)}" ${teamName(slot)===team?'selected':''}>${esc(team)}</option>`).join('')}</select>`;
 function draftedIds(except){ const s=new Set(); Object.entries(state.draft.picks).forEach(([k,v])=>{ if(k!==String(except)&&v)s.add(v); }); return s; }
 function nextOpenDraftSlot(){ const total=(state.draft.rounds||1)*32;
   for(let i=0;i<total;i++)if(!state.draft.picks[i])return i; return -1; }
@@ -1391,8 +1449,9 @@ function renderDraftResults(){
   for(let slot=0;slot<total;slot++){ const pid=state.draft.picks[slot],pl=pid&&byId(pid),round=Math.floor(slot/32)+1,pick=(slot%32)+1;
     if(pl)picked++;
     const o=pl?overall(pl):0,t=pl?tierOf(o):null;
+    const nhlTeam=teamName(slot);
     rows+=`<div class="result-row ${pl?'':'open'}"><span class="result-pick"><b class="tnum">${slot+1}</b><small>R${round} · P${pick}</small></span>
-      <span class="result-player">${pl?`${thumb(pl,'result-thumb')}<span><strong>${esc(pl.name)} ${flagFor(pl.country)?`<span class="inline-flags">${flagFor(pl.country)}</span>`:''}</strong><small>${esc(pl.team||'')}</small></span>`:'<em>Open pick</em>'}</span>
+      <span class="result-player">${pl?`${thumb(pl,'result-thumb')}<span><strong>${esc(pl.name)} ${flagFor(pl.country)?`<span class="inline-flags">${flagFor(pl.country)}</span>`:''}</strong><small>${nhlTeam?esc(nhlTeam)+' · ':''}${esc(pl.team||'')}</small></span>`:'<em>Open pick</em>'}</span>
       <span class="result-pos">${pl?`<span class="posbadge">${esc(pl.pos||'—')}</span>`:'—'}</span>
       <span class="result-rating">${pl?`<b class="tnum">${o.toFixed(1)}</b><span class="chip" style="background:${t.color}">${t.name}</span>`:'—'}</span></div>`;
   }
@@ -1428,11 +1487,12 @@ function renderDraft(){
         } else { delete state.draft.picks[slot]; body=`<div class="open-pick"><strong>Open pick</strong><small>Draft or drag a player from the table</small><button class="open-draft-best" data-draft-best-slot="${slot}" draggable="false">Draft best here</button></div>`; }
       } else body=`<div class="open-pick"><strong>Open pick</strong><small>Draft or drag a player from the table</small><button class="open-draft-best" data-draft-best-slot="${slot}" draggable="false">Draft best here</button></div>`;
       html+=`<div class="slot" data-drop-slot="${slot}"><div class="pk tnum">${op}</div><div class="body">
-        <div class="pick-context"><span>Round ${r}</span><b>Pick ${op}</b></div>
+        <div class="pick-context"><span>Round ${r} · Pick ${op}</span>${draftTeamSelect(slot)}</div>
         ${body}</div></div>`;
     }
   }
   $('#dBoard').innerHTML=html;
+  $$('#dBoard [data-team-slot]').forEach(select=>select.onchange=()=>{state.draft.teams[+select.dataset.teamSlot]=select.value;save();renderDraft();});
   $$('#dBoard [data-draft-best-slot]').forEach(b=>b.onclick=e=>{ e.stopPropagation(); const player=availableDraftPlayers()[0]; if(player)placeDraftPlayer(player.id,+b.dataset.draftBestSlot); });
   $$('#dBoard [data-clear]').forEach(b=>b.onclick=()=>{ delete state.draft.picks[b.dataset.clear]; save(); renderDraft(); });
   $$('#dBoard [data-pick-details]').forEach(b=>b.onclick=e=>{ e.stopPropagation(); openView(b.dataset.pickDetails); });

@@ -1,0 +1,81 @@
+const LOCAL_PLAYER_OVERRIDES = {
+  "Benjamin Nyström": {
+    "team": "Luleå HF U18",
+    "league": "U18 Nationell",
+    "pos": "C/W",
+    "shot": "L",
+    "height": "6'3\"",
+    "weight": "201lbs",
+    "country": "Sweden",
+    "skating": 82,
+    "shooting": 83,
+    "iq": 84,
+    "ozone": 85,
+    "dzone": 78,
+    "phys": 79
+  },
+  "Egon Ekberg": {
+    "team": "Djurgårdens IF U18",
+    "statsTeam": "Djurgårdens IF U18",
+    "league": "U18 Nationell",
+    "pos": "D",
+    "shot": "R",
+    "height": "6'0\"",
+    "weight": "168lbs",
+    "country": "Sweden",
+    "headshot": "assets/prospects/ep-2027-d1/egon-ekberg.jpeg",
+    "role": [],
+    "games": 22,
+    "goals": 7,
+    "assists": 14,
+    "points": 21,
+    "ppg": 0.95,
+    "gaa": 0,
+    "svPct": 0,
+    "wins": 0,
+    "losses": 0,
+    "shutouts": 0,
+    "skating": 81,
+    "shooting": 83,
+    "iq": 83,
+    "ozone": 81,
+    "dzone": 80,
+    "phys": 76,
+    "previousOverall": 71.4
+  },
+  "Love Lorentzon": {
+    "team": "Skellefteå AIK U18",
+    "statsTeam": "Skellefteå AIK U18",
+    "league": "U18 Nationell",
+    "pos": "C",
+    "shot": "R",
+    "height": "6'1\"",
+    "weight": "168lbs",
+    "country": "Sweden",
+    "headshot": "assets/prospects/ep-2027-d1/love-lorentzon.jpg",
+    "role": [],
+    "games": 21,
+    "goals": 10,
+    "assists": 21,
+    "points": 31,
+    "ppg": 1.48,
+    "gaa": 0,
+    "svPct": 0,
+    "wins": 0,
+    "losses": 0,
+    "shutouts": 0,
+    "skating": 82,
+    "shooting": 82,
+    "iq": 82,
+    "ozone": 80,
+    "dzone": 81,
+    "phys": 77,
+    "previousOverall": 76.9
+  }
+};
+if (typeof SEED_PLAYERS !== 'undefined') {
+  SEED_PLAYERS.forEach(player => {
+    const override = LOCAL_PLAYER_OVERRIDES[player.name];
+    if (override) Object.assign(player, override, {_localEdit:true});
+  });
+}
