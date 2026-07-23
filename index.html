@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=85">
+  <link rel="stylesheet" href="styles.css?v=87">
 </head>
 <body class="launch-open">
 
@@ -154,10 +154,12 @@
       <button data-draft-pane="board"><span>2</span> Pick board</button>
     </div>
     <div class="draft-layout" id="draftWorkspace">
+      <aside class="draft-recent" id="draftRecent"></aside>
       <aside class="best" id="best"></aside>
       <main class="draft-board-wrap">
         <div class="board-head">
           <div><span class="eyebrow">Draft room</span><h2>Pick board</h2></div>
+          <div class="active-pick-summary"><span>On the clock</span><strong id="activePickSummary">Pick 1</strong><button id="jumpNextPick">Next open pick</button></div>
         </div>
         <div class="board" id="dBoard"></div>
       </main>
@@ -184,8 +186,8 @@
     <span class="code-save-status" id="codeSaveStatus" role="status"></span>
     <span class="spacer"></span>
     <button class="btn" id="mClose2">Close</button>
-    <button class="btn" id="mCommitCode" hidden>Save All to Code</button>
-    <button class="btn primary" id="mEdit" hidden>Edit</button>
+    <button class="btn" id="mCommitCode">Save All to Code</button>
+    <button class="btn primary" id="mEdit">Edit</button>
     <button class="btn" id="mCancel">Cancel</button>
     <button class="btn primary" id="mSave">Save Player</button>
   </div>
@@ -220,6 +222,6 @@
 <script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-database-compat.js"></script>
 <script src="/firebase-config.js?v=2"></script>
-<script src="app.js?v=89"></script>
+<script src="app.js?v=91"></script>
 </body>
 </html>

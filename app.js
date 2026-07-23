@@ -43,7 +43,7 @@ const NHL_TEAMS=["Anaheim Ducks","Boston Bruins","Buffalo Sabres","Calgary Flame
 
 const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
 // Keep the complete local editing workflow available for a later release.
-const PLAYER_EDITING_ENABLED=false;
+const PLAYER_EDITING_ENABLED=true;
 // Admin access comes only from the signed-in Firebase profile. New accounts are always members.
 const isAdmin=()=>currentUser?.role==='admin';
 function applyAccessControl(){
@@ -1363,8 +1363,8 @@ $('#mDelete').onclick=async()=>{
 };
 
 $('#dRounds').onchange=()=>{ state.draft.rounds=+$('#dRounds').value; save(); renderDraft(); };
-$('#clearDraft').onclick=()=>{ if(confirm('Clear all picks?')){ state.draft.picks={}; save(); renderDraft(); } };
-let draftResultsOpen=false,draftSearch='',draftPos='all',playerPoolOpen=true,playerPoolExpanded=false,mobileDraftPane='pool';
+$('#clearDraft').onclick=()=>{ if(confirm('Clear all picks?')){ state.draft.picks={};draftActiveSlot=0;save();renderDraft(); } };
+let draftResultsOpen=false,draftSearch='',draftPos='all',draftSort='overall',draftActiveSlot=null,playerPoolOpen=true,playerPoolExpanded=true,mobileDraftPane='pool';
 $('#finishDraft').onclick=()=>{ draftResultsOpen=true; renderDraftResults(); };
 $('#backToDraft').onclick=()=>{ draftResultsOpen=false; setDraftView(); };
 $('#postDraftMock').onclick=()=>{
@@ -1380,10 +1380,29 @@ const draftTeamSelect=(slot)=>`<select class="pick-team-select" data-team-slot="
 function draftedIds(except){ const s=new Set(); Object.entries(state.draft.picks).forEach(([k,v])=>{ if(k!==String(except)&&v)s.add(v); }); return s; }
 function nextOpenDraftSlot(){ const total=(state.draft.rounds||1)*32;
   for(let i=0;i<total;i++)if(!state.draft.picks[i])return i; return -1; }
+function nextOpenDraftSlotAfter(slot=-1){
+  const total=(state.draft.rounds||1)*32;
+  for(let i=slot+1;i<total;i++)if(!state.draft.picks[i])return i;
+  for(let i=0;i<=slot&&i<total;i++)if(!state.draft.picks[i])return i;
+  return -1;
+}
+function activeDraftSlot(){
+  const total=(state.draft.rounds||1)*32;
+  if(draftActiveSlot===null||draftActiveSlot<0||draftActiveSlot>=total||state.draft.picks[draftActiveSlot])draftActiveSlot=nextOpenDraftSlot();
+  return draftActiveSlot;
+}
+function selectDraftSlot(slot){
+  if(state.draft.picks[slot])return;
+  draftActiveSlot=slot;
+  $$('#dBoard .slot').forEach(card=>card.classList.toggle('active-pick',+card.dataset.dropSlot===slot));
+  const summary=$('#activePickSummary');if(summary)summary.textContent=`Round ${Math.floor(slot/32)+1} · Pick ${slot+1}`;
+  const status=$('#draftOrderStatus');if(status)status.textContent=`Round ${Math.floor(slot/32)+1} · Pick ${slot+1} on the clock`;
+  $$('#poolPlayers [data-draft]').forEach(button=>button.textContent=`Draft #${slot+1}`);
+}
 function fillDraftSlots(limit=1){
   let filled=0;
   while(filled<limit){
-    const slot=nextOpenDraftSlot(),player=availableDraftPlayers()[0];
+    const slot=limit===1&&filled===0?activeDraftSlot():nextOpenDraftSlot(),player=availableDraftPlayers()[0];
     if(slot<0||!player)break;
     state.draft.picks[slot]=player.id;filled++;
   }
@@ -1392,7 +1411,7 @@ function fillDraftSlots(limit=1){
 function undoLastDraftPick(){
   const slots=Object.keys(state.draft.picks).map(Number).filter(slot=>state.draft.picks[slot]).sort((a,b)=>b-a);
   if(!slots.length)return;
-  delete state.draft.picks[slots[0]];save();renderDraft();
+  draftActiveSlot=slots[0];delete state.draft.picks[slots[0]];save();renderDraft();
 }
 $('#autoDraftBest').onclick=()=>fillDraftSlots(1);
 $('#autoFillRound').onclick=()=>{const next=nextOpenDraftSlot();if(next<0)return;fillDraftSlots(32-(next%32));};
@@ -1402,7 +1421,9 @@ function placeDraftPlayer(pid,toSlot,fromSlot=null){
   if(fromSlot!==null){
     if(target)state.draft.picks[fromSlot]=target; else delete state.draft.picks[fromSlot];
   }
-  state.draft.picks[toSlot]=pid; save(); renderDraft();
+  state.draft.picks[toSlot]=pid;
+  draftActiveSlot=nextOpenDraftSlotAfter(toSlot);
+  save(); renderDraft();
 }
 let draftDrag=null;
 function availableDraftPlayers(){ const taken=draftedIds(-1);
@@ -1420,7 +1441,9 @@ function setMobileDraftPane(){
 }
 function renderPoolPlayers(){
   const q=draftSearch.trim().toLowerCase();
-  const list=availableDraftPlayers().filter(p=>posMatch(p,draftPos)).filter(p=>!q||(p.name+' '+p.team).toLowerCase().includes(q));
+  const list=availableDraftPlayers().filter(p=>posMatch(p,draftPos)).filter(p=>!q||(p.name+' '+p.team+' '+p.country).toLowerCase().includes(q));
+  list.sort((a,b)=>draftSort==='points'?(Number(b.points)||0)-(Number(a.points)||0)||b._o-a._o:draftSort==='ppg'?(Number(b.ppg)||0)-(Number(a.ppg)||0)||b._o-a._o:draftSort==='name'?a.name.localeCompare(b.name):b._o-a._o);
+  const target=activeDraftSlot();
   const count=$('#poolCount'); if(count)count.textContent=`${list.length} available`;
   const body=$('#poolPlayers'); if(!body)return;
   body.innerHTML=list.map((p,i)=>{ const t=tierOf(p._o); return `<article class="pool-player" data-best="${p.id}" draggable="true">
@@ -1429,16 +1452,27 @@ function renderPoolPlayers(){
     <span class="pool-bio"><small>Height</small><b>${esc(p.height||'—')}</b><small>Weight</small><b>${esc(p.weight||'—')}</b></span>
     <span class="pool-production"><small>GP</small><b>${showStat(p.games)||'—'}</b><small>PTS</small><b>${showStat(p.points)||'—'}</b><small>P/GP</small><b>${showStat(p.ppg,2)||'—'}</b></span>
     <span class="pool-ovr"><b class="tnum">${p._o.toFixed(0)}</b><small>${t.name}</small></span>
-    <span class="pool-actions"><button class="pool-detail" data-details="${p.id}" draggable="false" title="View full breakdown">Breakdown</button>
-      <button class="draft-now" data-draft="${p.id}" draggable="false" title="Draft ${esc(p.name)}">Draft</button></span>
+    <span class="pool-actions"><button class="pool-detail" data-details="${p.id}" draggable="false" title="View full breakdown">Profile</button>
+      <button class="draft-now" data-draft="${p.id}" draggable="false" title="Draft ${esc(p.name)}">${target<0?'Complete':`Draft #${target+1}`}</button></span>
   </article>`; }).join('')||'<div class="pool-empty">No available players match.</div>';
-  $$('#poolPlayers [data-draft]').forEach(btn=>btn.onclick=e=>{ e.stopPropagation(); const slot=nextOpenDraftSlot(); if(slot>=0)placeDraftPlayer(btn.dataset.draft,slot); });
+  $$('#poolPlayers [data-draft]').forEach(btn=>btn.onclick=e=>{ e.stopPropagation(); const slot=activeDraftSlot(); if(slot>=0)placeDraftPlayer(btn.dataset.draft,slot); });
   $$('#poolPlayers [data-details]').forEach(btn=>btn.onclick=e=>{ e.stopPropagation(); openView(btn.dataset.details); });
   $$('#poolPlayers [data-best]').forEach(card=>{
-    card.ondblclick=()=>{ const slot=nextOpenDraftSlot(); if(slot>=0)placeDraftPlayer(card.dataset.best,slot); };
+    card.ondblclick=()=>{ const slot=activeDraftSlot(); if(slot>=0)placeDraftPlayer(card.dataset.best,slot); };
     card.ondragstart=e=>{ draftDrag={type:'available',pid:card.dataset.best}; e.dataTransfer.effectAllowed='move'; e.dataTransfer.setData('text/plain',card.dataset.best); card.classList.add('dragging'); };
     card.ondragend=()=>{ card.classList.remove('dragging'); draftDrag=null; $$('.drop-target').forEach(el=>el.classList.remove('drop-target')); };
   });
+}
+function renderDraftRecent(){
+  const panel=$('#draftRecent');if(!panel)return;
+  const completed=Object.entries(state.draft.picks).map(([slot,id])=>({slot:+slot,player:byId(id)})).filter(item=>item.player).sort((a,b)=>b.slot-a.slot).slice(0,7);
+  const next=activeDraftSlot(),upcoming=next<0?[]:Array.from({length:4},(_,index)=>next+index).filter(slot=>slot<(state.draft.rounds||1)*32&&!state.draft.picks[slot]);
+  panel.innerHTML=`<div class="recent-head"><span>Draft feed</span><strong>Recent picks</strong></div>
+    <div class="recent-list">${completed.length?completed.map(({slot,player})=>{const o=overall(player);return `<button class="recent-pick" data-recent-player="${player.id}"><b class="tnum">${slot+1}</b>${thumb(player,'recent-thumb')}<span><strong>${esc(player.name)}</strong><small>${esc(teamName(slot)||'Team TBD')} · ${esc(player.pos||'—')}</small></span><em class="tnum">${o.toFixed(0)}</em></button>`;}).join(''):'<div class="recent-empty">Your selections will appear here.</div>'}</div>
+    <div class="upcoming-head"><span>Coming up</span></div>
+    <div class="upcoming-list">${upcoming.length?upcoming.map(slot=>`<button data-upcoming-slot="${slot}" class="${slot===next?'on':''}"><b>#${slot+1}</b><span>${esc(teamName(slot)||'Team TBD')}</span></button>`).join(''):'<div class="recent-empty">Draft complete.</div>'}</div>`;
+  $$('[data-recent-player]').forEach(button=>button.onclick=()=>openView(button.dataset.recentPlayer));
+  $$('[data-upcoming-slot]').forEach(button=>button.onclick=()=>{selectDraftSlot(+button.dataset.upcomingSlot);document.querySelector(`[data-drop-slot="${button.dataset.upcomingSlot}"]`)?.scrollIntoView({behavior:'smooth',block:'center'});});
 }
 function setDraftView(){
   $('#draftWorkspace').hidden=draftResultsOpen; $('#draftResults').hidden=!draftResultsOpen;
@@ -1455,10 +1489,11 @@ function renderDraftResults(){
     rows+=`<div class="result-row ${pl?'':'open'}"><span class="result-pick"><b class="tnum">${slot+1}</b><small>R${round} · P${pick}</small></span>
       <span class="result-player">${pl?`${thumb(pl,'result-thumb')}<span><strong>${esc(pl.name)} ${flagFor(pl.country)?`<span class="inline-flags">${flagFor(pl.country)}</span>`:''}</strong><small>${nhlTeam?esc(nhlTeam)+' · ':''}${esc(pl.team||'')}</small></span>`:'<em>Open pick</em>'}</span>
       <span class="result-pos">${pl?`<span class="posbadge">${esc(pl.pos||'—')}</span>`:'—'}</span>
+      <span class="result-stats">${pl?`<b>${showStat(pl.games)||'—'} GP</b><small>${isGoalie(pl)?`${showStat(pl.svPct,3)||'—'} SV%`:`${showStat(pl.points)||'—'} PTS · ${showStat(pl.ppg,2)||'—'} P/GP`}</small>`:'—'}</span>
       <span class="result-rating">${pl?`<b class="tnum">${o.toFixed(1)}</b><span class="chip" style="background:${t.color}">${t.name}</span>`:'—'}</span></div>`;
   }
   $('#resultsSummary').textContent=`${picked} of ${total} picks completed · ${rounds} ${rounds===1?'round':'rounds'}`;
-  $('#resultsBody').innerHTML=`<div class="result-row result-labels"><span>Pick</span><span>Selection</span><span>Position</span><span>Rating</span></div>${rows}`;
+  $('#resultsBody').innerHTML=`<div class="result-row result-labels"><span>Pick</span><span>Selection</span><span>Position</span><span>Production</span><span>Rating</span></div>${rows}`;
   hydrateTeamLogos($('#resultsBody'));
   setDraftView();
 }
@@ -1467,11 +1502,12 @@ function renderDraft(){
   const totalSlots=(state.draft.rounds||1)*32, pickedCount=Object.values(state.draft.picks).filter(v=>v&&byId(v)).length;
   $('#best').innerHTML=`<div class="pool-head"><div><span class="eyebrow">Player pool</span><h3>Best available</h3></div><div class="pool-head-actions"><button id="expandPool" class="pool-expand">${playerPoolExpanded?'Collapse':'Expand'}</button><div class="draft-progress"><b>${pickedCount}</b> / ${totalSlots}</div></div></div>
     <div class="pool-search-wrap"><input class="pool-search" id="draftSearch" type="text" value="${esc(draftSearch)}" placeholder="Search all prospects…"><button id="clearDraftSearch" title="Clear search">×</button></div>
-    <div class="pool-tools"><div class="pool-seg" id="draftPos">${['all',...POSITION_FILTERS].map(pos=>`<button data-v="${pos}" class="${draftPos===pos?'on':''}">${pos==='all'?'All':pos}</button>`).join('')}</div><span id="poolCount"></span></div>
+    <div class="pool-tools"><div class="pool-seg" id="draftPos">${['all',...POSITION_FILTERS].map(pos=>`<button data-v="${pos}" class="${draftPos===pos?'on':''}">${pos==='all'?'All':pos}</button>`).join('')}</div><label class="pool-sort-label">Sort <select id="draftSort"><option value="overall" ${draftSort==='overall'?'selected':''}>Overall</option><option value="points" ${draftSort==='points'?'selected':''}>Points</option><option value="ppg" ${draftSort==='ppg'?'selected':''}>P/GP</option><option value="name" ${draftSort==='name'?'selected':''}>Name</option></select></label><span id="poolCount"></span></div>
     <div class="pool-columns"><span>Rank</span><span></span><span>Player</span><span>Size</span><span>Production</span><span>Overall</span><span></span></div>
     <div class="pool-players" id="poolPlayers"></div><div class="drag-hint">Use Draft for the next open pick, or drag a player onto any slot.</div>`;
   $('#draftSearch').oninput=e=>{draftSearch=e.target.value;renderPoolPlayers();};
   $('#clearDraftSearch').onclick=()=>{draftSearch='';draftPos='all';renderDraft();};
+  $('#draftSort').onchange=e=>{draftSort=e.target.value;renderPoolPlayers();};
   $('#expandPool').onclick=()=>{playerPoolExpanded=!playerPoolExpanded;setPoolVisibility();};
   $('#draftPos').onclick=e=>{if(e.target.dataset.v){draftPos=e.target.dataset.v; $$('#draftPos button').forEach(b=>b.classList.toggle('on',b===e.target));renderPoolPlayers();}};
   renderPoolPlayers();
@@ -1482,21 +1518,24 @@ function renderDraft(){
       if(pid){ const pl=byId(pid);
         if(pl){ const o=overall(pl),t=tierOf(o);
           body=`<div class="picked" draggable="true" data-drag-slot="${slot}" title="Drag to move or swap this pick"><span class="drag-grip" aria-hidden="true">⠿</span>${thumb(pl)}<div style="flex:1;min-width:0"><div class="nm">${esc(pl.name)} ${flagFor(pl.country)?`<span class="inline-flags">${flagFor(pl.country)}</span>`:''}</div>
-            <div class="sub">${esc(pl.pos||'')} · ${esc(pl.team||'')}</div></div>
+            <div class="sub">${esc(pl.pos||'')} · ${esc(pl.team||'')}</div>
+            <div class="pick-statline"><span>${esc(pl.height||'—')} · ${esc(pl.weight||'—')}</span><span>${showStat(pl.games)||'—'} GP</span><span>${isGoalie(pl)?`${hasStat(pl.svPct)?Number(pl.svPct).toFixed(3).replace(/^0/,''):'—'} SV%`:`${showStat(pl.points)||'—'} PTS · ${showStat(pl.ppg,2)||'—'} P/GP`}</span></div></div>
             <span class="dovr tnum">${o.toFixed(0)}</span><span class="chip" style="background:${t.color}">${t.name}</span>
             <button class="pick-details" data-pick-details="${pl.id}" draggable="false" title="View full breakdown">View</button>
             <button class="clear" data-clear="${slot}" draggable="false" title="Remove pick">✕</button></div>`;
         } else { delete state.draft.picks[slot]; body=`<div class="open-pick"><strong>Open pick</strong><small>Draft or drag a player from the table</small><button class="open-draft-best" data-draft-best-slot="${slot}" draggable="false">Draft best here</button></div>`; }
       } else body=`<div class="open-pick"><strong>Open pick</strong><small>Draft or drag a player from the table</small><button class="open-draft-best" data-draft-best-slot="${slot}" draggable="false">Draft best here</button></div>`;
-      html+=`<div class="slot" data-drop-slot="${slot}"><div class="pk tnum">${op}</div><div class="body">
+      html+=`<div class="slot ${slot===activeDraftSlot()?'active-pick':''}" data-drop-slot="${slot}"><div class="pk tnum">${op}</div><div class="body">
         <div class="pick-context"><span>Round ${r} · Pick ${op}</span>${draftTeamSelect(slot)}</div>
         ${body}</div></div>`;
     }
   }
   $('#dBoard').innerHTML=html;
+  renderDraftRecent();
   $$('#dBoard [data-team-slot]').forEach(select=>select.onchange=()=>{state.draft.teams[+select.dataset.teamSlot]=select.value;save();renderDraft();});
+  $$('#dBoard .slot').forEach(card=>card.onclick=e=>{if(!e.target.closest('button,select,.picked')&&!state.draft.picks[+card.dataset.dropSlot])selectDraftSlot(+card.dataset.dropSlot);});
   $$('#dBoard [data-draft-best-slot]').forEach(b=>b.onclick=e=>{ e.stopPropagation(); const player=availableDraftPlayers()[0]; if(player)placeDraftPlayer(player.id,+b.dataset.draftBestSlot); });
-  $$('#dBoard [data-clear]').forEach(b=>b.onclick=()=>{ delete state.draft.picks[b.dataset.clear]; save(); renderDraft(); });
+  $$('#dBoard [data-clear]').forEach(b=>b.onclick=()=>{draftActiveSlot=+b.dataset.clear;delete state.draft.picks[b.dataset.clear];save();renderDraft();});
   $$('#dBoard [data-pick-details]').forEach(b=>b.onclick=e=>{ e.stopPropagation(); openView(b.dataset.pickDetails); });
   $$('#dBoard [data-drag-slot]').forEach(card=>{
     card.ondragstart=e=>{ const from=+card.dataset.dragSlot; draftDrag={type:'pick',from,pid:state.draft.picks[from]};
@@ -1511,7 +1550,7 @@ function renderDraft(){
       placeDraftPlayer(draftDrag.pid,to,draftDrag.type==='pick'?draftDrag.from:null); draftDrag=null; };
   });
   $('#finishDraft').disabled=pickedCount===0;
-  const availableCount=availableDraftPlayers().length,next=nextOpenDraftSlot();
+  const availableCount=availableDraftPlayers().length,next=activeDraftSlot();
   $('#autoDraftBest').disabled=next<0||availableCount===0;
   $('#autoFillRound').disabled=next<0||availableCount===0;
   $('#undoDraftPick').disabled=pickedCount===0;
@@ -1520,6 +1559,8 @@ function renderDraft(){
   $('#heroOnClock').textContent=next<0?'Draft complete':`On the clock · Pick ${next+1}`;
   const orderStatus=$('#draftOrderStatus');
   if(orderStatus)orderStatus.textContent=next<0?'Draft complete':`Round ${Math.floor(next/32)+1} · Pick ${next+1} on the clock`;
+  const activeSummary=$('#activePickSummary');if(activeSummary)activeSummary.textContent=next<0?'Draft complete':`Round ${Math.floor(next/32)+1} · Pick ${next+1}`;
+  const jumpNext=$('#jumpNextPick');if(jumpNext){jumpNext.disabled=next<0;jumpNext.onclick=()=>{const slot=nextOpenDraftSlot();if(slot<0)return;selectDraftSlot(slot);document.querySelector(`[data-drop-slot="${slot}"]`)?.scrollIntoView({behavior:'smooth',block:'center'});};}
   const meta=$('#draftBoardMeta'),remaining=totalSlots-pickedCount,best=availableDraftPlayers()[0];
   if(meta)meta.innerHTML=`<span><b>${pickedCount}</b> picked</span><span><b>${remaining}</b> open</span><span><b>${next<0?'Done':'Pick '+(next+1)}</b> next</span>${best?`<span><b>${esc(best.name)}</b> top available</span>`:''}`;
   if(draftResultsOpen)renderDraftResults(); else setDraftView();
