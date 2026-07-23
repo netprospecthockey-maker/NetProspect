@@ -42,10 +42,12 @@ const NHL_TEAMS=["Anaheim Ducks","Boston Bruins","Buffalo Sabres","Calgary Flame
   "Washington Capitals","Winnipeg Jets"];
 
 const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+// Keep the complete local editing workflow available for a later release.
+const PLAYER_EDITING_ENABLED=false;
 // Admin access comes only from the signed-in Firebase profile. New accounts are always members.
 const isAdmin=()=>currentUser?.role==='admin';
 function applyAccessControl(){
-  $('#addBtn').hidden=!isAdmin();
+  $('#addBtn').hidden=!PLAYER_EDITING_ENABLED||!isAdmin();
   const review=$('#adminReview');if(review)review.hidden=!isAdmin();
   document.body.classList.toggle('read-only',!isAdmin());
 }
@@ -653,7 +655,7 @@ function renderPlayerTableFrame(){
   $('#pHead').innerHTML=`<tr>${shared}${production}${pHeaderButton('ovr','Overall','c')}${pHeaderButton('tier','Tier')}</tr>`;
   $$('.players-table .p-th-filter').forEach(btn=>btn.onclick=e=>{e.stopPropagation();if(pOpenColumn===btn.dataset.pcol){closePlayerMenu();return;}renderPlayerMenu(btn.dataset.pcol,btn);});
 }
-function pColumnValue(p,key){ if((key==='ovr'||key==='tier')&&prospectSeasonView==='draft')return '';if(key==='ovr')return p._o;if(key==='tier')return tierOf(p._o).name;if(key==='height')return heightInches(p.height);if(key==='weight')return weightLbs(p.weight);if(key==='player')return p.name;if(key==='league')return prospectLeagueFor(p);if(key==='team')return prospectTeamFor(p);if(PROSPECT_PRODUCTION_KEYS.includes(key))return prospectStatFor(p,key);return p[key]; }
+function pColumnValue(p,key){if(key==='ovr')return p._o;if(key==='tier')return tierOf(p._o).name;if(key==='height')return heightInches(p.height);if(key==='weight')return weightLbs(p.weight);if(key==='player')return p.name;if(key==='league')return prospectLeagueFor(p);if(key==='team')return prospectTeamFor(p);if(PROSPECT_PRODUCTION_KEYS.includes(key))return prospectStatFor(p,key);return p[key]; }
 function pFilterValues(key){ if(key==='country')return [...new Set(state.players.flatMap(p=>String(p.country||'').split(/\s*\/\s*/)).filter(Boolean))].sort(); if(key==='pos')return POSITION_FILTERS.filter(pos=>state.players.some(p=>positionTokens(p.pos).includes(pos))); if(key==='tier')return TIERS.map(t=>t.name); return [...new Set(state.players.map(p=>pColumnValue(p,key)).filter(Boolean))].sort(); }
 function updatePlayerHeaders(){ $$('.players-table .p-th-filter').forEach(btn=>{const key=btn.dataset.pcol,active=pTableSort&&pTableSort.key===key,filtered=P_NUMERIC.includes(key)?(pTableFilters[key].min!==''||pTableFilters[key].max!==''):pTableFilters[key]!=='';btn.classList.toggle('active',active);btn.classList.toggle('filtered',filtered);const icon=btn.querySelector('span');if(key==='player'&&!active)icon.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4 4"></path></svg>';else icon.textContent=active?(pTableSort.dir==='asc'?'↑':'↓'):'↕';}); }
 function closePlayerMenu(){ $('#pColumnMenu').hidden=true;pOpenColumn=null; }
@@ -688,8 +690,8 @@ function renderPlayers(){
       <td><span class="prospect-league-cell">${seasonLeague?leagueMark(seasonLeague,'table-league-mark'):''}<span>${esc(seasonLeague||'—')}</span></span></td>
       <td><span class="team-cell">${teamMark(seasonTeam,'table-team-mark',p.country)}<span>${esc(seasonTeam||'')}</span></span></td>
       <td class="c statnum tnum">${showStat(prospectStatFor(p,'games'))}</td>${goalie?`<td class="c statnum tnum">${showStat(prospectStatFor(p,'gaa'),2)}</td><td class="c statnum strong tnum">${hasStat(prospectStatFor(p,'svPct'))?Number(prospectStatFor(p,'svPct')).toFixed(3).replace(/^0/,''):''}</td><td class="c statnum tnum">${showStat(prospectStatFor(p,'wins'))}</td><td class="c statnum tnum">${showStat(prospectStatFor(p,'losses'))}</td><td class="c statnum tnum">${showStat(prospectStatFor(p,'shutouts'))}</td>`:`<td class="c statnum tnum">${showStat(prospectStatFor(p,'goals'))}</td><td class="c statnum tnum">${showStat(prospectStatFor(p,'assists'))}</td><td class="c statnum strong tnum">${showStat(prospectStatFor(p,'points'))}</td><td class="c statnum tnum">${showStat(prospectStatFor(p,'ppg'),2)}</td>`}
-      <td class="c">${prospectSeasonView==='draft'?'':`<span class="ovrn tnum">${p._o.toFixed(1)}</span>`}</td>
-      <td class="tier-cell">${prospectSeasonView==='draft'?'':`<span class="chip" style="background:${t.color}">${t.name}</span>`}</td>
+      <td class="c"><span class="ovrn tnum">${p._o.toFixed(1)}</span></td>
+      <td class="tier-cell"><span class="chip" style="background:${t.color}">${t.name}</span></td>
     </tr>`; }).join('');
   $$('#pBody tr[data-id]').forEach(tr=>tr.onclick=()=>openView(tr.dataset.id));
   hydrateTeamLogos($('#pBody'));
@@ -1265,8 +1267,8 @@ function setFooter(){
   const v=mode==='view';
   $('#editHint').style.display=v?'none':'flex';
   $('#mClose2').style.display=v?'inline-block':'none';
-  $('#mCommitCode').style.display=v?'inline-block':'none';
-  $('#mEdit').style.display=v?'inline-block':'none';
+  $('#mCommitCode').style.display=PLAYER_EDITING_ENABLED&&v?'inline-block':'none';
+  $('#mEdit').style.display=PLAYER_EDITING_ENABLED&&v?'inline-block':'none';
   $('#mCancel').style.display=v?'none':'inline-block';
   $('#mSave').style.display=v?'none':'inline-block';
   $('#mDelete').style.display=(!v && editId && isAdmin())?'inline-block':'none';
