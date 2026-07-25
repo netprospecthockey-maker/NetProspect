@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=87">
+  <link rel="stylesheet" href="styles.css?v=90">
 </head>
 <body class="launch-open">
 
@@ -104,7 +104,7 @@
 
   <section class="view" id="view-forum">
     <div class="forum-hero scout-room-hero">
-      <div class="forum-hero-main"><span class="eyebrow">Community scouting</span><h1>Scout Room</h1><p>Read the room, post a board and keep the conversation around actual prospects instead of scattered notes.</p><div class="forum-radar"><span>Reports</span><i></i><span>Mock boards</span><i></i><span>Discussion</span></div><div class="forum-hero-actions"><button class="btn primary report-submit" data-submit-type="report">Submit report</button><button class="btn forum-secondary" data-forum-action="mock">Post mock</button></div></div>
+      <div class="forum-hero-main"><span class="eyebrow">Community scouting</span><h1>Scout Room</h1><p>Share scouting reports, compare mock drafts and discuss the prospects shaping the 2027 class.</p><div class="forum-radar"><span>Reports</span><i></i><span>Mock boards</span><i></i><span>Discussion</span></div><div class="forum-hero-actions"><button class="btn primary report-submit" data-submit-type="report">Submit report</button><button class="btn forum-secondary" data-forum-action="mock">Post mock</button></div></div>
       <div class="forum-hero-panel"><span>Room pulse</span><div><strong id="forumReportCount">0</strong><small>Reports</small></div><div><strong id="forumMockCount">0</strong><small>Mocks</small></div><div><strong id="forumSubmissionCount">0</strong><small>Nominations</small></div></div>
     </div>
     <div class="scout-lanes">
@@ -135,39 +135,38 @@
   <section class="view sleeper-draft" id="view-draft">
     <div class="draft-setup" id="draftSetup">
       <div class="draft-hero">
-        <div class="draft-hero-copy"><span class="eyebrow">2027 NHL Mock Draft</span><h1>Build your mock draft.</h1><p>Choose a player from the list, use Draft to make the next pick, or drag a player to any open slot.</p></div>
+        <div class="draft-hero-copy"><span class="eyebrow">NetProspect Draft Room</span><h1>2027 Mock Draft</h1><p>Build the board pick by pick.</p></div>
         <div class="hero-status"><div><span id="heroOnClock">On the clock · Pick 1</span><strong id="heroProgressCount">0 / 32</strong></div><div class="hero-track"><i id="heroProgressBar"></i></div></div>
-      </div>
-      <div class="draft-top">
-        <div class="grp"><label class="fld">Rounds</label>
-          <select id="dRounds"><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
-        <div class="draft-top-actions"><button class="btn" id="autoDraftBest">Draft best</button><button class="btn" id="autoFillRound">Fill round</button><button class="btn" id="undoDraftPick">Undo pick</button><button class="btn warn" id="clearDraft">Clear board</button>
-          <button class="btn primary finish-btn" id="finishDraft">Finish &amp; view results</button></div>
+        <div class="draft-top">
+          <select id="dRounds" hidden><option selected>1</option></select>
+          <div class="draft-top-actions"><button class="btn" id="autoDraftBest">Draft best</button><button class="btn" id="autoFillRound">Sim remaining</button><button class="btn" id="undoDraftPick">Undo</button><button class="btn warn" id="clearDraft">Restart</button><button class="btn primary finish-btn" id="finishDraft">Results</button></div>
+        </div>
       </div>
     </div>
-    <div class="draft-order-strip">
-      <div><span class="eyebrow">Pick order</span><strong id="draftOrderStatus">Round 1 · Pick 1 on the clock</strong></div>
-      <div class="draft-board-actions"><div class="draft-board-meta" id="draftBoardMeta"></div><button class="btn compact" id="togglePool">Hide player list</button></div>
+    <div class="draft-order-strip" id="draftOrderStrip">
+      <div><span class="live-dot"></span><span class="eyebrow">Live draft</span><strong id="draftOrderStatus">Round 1 · Pick 1 on the clock</strong></div>
+      <div class="draft-board-actions"><div class="draft-board-meta" id="draftBoardMeta"></div><button class="btn compact" id="togglePool">Hide player list</button><button class="btn compact review-draft" id="reviewDraft">Review results</button></div>
     </div>
     <div class="mobile-draft-switch" id="mobileDraftSwitch" aria-label="Mock draft workspace view">
       <button class="on" data-draft-pane="pool"><span>1</span> Player pool</button>
       <button data-draft-pane="board"><span>2</span> Pick board</button>
     </div>
     <div class="draft-layout" id="draftWorkspace">
-      <aside class="draft-recent" id="draftRecent"></aside>
-      <aside class="best" id="best"></aside>
       <main class="draft-board-wrap">
         <div class="board-head">
-          <div><span class="eyebrow">Draft room</span><h2>Pick board</h2></div>
+          <div><span class="eyebrow">All selections</span><h2>Draft board</h2></div>
           <div class="active-pick-summary"><span>On the clock</span><strong id="activePickSummary">Pick 1</strong><button id="jumpNextPick">Next open pick</button></div>
         </div>
         <div class="board" id="dBoard"></div>
       </main>
+      <div class="draft-lower">
+        <section class="best" id="best"></section>
+      </div>
     </div>
     <div class="draft-results" id="draftResults" hidden>
       <div class="results-head">
         <div><span class="eyebrow">2027 NHL mock draft</span><h1>Draft results</h1><p id="resultsSummary"></p></div>
-        <div class="results-actions"><button class="btn" id="backToDraft">← Back to board</button><button class="btn primary" id="postDraftMock">Post mock to Scout Room</button></div>
+        <div class="results-actions"><button class="btn" id="backToDraft">← Back to draft room</button><button class="btn primary" id="postDraftMock">Post mock draft</button></div>
       </div>
       <div class="results-table" id="resultsBody"></div>
     </div>
@@ -222,6 +221,6 @@
 <script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-database-compat.js"></script>
 <script src="/firebase-config.js?v=2"></script>
-<script src="app.js?v=91"></script>
+<script src="app.js?v=94"></script>
 </body>
 </html>

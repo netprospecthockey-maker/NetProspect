@@ -705,7 +705,7 @@ function renderStock(){
   const movers=published?state.players.filter(p=>Number.isFinite(Number(baseline[p.name]))).map(p=>({...p,_o:overall(p),_prev:Number(baseline[p.name])})).map(p=>({...p,_delta:Math.round((p._o-p._prev)*10)/10})):[];
   const row=p=>`<button class="stock-row" data-id="${p.id}">${thumb(p,'stock-thumb')}<span class="stock-player"><strong>${esc(p.name)} ${flagFor(p.country)?`<span class="inline-flags">${flagFor(p.country)}</span>`:''}</strong><small>${esc(p.pos||'—')} · ${esc(p.team||'')}</small></span><span class="stock-scores"><b>${p._o.toFixed(1)}</b><small>was ${p._prev.toFixed(1)}</small></span><span class="stock-delta ${p._delta>0?'up':'down'}">${p._delta>0?'+':''}${p._delta.toFixed(1)}</span></button>`;
   const risers=movers.filter(p=>p._delta>0).sort((a,b)=>b._delta-a._delta).slice(0,10),fallers=movers.filter(p=>p._delta<0).sort((a,b)=>a._delta-b._delta).slice(0,10);
-  const empty='<div class="stock-empty">Stock Watch updates have not been published yet.</div>';
+  const empty='<div class="stock-empty">Stock changes will appear once the 2026–27 season begins and players start receiving ratings. Stock Watch will compare each player’s current rating with their D-1 rating to identify the biggest risers and fallers.</div>';
   $('#risers').innerHTML=risers.map(row).join('')||empty;
   $('#fallers').innerHTML=fallers.map(row).join('')||empty;
   $$('#view-stock [data-id]').forEach(b=>b.onclick=()=>openView(b.dataset.id));
@@ -1362,10 +1362,12 @@ $('#mDelete').onclick=async()=>{
   save(); closeEditor(); renderPlayers(); if($('#view-home').classList.contains('active'))renderHome(); if($('#view-stock').classList.contains('active'))renderStock();
 };
 
-$('#dRounds').onchange=()=>{ state.draft.rounds=+$('#dRounds').value; save(); renderDraft(); };
+$('#dRounds').onchange=()=>{ state.draft.rounds=1; save(); renderDraft(); };
 $('#clearDraft').onclick=()=>{ if(confirm('Clear all picks?')){ state.draft.picks={};draftActiveSlot=0;save();renderDraft(); } };
 let draftResultsOpen=false,draftSearch='',draftPos='all',draftSort='overall',draftActiveSlot=null,playerPoolOpen=true,playerPoolExpanded=true,mobileDraftPane='pool';
-$('#finishDraft').onclick=()=>{ draftResultsOpen=true; renderDraftResults(); };
+const openDraftResults=()=>{draftResultsOpen=true;renderDraftResults();};
+$('#finishDraft').onclick=openDraftResults;
+$('#reviewDraft').onclick=openDraftResults;
 $('#backToDraft').onclick=()=>{ draftResultsOpen=false; setDraftView(); };
 $('#postDraftMock').onclick=()=>{
   const total=(state.draft.rounds||1)*32,lines=[];
@@ -1377,7 +1379,7 @@ $('#togglePool').onclick=()=>{ playerPoolOpen=!playerPoolOpen; setPoolVisibility
 $('#mobileDraftSwitch').onclick=e=>{const button=e.target.closest('[data-draft-pane]');if(!button)return;mobileDraftPane=button.dataset.draftPane;setMobileDraftPane();};
 const teamName=i=>{ const t=(state.draft.teams||[])[i]; return (t&&t.length)?t:''; };
 const draftTeamSelect=(slot)=>`<select class="pick-team-select" data-team-slot="${slot}" aria-label="NHL team for pick ${slot+1}"><option value="">Team TBD</option>${NHL_TEAMS.map(team=>`<option value="${esc(team)}" ${teamName(slot)===team?'selected':''}>${esc(team)}</option>`).join('')}</select>`;
-function draftedIds(except){ const s=new Set(); Object.entries(state.draft.picks).forEach(([k,v])=>{ if(k!==String(except)&&v)s.add(v); }); return s; }
+function draftedIds(except){ const s=new Set(),total=(state.draft.rounds||1)*32; Object.entries(state.draft.picks).forEach(([k,v])=>{ if(+k<total&&k!==String(except)&&v)s.add(v); }); return s; }
 function nextOpenDraftSlot(){ const total=(state.draft.rounds||1)*32;
   for(let i=0;i<total;i++)if(!state.draft.picks[i])return i; return -1; }
 function nextOpenDraftSlotAfter(slot=-1){
@@ -1442,7 +1444,8 @@ function setMobileDraftPane(){
 function renderPoolPlayers(){
   const q=draftSearch.trim().toLowerCase();
   const list=availableDraftPlayers().filter(p=>posMatch(p,draftPos)).filter(p=>!q||(p.name+' '+p.team+' '+p.country).toLowerCase().includes(q));
-  list.sort((a,b)=>draftSort==='points'?(Number(b.points)||0)-(Number(a.points)||0)||b._o-a._o:draftSort==='ppg'?(Number(b.ppg)||0)-(Number(a.ppg)||0)||b._o-a._o:draftSort==='name'?a.name.localeCompare(b.name):b._o-a._o);
+  const sortNumber={points:'points',goals:'goals',assists:'assists',ppg:'ppg',skating:'skating',shooting:'shooting',iq:'iq'}[draftSort];
+  list.sort((a,b)=>sortNumber?(Number(b[sortNumber])||0)-(Number(a[sortNumber])||0)||b._o-a._o:draftSort==='name'?a.name.localeCompare(b.name):b._o-a._o);
   const target=activeDraftSlot();
   const count=$('#poolCount'); if(count)count.textContent=`${list.length} available`;
   const body=$('#poolPlayers'); if(!body)return;
@@ -1477,6 +1480,8 @@ function renderDraftRecent(){
 function setDraftView(){
   $('#draftWorkspace').hidden=draftResultsOpen; $('#draftResults').hidden=!draftResultsOpen;
   $('#draftSetup').hidden=draftResultsOpen;
+  $('#draftOrderStrip').hidden=draftResultsOpen;
+  $('#mobileDraftSwitch').hidden=draftResultsOpen;
   if(!draftResultsOpen){setPoolVisibility();setMobileDraftPane();}
 }
 function renderDraftResults(){
@@ -1498,11 +1503,12 @@ function renderDraftResults(){
   setDraftView();
 }
 function renderDraft(){
+  if(state.draft.rounds!==1||Object.keys(state.draft.picks).some(slot=>+slot>=32)){state.draft.rounds=1;state.draft.picks=Object.fromEntries(Object.entries(state.draft.picks).filter(([slot])=>+slot<32));save();}
   $('#dRounds').value=state.draft.rounds||1;
   const totalSlots=(state.draft.rounds||1)*32, pickedCount=Object.values(state.draft.picks).filter(v=>v&&byId(v)).length;
   $('#best').innerHTML=`<div class="pool-head"><div><span class="eyebrow">Player pool</span><h3>Best available</h3></div><div class="pool-head-actions"><button id="expandPool" class="pool-expand">${playerPoolExpanded?'Collapse':'Expand'}</button><div class="draft-progress"><b>${pickedCount}</b> / ${totalSlots}</div></div></div>
     <div class="pool-search-wrap"><input class="pool-search" id="draftSearch" type="text" value="${esc(draftSearch)}" placeholder="Search all prospects…"><button id="clearDraftSearch" title="Clear search">×</button></div>
-    <div class="pool-tools"><div class="pool-seg" id="draftPos">${['all',...POSITION_FILTERS].map(pos=>`<button data-v="${pos}" class="${draftPos===pos?'on':''}">${pos==='all'?'All':pos}</button>`).join('')}</div><label class="pool-sort-label">Sort <select id="draftSort"><option value="overall" ${draftSort==='overall'?'selected':''}>Overall</option><option value="points" ${draftSort==='points'?'selected':''}>Points</option><option value="ppg" ${draftSort==='ppg'?'selected':''}>P/GP</option><option value="name" ${draftSort==='name'?'selected':''}>Name</option></select></label><span id="poolCount"></span></div>
+    <div class="pool-tools"><div class="pool-seg" id="draftPos">${['all',...POSITION_FILTERS].map(pos=>`<button data-v="${pos}" class="${draftPos===pos?'on':''}">${pos==='all'?'All':pos}</button>`).join('')}</div><label class="pool-sort-label">Sort <select id="draftSort"><option value="overall" ${draftSort==='overall'?'selected':''}>Overall</option><option value="points" ${draftSort==='points'?'selected':''}>Points</option><option value="goals" ${draftSort==='goals'?'selected':''}>Goals</option><option value="assists" ${draftSort==='assists'?'selected':''}>Assists</option><option value="ppg" ${draftSort==='ppg'?'selected':''}>P/GP</option><option value="skating" ${draftSort==='skating'?'selected':''}>Skating</option><option value="shooting" ${draftSort==='shooting'?'selected':''}>Shooting</option><option value="iq" ${draftSort==='iq'?'selected':''}>Hockey IQ</option><option value="name" ${draftSort==='name'?'selected':''}>Name</option></select></label><span id="poolCount"></span></div>
     <div class="pool-columns"><span>Rank</span><span></span><span>Player</span><span>Size</span><span>Production</span><span>Overall</span><span></span></div>
     <div class="pool-players" id="poolPlayers"></div><div class="drag-hint">Use Draft for the next open pick, or drag a player onto any slot.</div>`;
   $('#draftSearch').oninput=e=>{draftSearch=e.target.value;renderPoolPlayers();};
@@ -1512,7 +1518,7 @@ function renderDraft(){
   $('#draftPos').onclick=e=>{if(e.target.dataset.v){draftPos=e.target.dataset.v; $$('#draftPos button').forEach(b=>b.classList.toggle('on',b===e.target));renderPoolPlayers();}};
   renderPoolPlayers();
   const rounds=state.draft.rounds||1; let html='';
-  for(let r=1;r<=rounds;r++){ html+=`<div class="round-h">Round ${r}</div>`;
+  for(let r=1;r<=rounds;r++){ let roundSlots='';
     for(let p=0;p<32;p++){ const slot=(r-1)*32+p, op=slot+1, pid=state.draft.picks[slot];
       let body;
       if(pid){ const pl=byId(pid);
@@ -1525,10 +1531,11 @@ function renderDraft(){
             <button class="clear" data-clear="${slot}" draggable="false" title="Remove pick">✕</button></div>`;
         } else { delete state.draft.picks[slot]; body=`<div class="open-pick"><strong>Open pick</strong><small>Draft or drag a player from the table</small><button class="open-draft-best" data-draft-best-slot="${slot}" draggable="false">Draft best here</button></div>`; }
       } else body=`<div class="open-pick"><strong>Open pick</strong><small>Draft or drag a player from the table</small><button class="open-draft-best" data-draft-best-slot="${slot}" draggable="false">Draft best here</button></div>`;
-      html+=`<div class="slot ${slot===activeDraftSlot()?'active-pick':''}" data-drop-slot="${slot}"><div class="pk tnum">${op}</div><div class="body">
+      roundSlots+=`<div class="slot ${slot===activeDraftSlot()?'active-pick':''}" data-drop-slot="${slot}"><div class="pk tnum">${op}</div><div class="body">
         <div class="pick-context"><span>Round ${r} · Pick ${op}</span>${draftTeamSelect(slot)}</div>
         ${body}</div></div>`;
     }
+    html+=`<section class="draft-round"><div class="round-h"><strong>Round ${r}</strong><span>Picks ${(r-1)*32+1}–${r*32}</span></div><div class="round-row">${roundSlots}</div></section>`;
   }
   $('#dBoard').innerHTML=html;
   renderDraftRecent();
@@ -1550,6 +1557,9 @@ function renderDraft(){
       placeDraftPlayer(draftDrag.pid,to,draftDrag.type==='pick'?draftDrag.from:null); draftDrag=null; };
   });
   $('#finishDraft').disabled=pickedCount===0;
+  $('#finishDraft').textContent=pickedCount===totalSlots?'View results':'Review results';
+  $('#reviewDraft').disabled=pickedCount===0;
+  $('#reviewDraft').textContent=pickedCount===totalSlots?'View results':'Review results';
   const availableCount=availableDraftPlayers().length,next=activeDraftSlot();
   $('#autoDraftBest').disabled=next<0||availableCount===0;
   $('#autoFillRound').disabled=next<0||availableCount===0;
