@@ -410,7 +410,8 @@ const VERIFIED_STAT_LINES={
 };
 
 const KEY='draftscout_v2'; let _mem=null;
-const SEED_VERSION=15;
+const SEED_VERSION=16;
+const CANONICAL_RANKINGS_VERSION=1;
 const RECOVERED_U18_RATINGS_VERSION=1;
 const POINT_STATS_VERSION=18;
 const BIO_DATA_VERSION=7;
@@ -533,7 +534,7 @@ const seedState=()=>({players:SEED_PLAYERS.map(original=>{
   const p={...original,name:PLAYER_NAME_CORRECTIONS[original.name]||original.name},bio=EP_BIOS[p.name]||{},stats=POINT_STATS[p.name]||{},grades=GOALIE_GRADES[p.name]||DEFAULT_GRADE_OVERRIDES[p.name]||{},
     {team:rawStatsTeam,...production}=stats,statsTeam=cleanTeamName(rawStatsTeam)||p.team||'';
   return{id:uid(),...p,...grades,...bio,...production,team:p.team||statsTeam,statsTeam,statLines:(typeof POINT_STAT_LINES==='object'&&POINT_STAT_LINES[p.name])||VERIFIED_STAT_LINES[p.name]||p.statLines,headshot:p.headshot||bio.photo||'',country:COUNTRY_BY_PLAYER[p.name]||p.country,role:cleanRole(p.role)};
-}),draft:{rounds:1,teams:[],picks:{}},seedVersion:SEED_VERSION,recoveredU18RatingsVersion:RECOVERED_U18_RATINGS_VERSION,countryDataVersion:COUNTRY_DATA_VERSION,pointStatsVersion:POINT_STATS_VERSION,bioDataVersion:BIO_DATA_VERSION,statLinesVersion:STAT_LINES_VERSION,goalieGradesVersion:GOALIE_GRADES_VERSION,defaultGradeVersion:DEFAULT_GRADE_VERSION});
+}),draft:{rounds:1,teams:[],picks:{}},seedVersion:SEED_VERSION,canonicalRankingsVersion:CANONICAL_RANKINGS_VERSION,recoveredU18RatingsVersion:RECOVERED_U18_RATINGS_VERSION,countryDataVersion:COUNTRY_DATA_VERSION,pointStatsVersion:POINT_STATS_VERSION,bioDataVersion:BIO_DATA_VERSION,statLinesVersion:STAT_LINES_VERSION,goalieGradesVersion:GOALIE_GRADES_VERSION,defaultGradeVersion:DEFAULT_GRADE_VERSION});
 function load(){ const raw=rawGet(); let migrated=false;
   if(raw){ try{state=JSON.parse(raw);}catch(e){state=seedState();} } else state=seedState();
   if(state.seedVersion!==SEED_VERSION){
@@ -591,6 +592,16 @@ function load(){ const raw=rawGet(); let migrated=false;
   if(migrateStatLines){state.statLinesVersion=STAT_LINES_VERSION;migrated=true;}
   if(migrateGoalieGrades){state.goalieGradesVersion=GOALIE_GRADES_VERSION;migrated=true;}
   if(migrateDefaultGrades){state.defaultGradeVersion=DEFAULT_GRADE_VERSION;migrated=true;}
+  if(state.canonicalRankingsVersion!==CANONICAL_RANKINGS_VERSION){
+    const canonical=seedState(),oldIdToName=new Map(state.players.map(player=>[player.id,player.name])),newNameToId=new Map(canonical.players.map(player=>[player.name,player.id]));
+    const previousDraft=state.draft||{rounds:1,teams:[],picks:{}},remappedPicks={};
+    Object.entries(previousDraft.picks||{}).forEach(([slot,id])=>{const name=oldIdToName.get(id),nextId=newNameToId.get(name);if(nextId)remappedPicks[slot]=nextId;});
+    state.players=canonical.players;
+    state.draft={rounds:previousDraft.rounds||1,teams:Array.isArray(previousDraft.teams)?previousDraft.teams:[],picks:remappedPicks};
+    state.seedVersion=SEED_VERSION;
+    state.canonicalRankingsVersion=CANONICAL_RANKINGS_VERSION;
+    migrated=true;
+  }
   if(!state.draft)state.draft={rounds:1,teams:[],picks:{}}; if(!state.draft.picks)state.draft.picks={}; if(!Array.isArray(state.draft.teams)){state.draft.teams=[];migrated=true;}
   if(migrated) save(); }
 const save=()=>rawSet(JSON.stringify(state));
