@@ -2572,3 +2572,87 @@ body.launch-open{overflow:hidden}
   #view-draft .draft-layout.pool-expanded .round-row{grid-template-columns:1fr}
   #view-draft .slot{min-height:100px}
 }
+
+/* Final phone pass: compact controls, readable pool rows and full-width pick cards. */
+@media(max-width:820px){
+  #view-draft .draft-setup{margin:0 0 6px}
+  #view-draft .draft-hero{padding:10px}
+  #view-draft .draft-hero-copy{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+  #view-draft .draft-hero-copy .eyebrow{font-size:7px;white-space:nowrap}
+  #view-draft .draft-hero-copy h1{margin:0;font-size:19px;white-space:nowrap}
+  #view-draft .draft-top{margin-top:8px}
+  #view-draft .draft-top-actions{grid-template-columns:repeat(5,minmax(0,1fr));gap:3px}
+  #view-draft .draft-top-actions .btn,
+  #view-draft .draft-top-actions .finish-btn{grid-column:auto;min-height:34px;padding:4px 2px;font-size:7px;line-height:1.1}
+  #view-draft .draft-order-strip{min-height:38px;margin-bottom:3px;padding:5px 8px}
+  #view-draft .draft-order-strip>div:first-child{min-width:0}
+  #view-draft .draft-order-strip strong{overflow:hidden;font-size:9px;text-overflow:ellipsis;white-space:nowrap}
+  #view-draft .draft-board-actions{display:none}
+  #view-draft .mobile-draft-switch{margin:0 -12px 6px;padding:5px 12px}
+  #view-draft .mobile-draft-switch button{min-height:38px;font-size:10px}
+  #view-draft .draft-layout,
+  #view-draft .draft-layout.mobile-pool,
+  #view-draft .draft-layout.mobile-board{padding:0;border:0;background:transparent;box-shadow:none}
+  #view-draft .best{border:1px solid #183f5d}
+  #view-draft .pool-head{min-height:43px;padding:7px 9px}
+  #view-draft .pool-search-wrap{padding:6px 8px}
+  #view-draft .pool-search{min-height:38px;font-size:12px}
+  #view-draft .pool-tools{gap:5px;padding:5px 7px}
+  #view-draft .pool-seg button{min-height:30px;padding:4px 9px}
+  #view-draft .pool-sort-label select{min-height:30px}
+  #view-draft .draft-layout .pool-player,
+  #view-draft .draft-layout.pool-expanded .pool-player{
+    grid-template-columns:20px 40px minmax(0,1fr) 42px 70px;
+    min-height:72px;
+    padding:7px 6px;
+  }
+  #view-draft .pool-rank{font-size:9px}
+  #view-draft .pool-id strong{font-size:11px;line-height:1.15}
+  #view-draft .pool-id small{font-size:8px;line-height:1.25}
+  #view-draft .pool-actions{display:grid;grid-template-columns:1fr;gap:3px}
+  #view-draft .pool-actions .pool-detail{display:block;min-height:27px;padding:3px 4px;font-size:7px}
+  #view-draft .pool-actions .draft-now{width:100%;min-height:29px;padding:3px 4px;font-size:8px}
+  #view-draft .draft-layout.pool-expanded .pool-player{min-height:80px}
+  #view-draft .draft-layout.pool-expanded .pool-production{grid-column:3 / 6;gap:3px 8px}
+  #view-draft .board-head{position:static;min-height:45px;margin:0 0 5px;padding:6px 8px}
+  #view-draft .board-head h2{font-size:15px}
+  #view-draft .active-pick-summary strong{font-size:10px}
+  #view-draft .active-pick-summary button{min-height:28px;padding:3px 6px;font-size:7px}
+  #view-draft .round-h{margin:0;padding:5px 8px}
+  #view-draft .slot{min-height:112px}
+  #view-draft .slot .body{padding:6px 7px}
+  #view-draft .pick-context{margin-bottom:5px;padding-bottom:5px}
+  #view-draft .pick-team-select{height:27px;font-size:9px}
+  #view-draft .slot .picked{grid-template-columns:40px minmax(0,1fr);gap:7px;min-height:61px}
+  #view-draft .slot .picked .thumb{width:40px;height:40px}
+  #view-draft .slot .picked .nm{font-size:11px}
+  #view-draft .slot .picked .sub{font-size:8px}
+  #view-draft .pick-statline{gap:2px 7px;margin-top:4px;font-size:7px}
+  #view-draft .slot .picked .dovr{font-size:10px}
+  #view-draft .open-pick{min-height:58px}
+  #view-draft .open-pick strong{font-size:10px}
+  #view-draft .open-draft-best{min-height:25px}
+  #view-draft .results-head{padding:14px 12px}
+  #view-draft .results-actions{width:100%}
+  #view-draft .results-actions .btn{flex:1;min-height:36px;padding:5px 7px;font-size:8px}
+}
+
+@media(max-width:600px){
+  #view-draft .draft-top-actions{grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}
+  #view-draft .draft-top-actions .btn{min-height:35px;font-size:8px}
+  #view-draft .draft-top-actions .finish-btn{grid-column:1 / -1}
+  #view-draft .round-row,
+  #view-draft .draft-layout.pool-expanded .round-row{grid-template-columns:1fr}
+  #view-draft .result-row{grid-template-columns:46px minmax(0,1fr) 58px;padding:8px 7px}
+  #view-draft .result-player strong{font-size:10px}
+  #view-draft .result-player small{font-size:7px}
+  #view-draft .result-rating b{font-size:11px}
+}
+
+@media(max-width:390px){
+  #view-draft .draft-hero-copy h1{font-size:17px}
+  #view-draft .draft-hero-copy .eyebrow{font-size:6px}
+  #view-draft .draft-layout .pool-player,
+  #view-draft .draft-layout.pool-expanded .pool-player{grid-template-columns:18px 36px minmax(0,1fr) 38px 64px;padding-inline:4px}
+  #view-draft .pool-thumb{width:36px;height:36px}
+}

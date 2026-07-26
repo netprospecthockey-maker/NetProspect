@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=90">
+  <link rel="stylesheet" href="styles.css?v=91">
 </head>
 <body class="launch-open">
 
@@ -48,7 +48,6 @@
       <a href="https://www.linkedin.com/in/net-prospect-hockey" target="_blank" rel="noopener" aria-label="NetProspect on LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="1.5"></rect><path d="M8 10v7M8 7.3v.2M11.5 17v-7m0 3c.7-2 4.5-2.3 4.5 1V17"></path></svg></a>
     </nav>
     <button class="iobtn auth-btn" id="authBtn"><svg class="auth-user-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.25"></circle><path d="M5.75 19c.55-3.35 2.64-5.25 6.25-5.25s5.7 1.9 6.25 5.25"></path></svg><span>Sign in</span></button>
-    <button class="iobtn primary" id="addBtn" hidden>+ Add Prospect</button>
   </div>
 </div></div>
 
@@ -176,20 +175,13 @@
 </div>
 
 <div class="overlay" id="overlay"><div class="modal">
-  <div class="modal-hd"><h2 id="mTitle">Edit Player</h2><button class="x" id="mClose">&times;</button></div>
+  <div class="modal-hd"><h2 id="mTitle">Player Profile</h2><button class="x" id="mClose">&times;</button></div>
   <div class="modal-bd2">
-    <div class="edit-hint" id="editHint">✏️ Every field on this card is editable — tap the name, the info boxes, the rating numbers, or the role notes.</div>
     <div id="cardEditor"></div>
   </div>
   <div class="modal-ft">
-    <button class="btn danger" id="mDelete">Delete</button>
-    <span class="code-save-status" id="codeSaveStatus" role="status"></span>
     <span class="spacer"></span>
     <button class="btn" id="mClose2">Close</button>
-    <button class="btn" id="mCommitCode">Save All to Code</button>
-    <button class="btn primary" id="mEdit">Edit</button>
-    <button class="btn" id="mCancel">Cancel</button>
-    <button class="btn primary" id="mSave">Save Player</button>
   </div>
 </div></div>
 
@@ -223,6 +215,6 @@
 <script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-database-compat.js"></script>
 <script src="/firebase-config.js?v=2"></script>
-<script src="app.js?v=95"></script>
+<script src="app.js?v=96"></script>
 </body>
 </html>

@@ -42,12 +42,9 @@ const NHL_TEAMS=["Anaheim Ducks","Boston Bruins","Buffalo Sabres","Calgary Flame
   "Washington Capitals","Winnipeg Jets"];
 
 const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
-// Keep the complete local editing workflow available for a later release.
-const PLAYER_EDITING_ENABLED=true;
 // Admin access comes only from the signed-in Firebase profile. New accounts are always members.
 const isAdmin=()=>currentUser?.role==='admin';
 function applyAccessControl(){
-  $('#addBtn').hidden=!PLAYER_EDITING_ENABLED||!isAdmin();
   const review=$('#adminReview');if(review)review.hidden=!isAdmin();
   document.body.classList.toggle('read-only',!isAdmin());
 }
@@ -1167,57 +1164,6 @@ function renderBoard(){
   hydrateTeamLogos($('#lBody'));
 }
 
-function ceImgMarkup(p){ return p.headshot
-  ? `<img id="ceImg" src="${esc(p.headshot)}" alt="" onerror="this.outerHTML='<div id=\\'ceImg\\' class=\\'ph\\'>${esc(initials(p.name))}</div>'">`
-  : `<div id="ceImg" class="ph">${esc(initials(p.name))}</div>`; }
-function editAttr(p,k){ const v=Number(p[k])||0;
-  return `<div class="sattr" data-k="${k}"><div class="srow"><span class="slb">${(isGoalie(p)?GOALIE_ATTR_LABELS[k]:LBL[k]).toUpperCase()}</span>
-    <input class="svl ce-rate" data-k="${k}" type="number" min="0" max="100" value="${v}"></div>
-    <div class="strack"><i style="width:${Math.max(0,Math.min(100,v))}%"></i></div></div>`; }
-function productionEditorHTML(p){
-  if(isGoalie(p))return `<div class="season-production production-editor"><div class="production-title">EDIT GOALTENDING</div><div class="production-grid goalie-production-grid">
-    <label><small>GP</small><input id="ceGames" type="number" min="0" step="1" value="${esc(showStat(p.games))}"></label><label><small>GAA</small><input id="ceGaa" type="number" min="0" step="0.01" value="${esc(showStat(p.gaa,2))}"></label><label><small>SV%</small><input id="ceSvPct" type="number" min="0" max="1" step="0.001" value="${esc(showStat(p.svPct,3))}"></label><label><small>W</small><input id="ceWins" type="number" min="0" step="1" value="${esc(showStat(p.wins))}"></label><label><small>L</small><input id="ceLosses" type="number" min="0" step="1" value="${esc(showStat(p.losses))}"></label><label><small>SO</small><input id="ceShutouts" type="number" min="0" step="1" value="${esc(showStat(p.shutouts))}"></label></div></div>`;
-  return `<div class="season-production production-editor"><div class="production-title">EDIT SEASON PRODUCTION</div><div class="production-grid"><label><small>GP</small><input id="ceGames" type="number" min="0" step="1" value="${esc(showStat(p.games))}"></label><label><small>G</small><input id="ceGoals" type="number" min="0" step="1" value="${esc(showStat(p.goals))}"></label><label><small>A</small><input id="ceAssists" type="number" min="0" step="1" value="${esc(showStat(p.assists))}"></label><label><small>PTS</small><input id="cePoints" type="number" min="0" step="1" value="${esc(showStat(p.points))}"></label><label><small>P/GP</small><input id="cePpg" type="number" min="0" step="0.01" value="${esc(showStat(p.ppg,2))}"></label></div></div>`;
-}
-function cardEditorHTML(p){
-  const o=overall(p),t=tierOf(o);
-  const urlVal=(p.headshot&&p.headshot.startsWith('data:'))?'':(p.headshot||'');
-  return `<div class="scard">
-    <div class="scard-hd">
-      <input id="ceName" class="hd-name" value="${esc(p.name)}" placeholder="Player Name">
-      <div class="hd-ovr"><span id="ceOvr" class="ovrnum">${o.toFixed(0)}</span><small>OVR</small>
-        <span id="ceTier" class="chip" style="background:${t.color}">${t.name}</span></div>
-    </div>
-    <div class="scard-bd">
-      <div class="scard-left">
-        <div class="photo-box">${ceImgMarkup(p)}<span id="ceFlag" class="sflag">${flagFor(p.country)}</span></div>
-        <input id="ceHead" class="head-url" placeholder="Headshot URL (optional)" value="${esc(urlVal)}">
-        <div class="spanel"><div class="sphl">Position &nbsp;·&nbsp; Shot</div>
-          <div class="duo"><input id="cePos" class="cellin" value="${esc(p.pos)}" placeholder="C">
-            <input id="ceShot" class="cellin" value="${esc(p.shot)}" placeholder="L/R" maxlength="4"></div></div>
-        <div class="spanel"><div class="sphl">Height &nbsp;·&nbsp; Weight</div>
-          <div class="duo"><input id="ceHt" class="cellin" value="${esc(p.height)}" placeholder="6'0&quot;">
-            <input id="ceWt" class="cellin" value="${esc(p.weight)}" placeholder="190lbs"></div></div>
-        <div class="spanel"><div class="sphl">Team</div>
-          <input id="ceTeam" class="linein" value="${esc(p.team)}" placeholder="Team name"></div>
-        <div class="spanel"><div class="sphl">2025–26 League</div>
-          <input id="ceLeague" class="linein" value="${esc(p.league||leagueForTeam(p.team,p.country))}" placeholder="WHL, OHL, U20 Nationell…"></div>
-        <div class="spanel"><div class="sphl">Country</div>
-          <input id="ceCountry" class="linein" value="${esc(p.country)}" placeholder="Canada"></div>
-      </div>
-      <div class="scard-right">
-        <div class="attrwrap">
-          <div class="attrcol">${ATTR_L.map(k=>editAttr(p,k)).join('')}</div>
-          <div class="attrcol">${ATTR_R.map(k=>editAttr(p,k)).join('')}</div>
-        </div>
-        ${productionEditorHTML(p)}
-        <div class="srole"><div class="srt">NHL ROLE</div>
-          <textarea id="ceRole" class="rolein" rows="3" placeholder="Projected role&#10;Player point one&#10;Player point two">${esc(cleanRole(p.role).join('\n'))}</textarea>
-          <div class="role-limit">Projected role + two player points</div></div>
-      </div>
-    </div>
-  </div>`;
-}
 function viewAttr(p,k){ const v=Number(p[k])||0;
   return `<div class="vattr"><div class="vrow"><span class="vlb">${(isGoalie(p)?GOALIE_ATTR_LABELS[k]:LBL[k]).toUpperCase()}</span><span class="vnum">${v}</span></div>
     <div class="vbar"><i style="width:${Math.max(0,Math.min(100,v))}%"></i></div></div>`; }
@@ -1273,105 +1219,16 @@ function cardViewHTML(p){
   </div>`;
 }
 
-let editId=null,draftP=null,viewId=null,mode='view';
-function setFooter(){
-  const v=mode==='view';
-  $('#editHint').style.display=v?'none':'flex';
-  $('#mClose2').style.display=v?'inline-block':'none';
-  $('#mCommitCode').style.display=PLAYER_EDITING_ENABLED&&v?'inline-block':'none';
-  $('#mEdit').style.display=PLAYER_EDITING_ENABLED&&v?'inline-block':'none';
-  $('#mCancel').style.display=v?'none':'inline-block';
-  $('#mSave').style.display=v?'none':'inline-block';
-  $('#mDelete').style.display=(!v && editId && isAdmin())?'inline-block':'none';
-}
 function openView(id){
   const p=byId(id); if(!p)return;
-  mode='view'; viewId=id; editId=null; draftP=null;
   $('#mTitle').textContent=p.name;
   $('#cardEditor').innerHTML=cardViewHTML(p);
-  setFooter(); $('#overlay').classList.add('show'); hydrateTeamLogos($('#cardEditor'));
+  $('#overlay').classList.add('show'); hydrateTeamLogos($('#cardEditor'));
 }
-$('#addBtn').onclick=()=>{if(isAdmin())openEditor(null);};
 $('#mClose').onclick=closeEditor;
 $('#mClose2').onclick=closeEditor;
-$('#mEdit').onclick=()=>{ const status=$('#codeSaveStatus');if(status)status.textContent='';if(viewId)openEditor(viewId); };
-$('#mCancel').onclick=()=>{ if(editId)openView(editId); else closeEditor(); };
 $('#overlay').onclick=e=>{ if(e.target.id==='overlay')closeEditor(); };
-const blankPlayer=()=>({id:null,name:'',team:'',pos:'',shot:'L',country:'',height:'',weight:'',headshot:'',
-  league:'',games:'',goals:'',assists:'',points:'',ppg:'',gaa:'',svPct:'',wins:'',losses:'',shutouts:'',skating:80,shooting:80,iq:80,ozone:80,dzone:80,phys:80,role:[]});
-function openEditor(id){
-  mode='edit'; editId=id; const src=id?byId(id):blankPlayer(); draftP=JSON.parse(JSON.stringify(src));
-  $('#mTitle').textContent=id?'Edit Prospect':'Add Prospect';
-  buildCardEditor(); setFooter(); $('#overlay').classList.add('show');
-}
-function updateOvr(){ const o=overall(draftP),t=tierOf(o);
-  const n=$('#ceOvr'); if(n)n.textContent=o.toFixed(0);
-  const c=$('#ceTier'); if(c){ c.textContent=t.name; c.style.background=t.color; } }
-function setCePhoto(){ const old=$('#ceImg'); if(old)old.outerHTML=ceImgMarkup(draftP); }
-function buildCardEditor(){
-  $('#cardEditor').innerHTML=cardEditorHTML(draftP);
-  const bind=(id,key,after)=>{ const el=$('#'+id); if(el)el.oninput=()=>{ draftP[key]=el.value; if(after)after(); }; };
-  bind('ceName','name'); bind('ceTeam','team'); bind('ceLeague','league'); bind('ceHt','height'); bind('ceWt','weight');
-  bind('cePos','pos',updateOvr); bind('ceShot','shot');
-  [['ceGames','games'],['ceGoals','goals'],['ceAssists','assists'],['cePoints','points'],['cePpg','ppg'],['ceGaa','gaa'],['ceSvPct','svPct'],['ceWins','wins'],['ceLosses','losses'],['ceShutouts','shutouts']].forEach(([id,key])=>{const el=$('#'+id);if(el)el.oninput=()=>{draftP[key]=el.value;};});
-  $('#ceCountry').oninput=()=>{ draftP.country=$('#ceCountry').value; $('#ceFlag').textContent=flagFor(draftP.country); };
-  $('#ceHead').oninput=()=>{ const v=$('#ceHead').value.trim();
-    if(v) draftP.headshot=v;
-    else { const orig=editId?byId(editId):null; draftP.headshot=(orig&&orig.headshot&&orig.headshot.startsWith('data:'))?orig.headshot:''; }
-    setCePhoto(); };
-  $('#ceRole').oninput=()=>{ draftP.role=cleanRole($('#ceRole').value.split('\n')); };
-  $$('#cardEditor .ce-rate').forEach(inp=>inp.oninput=()=>{
-    const v=Math.max(0,Math.min(100,Math.round(+inp.value||0))); draftP[inp.dataset.k]=v;
-    const bar=$(`#cardEditor .sattr[data-k="${inp.dataset.k}"] .strack i`); if(bar)bar.style.width=v+'%';
-    updateOvr(); });
-}
-function closeEditor(){ $('#overlay').classList.remove('show'); editId=null; draftP=null; viewId=null; }
-async function postLocalPlayerApi(path,body={}){
-  const options={method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)};
-  const endpoints=[path];
-  if(location.hostname==='localhost'||location.hostname==='127.0.0.1')endpoints.push(`http://127.0.0.1:8787${path}`);
-  for(const endpoint of [...new Set(endpoints)]){
-    try{
-      const response=await fetch(endpoint,options);
-      if(response.ok)return true;
-    }catch(error){console.warn(`Code save unavailable at ${endpoint}`,error);}
-  }
-  return false;
-}
-const persistPlayerOverride=player=>postLocalPlayerApi('/api/player-overrides',player);
-const commitPlayerOverrides=()=>postLocalPlayerApi('/api/player-overrides/commit');
-$('#mSave').onclick=async()=>{
-  draftP.name=(draftP.name||'').trim();
-  if(!draftP.name){ const n=$('#ceName'); if(n){ n.focus(); n.style.borderColor='#E0705A'; } return; }
-  ATTRS.forEach(([k])=>draftP[k]=Math.max(0,Math.min(100,Math.round(+draftP[k]||0))));
-  ['games','goals','assists','points','ppg','gaa','svPct','wins','losses','shutouts'].forEach(k=>{draftP[k]=draftP[k]===''?'':Math.max(0,Number(draftP[k])||0);});
-  if(editId){ const existing=byId(editId),oldScore=overall(existing),newScore=overall(draftP);
-    draftP.previousOverall=Math.abs(newScore-oldScore)>=.05?oldScore:(Number(existing.previousOverall)||oldScore);
-    draftP._localEdit=true;
-    Object.assign(existing,draftP);
-  } else { draftP.id=uid(); draftP.previousOverall=overall(draftP); state.players.push(draftP); }
-  const savedId = editId || draftP.id;
-  save();
-  const persisted=await persistPlayerOverride(byId(savedId));
-  renderPlayers(); if($('#view-home').classList.contains('active'))renderHome(); if($('#view-board').classList.contains('active'))renderBoard(); if($('#view-stock').classList.contains('active'))renderStock();
-  openView(savedId);
-  const status=$('#codeSaveStatus');if(status){status.textContent=persisted?'✓ Saved — code update queued':'Saved in browser only';status.classList.toggle('failed',!persisted);}
-};
-$('#mCommitCode').onclick=async()=>{
-  const button=$('#mCommitCode'),status=$('#codeSaveStatus');
-  button.disabled=true;
-  if(status){status.textContent='Saving all edits to code…';status.classList.remove('failed');}
-  const committed=await commitPlayerOverrides();
-  button.disabled=false;
-  if(status){status.textContent=committed?'✓ All edits saved to code':'Could not save edits to code';status.classList.toggle('failed',!committed);}
-};
-$('#mDelete').onclick=async()=>{
-  if(!isAdmin())return;
-  if(!editId)return; if(!confirm('Delete this player? Also removes them from the draft board.'))return;
-  state.players=state.players.filter(p=>p.id!==editId);
-  Object.keys(state.draft.picks).forEach(k=>{ if(state.draft.picks[k]===editId)delete state.draft.picks[k]; });
-  save(); closeEditor(); renderPlayers(); if($('#view-home').classList.contains('active'))renderHome(); if($('#view-stock').classList.contains('active'))renderStock();
-};
+function closeEditor(){ $('#overlay').classList.remove('show'); }
 
 $('#dRounds').onchange=()=>{ state.draft.rounds=1; save(); renderDraft(); };
 $('#clearDraft').onclick=()=>{ if(confirm('Clear all picks?')){ state.draft.picks={};draftActiveSlot=0;save();renderDraft(); } };
