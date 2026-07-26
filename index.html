@@ -98,6 +98,7 @@
       <div class="stock-head-copy"><span class="eyebrow">Player movement</span><h1>Stock Watch</h1><p>Track whose evaluations are moving, which profiles are heating up and where the board may need another look.</p><div class="stock-head-notes"><span>Risers and fallers</span><span>Previous vs. current grade</span><span>Tap any player for the full card</span></div></div>
       <div class="stock-head-art"><img src="assets/stock-watch/header.jpg" alt="Stock Watch prospect header art"></div>
     </div>
+    <p class="stock-launch-note">Stock changes will appear once the 2026–27 season begins and players start receiving ratings. Stock Watch will compare each player’s current rating with their D-1 rating to identify the biggest risers and fallers.</p>
     <div class="stock-grid"><div class="stock-card rise"><div class="stock-title"><span>↗</span><div><h2>Trending up</h2><p>Biggest score increases</p></div></div><div id="risers"></div></div>
       <div class="stock-card fall"><div class="stock-title"><span>↘</span><div><h2>Trending down</h2><p>Biggest score decreases</p></div></div><div id="fallers"></div></div></div>
   </section>
@@ -152,6 +153,9 @@
       <button data-draft-pane="board"><span>2</span> Pick board</button>
     </div>
     <div class="draft-layout" id="draftWorkspace">
+      <div class="draft-lower">
+        <section class="best" id="best"></section>
+      </div>
       <main class="draft-board-wrap">
         <div class="board-head">
           <div><span class="eyebrow">All selections</span><h2>Draft board</h2></div>
@@ -159,9 +163,6 @@
         </div>
         <div class="board" id="dBoard"></div>
       </main>
-      <div class="draft-lower">
-        <section class="best" id="best"></section>
-      </div>
     </div>
     <div class="draft-results" id="draftResults" hidden>
       <div class="results-head">

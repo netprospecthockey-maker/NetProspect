@@ -705,7 +705,7 @@ function renderStock(){
   const movers=published?state.players.filter(p=>Number.isFinite(Number(baseline[p.name]))).map(p=>({...p,_o:overall(p),_prev:Number(baseline[p.name])})).map(p=>({...p,_delta:Math.round((p._o-p._prev)*10)/10})):[];
   const row=p=>`<button class="stock-row" data-id="${p.id}">${thumb(p,'stock-thumb')}<span class="stock-player"><strong>${esc(p.name)} ${flagFor(p.country)?`<span class="inline-flags">${flagFor(p.country)}</span>`:''}</strong><small>${esc(p.pos||'—')} · ${esc(p.team||'')}</small></span><span class="stock-scores"><b>${p._o.toFixed(1)}</b><small>was ${p._prev.toFixed(1)}</small></span><span class="stock-delta ${p._delta>0?'up':'down'}">${p._delta>0?'+':''}${p._delta.toFixed(1)}</span></button>`;
   const risers=movers.filter(p=>p._delta>0).sort((a,b)=>b._delta-a._delta).slice(0,10),fallers=movers.filter(p=>p._delta<0).sort((a,b)=>a._delta-b._delta).slice(0,10);
-  const empty='<div class="stock-empty">Stock changes will appear once the 2026–27 season begins and players start receiving ratings. Stock Watch will compare each player’s current rating with their D-1 rating to identify the biggest risers and fallers.</div>';
+  const empty='<div class="stock-empty">TBD</div>';
   $('#risers').innerHTML=risers.map(row).join('')||empty;
   $('#fallers').innerHTML=fallers.map(row).join('')||empty;
   $$('#view-stock [data-id]').forEach(b=>b.onclick=()=>openView(b.dataset.id));
@@ -1434,7 +1434,7 @@ function setPoolVisibility(){
   $('#draftWorkspace').classList.toggle('pool-hidden',!playerPoolOpen);
   $('#draftWorkspace').classList.toggle('pool-expanded',playerPoolOpen&&playerPoolExpanded);
   $('#togglePool').textContent=playerPoolOpen?'Hide player list':'Show player list';
-  const expand=$('#expandPool'); if(expand)expand.textContent=playerPoolExpanded?'Collapse':'Expand';
+  const expand=$('#expandPool'); if(expand)expand.textContent=playerPoolExpanded?'Compact view':'Show stats';
 }
 function setMobileDraftPane(){
   $('#draftWorkspace').classList.toggle('mobile-pool',mobileDraftPane==='pool');
@@ -1506,7 +1506,7 @@ function renderDraft(){
   if(state.draft.rounds!==1||Object.keys(state.draft.picks).some(slot=>+slot>=32)){state.draft.rounds=1;state.draft.picks=Object.fromEntries(Object.entries(state.draft.picks).filter(([slot])=>+slot<32));save();}
   $('#dRounds').value=state.draft.rounds||1;
   const totalSlots=(state.draft.rounds||1)*32, pickedCount=Object.values(state.draft.picks).filter(v=>v&&byId(v)).length;
-  $('#best').innerHTML=`<div class="pool-head"><div><span class="eyebrow">Player pool</span><h3>Best available</h3></div><div class="pool-head-actions"><button id="expandPool" class="pool-expand">${playerPoolExpanded?'Collapse':'Expand'}</button><div class="draft-progress"><b>${pickedCount}</b> / ${totalSlots}</div></div></div>
+  $('#best').innerHTML=`<div class="pool-head"><div><span class="eyebrow">Player pool</span><h3>Best available</h3></div><div class="pool-head-actions"><button id="expandPool" class="pool-expand">${playerPoolExpanded?'Compact view':'Show stats'}</button><div class="draft-progress"><b>${pickedCount}</b> / ${totalSlots}</div></div></div>
     <div class="pool-search-wrap"><input class="pool-search" id="draftSearch" type="text" value="${esc(draftSearch)}" placeholder="Search all prospects…"><button id="clearDraftSearch" title="Clear search">×</button></div>
     <div class="pool-tools"><div class="pool-seg" id="draftPos">${['all',...POSITION_FILTERS].map(pos=>`<button data-v="${pos}" class="${draftPos===pos?'on':''}">${pos==='all'?'All':pos}</button>`).join('')}</div><label class="pool-sort-label">Sort <select id="draftSort"><option value="overall" ${draftSort==='overall'?'selected':''}>Overall</option><option value="points" ${draftSort==='points'?'selected':''}>Points</option><option value="goals" ${draftSort==='goals'?'selected':''}>Goals</option><option value="assists" ${draftSort==='assists'?'selected':''}>Assists</option><option value="ppg" ${draftSort==='ppg'?'selected':''}>P/GP</option><option value="skating" ${draftSort==='skating'?'selected':''}>Skating</option><option value="shooting" ${draftSort==='shooting'?'selected':''}>Shooting</option><option value="iq" ${draftSort==='iq'?'selected':''}>Hockey IQ</option><option value="name" ${draftSort==='name'?'selected':''}>Name</option></select></label><span id="poolCount"></span></div>
     <div class="pool-columns"><span>Rank</span><span></span><span>Player</span><span>Size</span><span>Production</span><span>Overall</span><span></span></div>
