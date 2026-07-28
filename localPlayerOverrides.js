@@ -20,13 +20,13 @@ const LOCAL_PLAYER_OVERRIDES = {
     "wins": 0,
     "losses": 0,
     "shutouts": 0,
-    "skating": 82,
-    "shooting": 84,
-    "iq": 85,
-    "ozone": 87,
-    "dzone": 80,
-    "phys": 84,
-    "previousOverall": 83.5
+    "skating": 81,
+    "shooting": 83,
+    "iq": 82,
+    "ozone": 84,
+    "dzone": 78,
+    "phys": 81,
+    "previousOverall": 77.4
   },
   "Egon Ekberg": {
     "team": "Djurgårdens IF U18",
@@ -78,13 +78,13 @@ const LOCAL_PLAYER_OVERRIDES = {
     "wins": 0,
     "losses": 0,
     "shutouts": 0,
-    "skating": 82,
-    "shooting": 82,
-    "iq": 82,
-    "ozone": 83,
-    "dzone": 81,
-    "phys": 77,
-    "previousOverall": 81
+    "skating": 79,
+    "shooting": 80,
+    "iq": 78,
+    "ozone": 78,
+    "dzone": 75,
+    "phys": 76,
+    "previousOverall": 76.9
   },
   "Oliver Sundberg": {
     "team": "Djurgårdens IF U18",
@@ -174,12 +174,12 @@ const LOCAL_PLAYER_OVERRIDES = {
     "losses": 0,
     "shutouts": 0,
     "skating": 82,
-    "shooting": 84,
-    "iq": 85,
-    "ozone": 83,
-    "dzone": 79,
-    "phys": 76,
-    "previousOverall": 77.7
+    "shooting": 79,
+    "iq": 83,
+    "ozone": 84,
+    "dzone": 76,
+    "phys": 75,
+    "previousOverall": 79.7
   },
   "Tom Pråhl": {
     "team": "Djurgårdens IF U18",
@@ -202,13 +202,13 @@ const LOCAL_PLAYER_OVERRIDES = {
     "wins": 0,
     "losses": 0,
     "shutouts": 0,
-    "skating": 84,
-    "shooting": 87,
-    "iq": 82,
-    "ozone": 85,
-    "dzone": 79,
-    "phys": 80,
-    "previousOverall": 84.1
+    "skating": 80,
+    "shooting": 84,
+    "iq": 79,
+    "ozone": 81,
+    "dzone": 76,
+    "phys": 78,
+    "previousOverall": 76.7
   },
   "Noel Nord": {
     "team": "Leksands IF U18",
@@ -231,12 +231,12 @@ const LOCAL_PLAYER_OVERRIDES = {
     "wins": 0,
     "losses": 0,
     "shutouts": 0,
-    "skating": 81,
-    "shooting": 83,
-    "iq": 81,
-    "ozone": 82,
-    "dzone": 80,
-    "phys": 78,
+    "skating": 78,
+    "shooting": 78,
+    "iq": 78,
+    "ozone": 81,
+    "dzone": 77,
+    "phys": 77,
     "previousOverall": 77.1
   },
   "Vincent Bäckdahl": {
@@ -260,12 +260,12 @@ const LOCAL_PLAYER_OVERRIDES = {
     "wins": 0,
     "losses": 0,
     "shutouts": 0,
-    "skating": 80,
-    "shooting": 84,
-    "iq": 79,
-    "ozone": 83,
-    "dzone": 79,
-    "phys": 84,
+    "skating": 76,
+    "shooting": 77,
+    "iq": 77,
+    "ozone": 77,
+    "dzone": 75,
+    "phys": 83,
     "previousOverall": 76.4
   },
   "Alexander Søyland": {
@@ -694,12 +694,12 @@ const LOCAL_PLAYER_OVERRIDES = {
     "wins": 0,
     "losses": 0,
     "shutouts": 0,
-    "skating": 82,
-    "shooting": 83,
-    "iq": 83,
-    "ozone": 82,
-    "dzone": 78,
-    "phys": 76,
+    "skating": 78,
+    "shooting": 82,
+    "iq": 82,
+    "ozone": 83,
+    "dzone": 77,
+    "phys": 77,
     "previousOverall": 76.5
   },
   "Jonathan Cremonese": {
@@ -754,13 +754,13 @@ const LOCAL_PLAYER_OVERRIDES = {
     "wins": 0,
     "losses": 0,
     "shutouts": 0,
-    "skating": 81,
-    "shooting": 83,
-    "iq": 81,
-    "ozone": 80,
-    "dzone": 77,
+    "skating": 82,
+    "shooting": 82,
+    "iq": 83,
+    "ozone": 83,
+    "dzone": 74,
     "phys": 75,
-    "previousOverall": 75.9
+    "previousOverall": 79.8
   },
   "Aleks Kulemin": {
     "team": "Kingston Frontenacs",
@@ -845,12 +845,12 @@ const LOCAL_PLAYER_OVERRIDES = {
     "wins": 0,
     "losses": 0,
     "shutouts": 0,
-    "skating": 77,
-    "shooting": 82,
-    "iq": 77,
+    "skating": 76,
+    "shooting": 78,
+    "iq": 76,
     "ozone": 78,
     "dzone": 75,
-    "phys": 78,
+    "phys": 76,
     "previousOverall": 75.4
   },
   "James Scantlebury": {
@@ -978,12 +978,12 @@ const LOCAL_PLAYER_OVERRIDES = {
     "losses": 0,
     "shutouts": 0,
     "skating": 79,
-    "shooting": 82,
-    "iq": 82,
-    "ozone": 82,
+    "shooting": 79,
+    "iq": 80,
+    "ozone": 79,
     "dzone": 75,
     "phys": 68,
-    "previousOverall": 79.7
+    "previousOverall": 78.3
   },
   "Max Syrjäläinen": {
     "team": "Jokerit U20",
@@ -1490,9 +1490,45 @@ const LOCAL_PLAYER_OVERRIDES = {
     "dzone": 75,
     "phys": 75,
     "previousOverall": 85.3
+  },
+  "Blake Chorney": {
+    "skating": 75,
+    "shooting": 80,
+    "iq": 80,
+    "ozone": 82,
+    "dzone": 78,
+    "phys": 75,
+    "previousOverall": 79.4
+  },
+  "Oliver Rinne": {
+    "skating": 80,
+    "shooting": 78,
+    "iq": 82,
+    "ozone": 81,
+    "dzone": 79,
+    "phys": 77,
+    "previousOverall": 77.2
+  },
+  "Prabh Bhathal": {
+    "skating": 75,
+    "shooting": 79,
+    "iq": 78,
+    "ozone": 75,
+    "dzone": 77,
+    "phys": 78,
+    "previousOverall": 77.8
+  },
+  "Loui Karlsson": {
+    "skating": 78,
+    "shooting": 80,
+    "iq": 83,
+    "ozone": 83,
+    "dzone": 78,
+    "phys": 75,
+    "previousOverall": 80.9
   }
 };
-if (typeof SEED_PLAYERS !== 'undefined') {
+if (typeof SEED_PLAYERS !== "undefined") {
   SEED_PLAYERS.forEach(player => {
     const override = LOCAL_PLAYER_OVERRIDES[player.name];
     if (override) Object.assign(player, override, {_localEdit:true});
