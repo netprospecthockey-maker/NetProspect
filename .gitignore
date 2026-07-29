@@ -1,3 +1,6 @@
 .cache-draft2026-d1/
 .env
 node_modules/
+firebase-debug.log*
+database-debug.log*
+ui-debug.log*
