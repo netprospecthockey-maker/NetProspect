@@ -411,7 +411,7 @@ const VERIFIED_STAT_LINES={
 
 const KEY='draftscout_v2'; let _mem=null;
 const SEED_VERSION=16;
-const CANONICAL_RANKINGS_VERSION=3;
+const CANONICAL_RANKINGS_VERSION=4;
 const RECOVERED_U18_RATINGS_VERSION=1;
 const POINT_STATS_VERSION=18;
 const BIO_DATA_VERSION=7;
@@ -531,7 +531,8 @@ const SOURCE_RATINGS_BY_PLAYER=Object.fromEntries(SEED_PLAYERS.map(player=>{
   return [name,{...ratings,...(goalie||(stillDefault&&defaults)||{})}];
 }));
 const seedState=()=>({players:SEED_PLAYERS.map(original=>{
-  const p={...original,name:PLAYER_NAME_CORRECTIONS[original.name]||original.name},bio=EP_BIOS[p.name]||{},stats=POINT_STATS[p.name]||{},grades=GOALIE_GRADES[p.name]||DEFAULT_GRADE_OVERRIDES[p.name]||{},
+  const p={...original,name:PLAYER_NAME_CORRECTIONS[original.name]||original.name},bio=EP_BIOS[p.name]||{},stats=POINT_STATS[p.name]||{},
+    stillDefault=ATTRS.every(([key])=>Number(p[key])===75),grades=GOALIE_GRADES[p.name]||(stillDefault?DEFAULT_GRADE_OVERRIDES[p.name]:null)||{},
     {team:rawStatsTeam,...production}=stats,statsTeam=cleanTeamName(rawStatsTeam)||p.team||'';
   return{id:uid(),...p,...grades,...bio,...production,team:p.team||statsTeam,statsTeam,statLines:(typeof POINT_STAT_LINES==='object'&&POINT_STAT_LINES[p.name])||VERIFIED_STAT_LINES[p.name]||p.statLines,headshot:p.headshot||bio.photo||'',country:COUNTRY_BY_PLAYER[p.name]||p.country,role:cleanRole(p.role)};
 }),draft:{rounds:1,teams:[],picks:{}},seedVersion:SEED_VERSION,canonicalRankingsVersion:CANONICAL_RANKINGS_VERSION,recoveredU18RatingsVersion:RECOVERED_U18_RATINGS_VERSION,countryDataVersion:COUNTRY_DATA_VERSION,pointStatsVersion:POINT_STATS_VERSION,bioDataVersion:BIO_DATA_VERSION,statLinesVersion:STAT_LINES_VERSION,goalieGradesVersion:GOALIE_GRADES_VERSION,defaultGradeVersion:DEFAULT_GRADE_VERSION});
