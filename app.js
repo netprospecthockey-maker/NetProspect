@@ -52,6 +52,16 @@ function applyAccessControl(){
   document.body.classList.toggle('read-only',!isAdmin());
 }
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+document.addEventListener('error',event=>{
+  const image=event.target;if(!(image instanceof HTMLImageElement))return;
+  if(image.dataset.fallbackInitials!==undefined){
+    const replacement=document.createElement(image.id==='ceImg'?'div':'span');
+    if(image.id)replacement.id=image.id;
+    replacement.className=image.id==='ceImg'?'ph':image.className;
+    replacement.textContent=image.dataset.fallbackInitials;
+    image.replaceWith(replacement);
+  }else if(image.dataset.removeOnError!==undefined)image.remove();
+},true);
 const positionTokens=pos=>String(pos||'').toUpperCase().split(/\s*[/,|-]\s*/).map(v=>v.trim()).filter(Boolean).map(v=>v==='LD'||v==='RD'?'D':v);
 const isD=pos=>positionTokens(pos).includes('D');
 const isGoalie=p=>positionTokens(p?.pos).includes('G');
@@ -66,7 +76,7 @@ const initials=n=>String(n||'?').split(/\s+/).map(w=>w[0]).slice(0,2).join('').t
 const roleMeta=/^(position|shot|height|weight|skating|shooting|hockey iq|offensive zone|defensive zone|physicality)\b/i;
 const cleanRole=role=>(Array.isArray(role)?role:[]).map(s=>String(s||'').trim()).filter(s=>s&&!roleMeta.test(s)).slice(0,3);
 function thumb(p,cls){ return p.headshot
-  ? `<img class="thumb ${cls||''}" src="${esc(p.headshot)}" alt="" loading="lazy" decoding="async" onerror="this.outerHTML='<span class=\\'thumb ${cls||''}\\'>${esc(initials(p.name))}</span>'">`
+  ? `<img class="thumb ${cls||''}" src="${esc(p.headshot)}" alt="" loading="lazy" decoding="async" data-fallback-initials="${esc(initials(p.name))}">`
   : `<span class="thumb ${cls||''}">${esc(initials(p.name))}</span>`; }
 const teamAbbr=team=>String(team||'FA').replace(/\b(HC|Hockey|U1[6789]|U20|Juniors?|Academy|Team)\b/gi,' ').trim().split(/\s+/).filter(Boolean).slice(0,3).map(w=>w[0]).join('').toUpperCase().slice(0,3)||'FA';
 const TEAM_LOGOS={
@@ -330,7 +340,7 @@ function matchedClubName(team){
 function teamMark(team,cls='',fallbackCountry=''){
   const name=String(team||''),club=matchedClubName(name),logo=TEAM_LOGOS[name]||TEAM_LOGOS[club]||'';
   const fallback=flagFor(fallbackCountry);
-  return `<span class="team-mark ${cls} ${!logo&&fallback?'flag-fallback':''}" aria-hidden="true"><i>${fallback||esc(teamAbbr(name))}</i>${logo?`<img src="${esc(logo)}" alt="" loading="lazy" onerror="this.remove()">`:''}</span>`;
+  return `<span class="team-mark ${cls} ${!logo&&fallback?'flag-fallback':''}" aria-hidden="true"><i>${fallback||esc(teamAbbr(name))}</i>${logo?`<img src="${esc(logo)}" alt="" loading="lazy" data-remove-on-error>`:''}</span>`;
 }
 async function hydrateTeamLogos(){/* Only verified, club-specific artwork is rendered. */}
 function leagueForTeam(team,country=''){
@@ -759,8 +769,8 @@ function draft26DisplayRow(player,d1Map=draft26D1Map()){
 }
 const DRAFT26_LEAGUE_LOGOS={OHL:'assets/leagues/ohl.png',WHL:'assets/leagues/whl.gif',USHL:'assets/leagues/ushl.png',QMJHL:'assets/leagues/qmjhl.png',NCAA:'assets/leagues/ncaa.svg',NTDP:'assets/teams/u-s-national-u18-team.gif',SHL:'assets/leagues/shl.svg',Liiga:'assets/leagues/liiga.svg',HockeyAllsvenskan:'assets/leagues/hockeyallsvenskan.svg','HockeyAllsv...':'assets/leagues/hockeyallsvenskan.svg',NAHL:'assets/leagues/nahl.svg',KHL:'assets/leagues/khl.png',GOJHL:'assets/leagues/gojhl.png'};
 const DRAFT26_LEAGUE_COUNTRIES={OHL:'Canada',WHL:'Canada',QMJHL:'Canada',USHL:'USA',MHL:'Russia','U20 Nationell':'Sweden','J20 Nationell':'Sweden','J18 Region':'Sweden','J18 Nationell':'Sweden','J18 Div.1':'Sweden','U20 SM-sarja':'Finland','U18 SM-sarja':'Finland','U20 Mestis':'Finland','U18 Mestis':'Finland',NTDP:'USA','USHS-Prep':'USA','USHS-MN':'USA',Liiga:'Finland',Slovakia:'Slovakia','Slovakia U18':'Slovakia','Slovakia U20':'Slovakia','Czechia U17':'Czechia','Czechia U20':'Czechia',HockeyAllsvenskan:'Sweden','HockeyAllsv...':'Sweden',VHL:'Russia',KHL:'Russia',PHC:'Russia',NL:'Switzerland',NAHL:'USA',BCHL:'Canada',AJHL:'Canada',CCHL:'Canada',OJHL:'Canada',QM18AAA:'Canada','AEHL U18':'Canada','SMAAAHL':'Canada','CSSHL U18':'Canada','U18 AAA':'Canada','16U AAA':'USA','18U AAA':'USA','AYHL 16U':'USA','BEAST 18U':'USA',MPHL:'USA',UMHSEHL:'USA','Steel Icebreaker U16':'USA','Russia U17':'Russia','Russia U18':'Russia','Belarus Vysshaya':'Belarus','Belarus U18':'Belarus','WJC-18 D1A':'Denmark','U20-Elit':'Switzerland',GOJHL:'Canada','Division 2':'Sweden',Denmark:'Denmark',Latvia:'Latvia',Czechia:'Czechia'};
-const leagueMark=(league,cls='')=>{const logo=DRAFT26_LEAGUE_LOGOS[league],fallback=flagFor(DRAFT26_LEAGUE_COUNTRIES[league]);return `<span class="league-mark ${cls} ${!logo&&fallback?'flag-mark':''}" aria-hidden="true"><i>${fallback||esc(String(league||'—').replace(/[^A-Za-z0-9]/g,'').slice(0,4))}</i>${logo?`<img src="${esc(logo)}" alt="" loading="lazy" onerror="this.remove()">`:''}</span>`;};
-const draft26Portrait=player=>{const source=/^No selection/i.test(player.player)?'':((typeof DRAFT_2026_HEADSHOTS==='object'&&DRAFT_2026_HEADSHOTS[player.player])||(typeof DRAFT_2026_HEADSHOTS_BY_PICK==='object'&&DRAFT_2026_HEADSHOTS_BY_PICK[player.pick])||'');return `<span class="draft26-photo" aria-hidden="true"><i>${esc(initials(player.player))}</i>${source?`<img src="${esc(source)}" alt="" loading="lazy" decoding="async" onerror="this.remove()">`:''}</span>`;};
+const leagueMark=(league,cls='')=>{const logo=DRAFT26_LEAGUE_LOGOS[league],fallback=flagFor(DRAFT26_LEAGUE_COUNTRIES[league]);return `<span class="league-mark ${cls} ${!logo&&fallback?'flag-mark':''}" aria-hidden="true"><i>${fallback||esc(String(league||'—').replace(/[^A-Za-z0-9]/g,'').slice(0,4))}</i>${logo?`<img src="${esc(logo)}" alt="" loading="lazy" data-remove-on-error>`:''}</span>`;};
+const draft26Portrait=player=>{const source=/^No selection/i.test(player.player)?'':((typeof DRAFT_2026_HEADSHOTS==='object'&&DRAFT_2026_HEADSHOTS[player.player])||(typeof DRAFT_2026_HEADSHOTS_BY_PICK==='object'&&DRAFT_2026_HEADSHOTS_BY_PICK[player.pick])||'');return `<span class="draft26-photo" aria-hidden="true"><i>${esc(initials(player.player))}</i>${source?`<img src="${esc(source)}" alt="" loading="lazy" decoding="async" data-remove-on-error>`:''}</span>`;};
 const draft26PlayerCell=player=>{const profile=typeof DRAFT_2026_PROFILES_BY_PICK==='object'?DRAFT_2026_PROFILES_BY_PICK[player.pick]:null,content=`${draft26Portrait(player)}<strong>${esc(player.player)}</strong>`;return profile?`<a class="draft26-player" href="${esc(profile.url)}" target="_blank" rel="noopener" title="Photo: ${esc(profile.credit)} · Elite Prospects profile">${content}</a>`:`<span class="draft26-player">${content}</span>`;};
 const DRAFT26_NATIONS=[['Canada',71,'can'],['USA',54,'usa'],['Russia',26,'rus'],['Sweden',24,'swe'],['Czechia',13,'cze'],['Finland',13,'fin'],['Slovakia',8,'svk'],['Latvia',4,'lva'],['Belarus',3,'blr'],['Denmark',1,'dnk'],['Germany',1,'deu'],['Hungary',1,'hun'],['Lithuania',1,'ltu'],['Moldova',1,'mda'],['Norway',1,'nor'],['Switzerland',1,'che']];
 const DRAFT26_LEAGUES=[['OHL',45,'ohl'],['WHL',37,'whl'],['USHL',25,'ushl'],['QMJHL',20,'qmjhl'],['MHL',16,'mhl'],['U20 Nationell',16,'u20-nationell'],['U20 SM-sarja',12,'u20-sm-sarja'],['NCAA',11,'ncaa'],['NTDP',9,'ntdp'],['SHL',5,'shl'],['USHS-Prep',4,'ushs-prep'],['Liiga',3,'liiga'],['Slovakia',3,'slovakia'],['Czechia U20',2,'czechia-u20'],['HockeyAllsvenskan',2,'hockeyallsvenskan'],['USHS-MN',2,'ushs-mn'],['VHL',2,'vhl'],['KHL',1,'khl'],['PHC',1,'phc'],['NL',1,'nl'],['NAHL',1,'nahl'],['U18 AAA',1,'u18-aaa'],['GOJHL',1,'gojhl'],['Division 2',1,'division-2'],['Denmark',1,'denmark'],['Latvia',1,'latvia'],['Czechia',1,'czechia']];
@@ -911,7 +921,11 @@ const FORUM_BLOCK_PATTERNS=[
   /\b(kill|gas|exterminate)\s+(all|every|the)\b/i,
   /\bgo back to (your|their) country\b/i
 ];
-function moderateForumText(text){ const normalized=normalizeForumText(text); return FORUM_BLOCK_PATTERNS.some(rx=>rx.test(normalized)); }
+const FORUM_BLOCK_COMPACT=['fuck','motherfucker','nigger','nigga','faggot','fagot','kike','spic','chink','cunt','heilhitler','whitepower'];
+function moderateForumText(text){
+  const normalized=normalizeForumText(text),compact=normalized.replace(/[^a-z]/g,'');
+  return FORUM_BLOCK_PATTERNS.some(rx=>rx.test(normalized))||FORUM_BLOCK_COMPACT.some(term=>compact.includes(term));
+}
 const usernameKey=username=>String(username||'').trim().toLowerCase();
 const usernameEmail=username=>`${usernameKey(username)}@netprospect.local`;
 function validateFirebaseUsername(username){
@@ -925,7 +939,7 @@ function firebaseFriendlyError(error){
   if(code.includes('email-already-in-use'))return 'That username is already taken.';
   if(code.includes('invalid-credential')||code.includes('wrong-password')||code.includes('user-not-found'))return 'Incorrect username or password.';
   if(code.includes('weak-password'))return 'Passwords must be at least 8 characters.';
-  if(code.includes('permission-denied'))return 'Firebase rules are blocking this action.';
+  if(code.includes('permission-denied'))return 'This action was blocked by the posting limits or content rules.';
   return error?.message||'Firebase request failed.';
 }
 function firebasePublicUser(uid,profile={}){
@@ -957,6 +971,7 @@ async function firebaseLogin(username,password){
 function firebaseTopicOut(id,topic={}){
   const commentsRaw=topic.comments||{};
   const comments=Array.isArray(commentsRaw)?commentsRaw.filter(Boolean):Object.entries(commentsRaw).map(([commentId,comment])=>({id:commentId,...comment}));
+  const likeUsers=topic.likeUsers&&typeof topic.likeUsers==='object'?topic.likeUsers:{};
   comments.sort((a,b)=>Number(a.createdAt||0)-Number(b.createdAt||0));
   return {
     id,
@@ -972,7 +987,8 @@ function firebaseTopicOut(id,topic={}){
     pending:Boolean(topic.pending),
     approved:Boolean(topic.approved),
     views:Number(topic.views||0),
-    likes:Number(topic.likes||0),
+    likes:Number(topic.likes||0)+Object.keys(likeUsers).length,
+    liked:Boolean(currentUser?.id&&likeUsers[currentUser.id]),
     author:topic.author||null,
     comments:comments.map(comment=>({
       id:String(comment.id||''),
@@ -982,24 +998,36 @@ function firebaseTopicOut(id,topic={}){
     }))
   };
 }
+const FORUM_RATE_LIMIT_MS={topic:5*60*1000,comment:30*1000};
+async function firebaseReserveForumAction(action,resourceId,parentId=''){
+  if(!currentUser)throw new Error('Sign in required.');
+  const cooldown=FORUM_RATE_LIMIT_MS[action],ref=firebaseDb.ref(`userRateLimits/${currentUser.id}/${action}`),snapshot=await ref.once('value'),lastAt=Number(snapshot.val()?.at||0),remaining=lastAt+cooldown-Date.now();
+  if(remaining>0){
+    const wait=remaining>=60000?`${Math.ceil(remaining/60000)} minute${remaining>60000?'s':''}`:`${Math.ceil(remaining/1000)} seconds`;
+    throw new Error(`Please wait ${wait} before ${action==='topic'?'posting again':'commenting again'}.`);
+  }
+  await ref.set({at:firebase.database.ServerValue.TIMESTAMP,resourceId,parentId});
+}
 async function firebaseCreateTopic(topic){
   if(!currentUser)throw new Error('Sign in required.');
   const ref=firebaseDb.ref('forumTopics').push();
+  await firebaseReserveForumAction('topic',ref.key);
   const payload={...topic,createdAt:Date.now(),updatedAt:Date.now(),views:0,likes:0,comments:{},author:currentUser};
   await ref.set(payload);
   return firebaseTopicOut(ref.key,payload);
 }
 async function firebaseLikeTopic(id){
-  await firebaseDb.ref(`forumTopics/${id}/likes`).set(firebase.database.ServerValue.increment(1));
+  if(!currentUser)throw new Error('Sign in required.');
+  const ref=firebaseDb.ref(`forumTopics/${id}/likeUsers/${currentUser.id}`),snapshot=await ref.once('value');
+  if(snapshot.exists())throw new Error('You have already liked this post.');
+  await ref.set(true);
 }
 async function firebaseCommentTopic(id,body){
   if(!currentUser)throw new Error('Sign in required.');
   const ref=firebaseDb.ref(`forumTopics/${id}/comments`).push();
+  await firebaseReserveForumAction('comment',ref.key,id);
   const comment={id:ref.key,body,created:'Just now',createdAt:Date.now(),author:currentUser};
-  await firebaseDb.ref().update({
-    [`forumTopics/${id}/comments/${ref.key}`]:comment,
-    [`forumTopics/${id}/updatedAt`]:firebase.database.ServerValue.TIMESTAMP
-  });
+  await ref.set(comment);
   return comment;
 }
 const forumEmpty=copy=>`<div class="lane-empty">${esc(copy)}</div>`;
@@ -1008,7 +1036,7 @@ function reportPreview(t){return `<button class="lane-post"><span>${esc(t.title.
 function mockPickLines(body){return String(body||'').split(/\r?\n/).map(line=>line.trim()).filter(Boolean).map((line,index)=>{const match=line.match(/^(\d+)[.)]\s*(.+)$/);return {number:match?Number(match[1]):index+1,text:match?match[2]:line};});}
 function mockPickPlayer(text){const haystack=normalizeForumText(text);return [...state.players].sort((a,b)=>b.name.length-a.name.length).find(player=>haystack.includes(normalizeForumText(player.name)))||null;}
 function mockPickCompact(p){const player=mockPickPlayer(p.text);return `<i><b>${p.number}</b>${player?thumb(player,'mock-pick-photo'):`<span class="mock-pick-photo mock-pick-fallback">?</span>`}<em><strong>${esc(player?.name||p.text)}</strong>${player?`<small>${esc(player.team||player.pos||'Prospect')}</small>`:''}</em></i>`;}
-function mockPreview(t){const count=(t.comments||[]).length,likes=Number(t.likes||0),picks=mockPickLines(t.body),preview=picks.slice(0,3),author=t.author?.username||'Scout Room member';return `<article class="mock-room-card" data-mock-id="${esc(t.id)}"><button class="mock-room-open" type="button" data-mock-open="${esc(t.id)}"><span>${esc(t.title)}</span><small class="mock-room-author">By ${esc(author)}</small><div class="mock-room-preview">${preview.map(mockPickCompact).join('')}</div><small>${picks.length} ${picks.length===1?'pick':'picks'} · Open full board</small></button><div class="mock-room-actions"><button type="button" data-mock-like="${esc(t.id)}">Like <b>${likes}</b></button><button type="button" data-mock-open="${esc(t.id)}">${count} ${count===1?'comment':'comments'}</button></div></article>`;}
+function mockPreview(t){const count=(t.comments||[]).length,likes=Number(t.likes||0),picks=mockPickLines(t.body),preview=picks.slice(0,3),author=t.author?.username||'Scout Room member';return `<article class="mock-room-card" data-mock-id="${esc(t.id)}"><button class="mock-room-open" type="button" data-mock-open="${esc(t.id)}"><span>${esc(t.title)}</span><small class="mock-room-author">By ${esc(author)}</small><div class="mock-room-preview">${preview.map(mockPickCompact).join('')}</div><small>${picks.length} ${picks.length===1?'pick':'picks'} · Open full board</small></button><div class="mock-room-actions"><button type="button" data-mock-like="${esc(t.id)}"${t.liked?' disabled aria-disabled="true"':''}>${t.liked?'Liked':'Like'} <b>${likes}</b></button><button type="button" data-mock-open="${esc(t.id)}">${count} ${count===1?'comment':'comments'}</button></div></article>`;}
 function approvedPreview(t){return `<button class="lane-post"><span>${esc(t.player||t.title.replace(/^Prospect nomination:\s*/i,''))}</span><small>${esc(t.team||t.body||'Accepted for administrator review')}</small><b>Accepted · ${esc(t.created||'Recently')}</b></button>`;}
 function renderForum(){
   const reports=forumTopics.filter(t=>t.category==='Scouting Report'&&!t.pending).sort((a,b)=>reportScore(b)-reportScore(a)).slice(0,3);
@@ -1066,17 +1094,20 @@ function openMockDetail(id){
   $('#mockDetailTitle').textContent=topic.title;$('#mockDetailBody').innerHTML=picks.map(p=>{const player=mockPickPlayer(p.text);return `<div class="mock-detail-pick"><b>${p.number}</b>${player?thumb(player,'mock-detail-photo'):`<span class="mock-detail-photo mock-pick-fallback">?</span>`}<span><strong>${esc(player?.name||p.text)}</strong>${player?`<small>${esc(player.team||player.pos||'Prospect')}</small>`:''}</span></div>`;}).join('');
   const comments=topic.comments||[];$('#mockCommentCount').textContent=`${comments.length} ${comments.length===1?'comment':'comments'}`;
   $('#mockDetailMeta').innerHTML=`<span>By ${esc(topic.author?.username||'Scout Room member')}</span><span>${Number(topic.likes||0)} likes</span><span>${Number(topic.views||0)} views</span><span>${comments.length} comments</span>`;
-  $('#mockLikeBtn').textContent=`Like (${Number(topic.likes||0)})`;
+  $('#mockLikeBtn').textContent=`${topic.liked?'Liked':'Like'} (${Number(topic.likes||0)})`;$('#mockLikeBtn').disabled=Boolean(topic.liked);
+  $('#mockDeleteBtn').hidden=!isAdmin();
   $('#mockComments').innerHTML=comments.map(c=>`<article class="mock-comment"><strong>${esc(c.author?.username||'Scout Room member')}</strong><p>${esc(c.body)}</p><small>${esc(c.created||'Recently')}</small></article>`).join('')||'<div class="lane-empty">No comments yet. Start the discussion.</div>';
   $('#mockCommentText').value='';$('#mockDetailOverlay').classList.add('show');
 }
 async function likeMock(id){
   const topic=forumTopics.find(t=>t.id===id);if(!topic)return;
+  if(topic.liked)return;
   if(initFirebase()&&forumRemote&&!currentUser){requireAuth('Sign in to like Scout Room posts.');return;}
   try{
     if(initFirebase()&&forumRemote){
       await firebaseLikeTopic(id);
       topic.likes=Number(topic.likes||0)+1;
+      topic.liked=true;
     }else{
       topic.likes=Number(topic.likes||0)+1;forumSave();
     }
@@ -1089,6 +1120,11 @@ async function likeMock(id){
 $('#mockDetailClose').onclick=closeMockDetail;
 $('#mockDetailOverlay').onclick=e=>{if(e.target.id==='mockDetailOverlay')closeMockDetail();};
 $('#mockLikeBtn').onclick=()=>{if(openMockId)likeMock(openMockId);};
+$('#mockDeleteBtn').onclick=async()=>{
+  if(!openMockId||!isAdmin()||!firebaseDb||!confirm('Delete this community post and all of its comments?'))return;
+  try{await firebaseDb.ref(`forumTopics/${openMockId}`).remove();forumTopics=forumTopics.filter(topic=>topic.id!==openMockId);closeMockDetail();renderForum();}
+  catch(error){$('#mockCommentError').textContent=firebaseFriendlyError(error);}
+};
 $('#mockCommentForm').onsubmit=async e=>{e.preventDefault();if(!requireAuth('Sign in to comment in Scout Room.'))return;const body=$('#mockCommentText').value.trim(),topic=forumTopics.find(t=>t.id===openMockId);if(!topic)return;if(moderateForumText(body)){$('#mockCommentError').textContent='This comment contains language that is not allowed in Scout Room.';return;}try{topic.comments=topic.comments||[];if(initFirebase()&&forumRemote){topic.comments.push(await firebaseCommentTopic(topic.id,body));}else{topic.comments.push({body,created:'Just now',author:currentUser});forumSave();}openMockDetail(topic.id);renderForum();}catch(error){$('#mockCommentError').textContent=firebaseFriendlyError(error);}};
 function closeScoutSubmit(){ $('#scoutOverlay').classList.remove('show'); $('#scoutSubmitError').textContent=''; }
 function openScoutSubmit(type='prospect'){
@@ -1169,7 +1205,7 @@ function renderBoard(){
 }
 
 function ceImgMarkup(p){ return p.headshot
-  ? `<img id="ceImg" src="${esc(p.headshot)}" alt="" onerror="this.outerHTML='<div id=\\'ceImg\\' class=\\'ph\\'>${esc(initials(p.name))}</div>'">`
+  ? `<img id="ceImg" src="${esc(p.headshot)}" alt="" data-fallback-initials="${esc(initials(p.name))}">`
   : `<div id="ceImg" class="ph">${esc(initials(p.name))}</div>`; }
 function editAttr(p,k){ const v=Number(p[k])||0;
   return `<div class="sattr" data-k="${k}"><div class="srow"><span class="slb">${(isGoalie(p)?GOALIE_ATTR_LABELS[k]:LBL[k]).toUpperCase()}</span>
